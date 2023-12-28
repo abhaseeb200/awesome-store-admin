@@ -29,9 +29,11 @@ const Layout = ({ children }) => {
           screenWidth={screenWidth}
         />
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-x-hidden overflow-y-auto container custom-width-90 mx-auto">
-            <Header handleSidebar={handleSidebar} screenWidth={screenWidth} />
-            <main>{children}</main>
+          <div className="flex-1 overflow-hidden overflow-y-auto">
+            <div className="container custom-width-90 mx-auto">
+              <Header handleSidebar={handleSidebar} screenWidth={screenWidth} />
+              <main>{children}</main>
+            </div>
           </div>
         </div>
       </div>

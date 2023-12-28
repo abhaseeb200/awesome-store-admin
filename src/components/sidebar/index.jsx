@@ -1,8 +1,11 @@
 import { Transition } from "@headlessui/react";
 import { useNavigate } from "react-router";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { IoHomeOutline } from "react-icons/io5";
+import { GoChecklist } from "react-icons/go";
+import { CiBoxList } from "react-icons/ci";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
 import NavbarLink from "../navbarLink";
 
@@ -83,7 +86,7 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
         <NavbarLink
           to="/orderlist"
           title="Order List"
-          icon={<LiaFileInvoiceSolid size="1.1rem" />}
+          icon={<GoChecklist size="1.1rem" />}
         />
         <NavbarLink
           to="/orderdetails"
@@ -96,12 +99,12 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
         <NavbarLink
           to="/productlist"
           title="Product List"
-          icon={<LiaFileInvoiceSolid size="1.1rem" />}
+          icon={<CiBoxList size="1.1rem" />}
         />
         <NavbarLink
           to="/addproduct"
           title="Add Product"
-          icon={<LiaFileInvoiceSolid size="1.1rem" />}
+          icon={<IoBagAddOutline size="1.1rem" />}
         />
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           auth
