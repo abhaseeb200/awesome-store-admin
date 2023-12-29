@@ -1,7 +1,15 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-const Dropdown = ({ title, items, titleClass, menuItemsClass, icon }) => {
+const Dropdown = ({
+  title,
+  items,
+  titleClass,
+  menuItemsClass,
+  icon,
+  handleOnClick,
+  currentDocID
+}) => {
   return (
     <div className="relative">
       <Menu>
@@ -19,11 +27,14 @@ const Dropdown = ({ title, items, titleClass, menuItemsClass, icon }) => {
           className="z-30"
         >
           <Menu.Items
-            className={`text-sm w-full flex flex-col bg-white drop-shadow-lg rounded-md px-1.5 py-2  ${menuItemsClass}`}
+            className={`text-sm flex flex-col bg-white drop-shadow-lg rounded-md px-1.5 py-2  ${menuItemsClass}`}
           >
             {items?.map((item, index) => (
               <Menu.Item key={index}>
-                <div className="flex items-center hover:bg-gray-100 rounded-md cursor-pointer py-1 px-2 my-0.5 text-gray-600">
+                <div
+                  className="flex items-center hover:bg-primaryLight hover:text-primaryDark rounded-md cursor-pointer py-1 px-2 my-0.5 text-gray-600"
+                  onClick={() => handleOnClick(item?.action, currentDocID)}
+                >
                   {item.icon && <span className="mr-2">{item.icon}</span>}
                   <span className="">{item.label}</span>
                 </div>

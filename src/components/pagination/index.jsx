@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
@@ -7,13 +8,13 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     pageNumbers.push(i);
   }
 
-  console.log(
-    pageNumbers[pageNumbers.length - 1],
-    "---",
-    pageNumbers[0],
-    "---",
-    currentPage
-  );
+  // console.log(
+  //   pageNumbers[pageNumbers.length - 1],
+  //   "---",
+  //   pageNumbers[0],
+  //   "---",
+  //   currentPage
+  // );
 
   const nextPagination = () => {
     if (currentPage < totalPages) {
@@ -40,7 +41,9 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
           <li
             key={number}
             className={`cursor-pointer rounded-md h-10 w-9 flex justify-center items-center transition ${
-              currentPage === number ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-gray-200 hover:bg-gray-300'
+              currentPage === number
+                ? "bg-primary text-white hover:bg-primaryDark"
+                : "bg-gray-200 hover:bg-gray-300"
             }`}
             onClick={() => onPageChange(number)}
           >

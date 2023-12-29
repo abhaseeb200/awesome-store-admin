@@ -5,12 +5,16 @@ import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { GoDownload } from "react-icons/go";
 import { GrAdd } from "react-icons/gr";
+import { LuEye } from "react-icons/lu";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { TbEdit } from "react-icons/tb";
 import InputCustom from "../../components/inputs";
 import Dropdown from "../../components/dropdown";
 import SelectCustom from "../../components/select";
 import Pagination from "../../components/pagination";
 import Button from "../../components/button";
 import PageHeading from "../../components/pageTitle";
+import { Card } from "../../components/card";
 
 const ProductList = () => {
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
@@ -22,9 +26,9 @@ const ProductList = () => {
   ];
 
   const actionDropdownItems = [
-    { label: "View" },
-    { label: "Edit" },
-    { label: "Delete" },
+    { label: "View", icon: <LuEye size="1.1rem" /> },
+    { label: "Edit", icon: <TbEdit size="1.1rem" /> },
+    { label: "Delete", icon: <MdOutlineDeleteOutline size="1.1rem" /> },
   ];
 
   const handlePageChange = (pageNumber) => {
@@ -35,7 +39,8 @@ const ProductList = () => {
     <>
       <div>
         <PageHeading title="Product List" />
-        <div className="bg-white drop-shadow-md rounded-md px-5">
+        <Card>
+          {/* head - filter */}
           <div className="filter py-6">
             <h4 className="text-lg text-gray-600 font-medium pb-2">Filter</h4>
             <div className="flex sm:flex-row flex-col gap-4">
@@ -51,7 +56,7 @@ const ProductList = () => {
             </div>
           </div>
           <hr className="bg-gray-400 h-0.5" />
-
+          {/* head - search */}
           <div className="py-6 flex sm:flex-row flex-col gap-4 justify-between">
             <span className="sm:w-48 w-full block">
               <InputCustom type="text" placeholder="Search Order" />
@@ -74,6 +79,7 @@ const ProductList = () => {
               <Button name="Add Product" icon={<GrAdd size="1rem" />} />
             </span>
           </div>
+          {/* body - table */}
           <div className="overflow-auto">
             <table className="table-auto w-full">
               <thead>
@@ -145,7 +151,7 @@ const ProductList = () => {
               </tbody>
             </table>
           </div>
-
+          {/* footer - pagination */}
           <div className="py-6 flex sm:flex-row flex-col gap-3 justify-between items-center">
             <p className="text-xs text-gray-500">
               Displaying 1 to 10 of 100 entries
@@ -156,7 +162,7 @@ const ProductList = () => {
               onPageChange={handlePageChange}
             />
           </div>
-        </div>
+        </Card>
       </div>
     </>
   );

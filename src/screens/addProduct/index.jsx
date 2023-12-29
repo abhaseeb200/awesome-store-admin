@@ -4,6 +4,7 @@ import InputCustom from "../../components/inputs";
 import SelectCustom from "../../components/select";
 import TextareaCustom from "../../components/textarea";
 import PageHeading from "../../components/pageTitle";
+import { Card, CardHeading } from "../../components/card";
 
 const AddProduct = () => {
   return (
@@ -26,10 +27,9 @@ const AddProduct = () => {
 
         <div className="flex gap-3 flex-col sm:flex-row py-6">
           <div className="sm:w-3/5 w-full">
-            <div className="bg-white drop-shadow-md rounded-md px-5 ">
-              <h4 className="text-lg text-gray-600 font-medium py-6">
-                Product information
-              </h4>
+            {/* product information */}
+            <Card>
+              <CardHeading title="Product information" />
               <div className="pb-4">
                 <label className="text-sm text-gray-500">Name</label>
                 <InputCustom placeholder="Product title" type="text" />
@@ -44,10 +44,10 @@ const AddProduct = () => {
                 </label>
                 <TextareaCustom placeholder="Product description" rows="10" />
               </div>
-            </div>
-
-            <div className="bg-white drop-shadow-md rounded-md px-5 mt-3">
-              <h4 className="text-lg text-gray-600 font-medium py-6">Media</h4>
+            </Card>
+            {/* Media */}
+            <Card>
+              <CardHeading title="Media" />
               <div className="pb-6">
                 <label className="w-full flex flex-col items-center rounded-md border border-2 border-dashed border-gray-400 tracking-wide border border-blue cursor-pointer py-14">
                   <span className="bg-gray-200 py-3 px-3 rounded-md mb-5">
@@ -59,12 +59,10 @@ const AddProduct = () => {
                   <input type="file" className="hidden" />
                 </label>
               </div>
-            </div>
-
-            <div className="bg-white drop-shadow-md rounded-md px-5 mt-3">
-              <h4 className="text-lg text-gray-600 font-medium py-6">
-                Variants
-              </h4>
+            </Card>
+            {/* Variants */}
+            <Card>
+              <CardHeading title="Variants" />
               <div className="pb-4">
                 <div className="flex sm:flex-row flex-col items-end gap-3">
                   <span className="sm:w-1/3 w-full">
@@ -85,14 +83,13 @@ const AddProduct = () => {
               <div className="pb-6">
                 <Button name="Add another option" />
               </div>
-            </div>
+            </Card>
           </div>
 
           <div className="sm:w-2/5 w-full">
-            <div className="bg-white drop-shadow-md rounded-md px-5 ">
-              <h4 className="text-lg text-gray-600 font-medium py-6">
-                Pricing
-              </h4>
+            {/* Pricing */}
+            <Card>
+              <CardHeading title="Pricing" />
               <div className="pb-4">
                 <label className="text-sm text-gray-500">Base Price</label>
                 <InputCustom placeholder="Price" type="number" />
@@ -103,12 +100,10 @@ const AddProduct = () => {
                 </label>
                 <InputCustom placeholder="Discounted Price" type="number" />
               </div>
-            </div>
-
-            <div className="bg-white drop-shadow-md rounded-md px-5 mt-3">
-              <h4 className="text-lg text-gray-600 font-medium py-6">
-                Organize
-              </h4>
+            </Card>
+            {/* Organize */}
+            <Card>
+              <CardHeading title="Organize" />
               <div className="pb-6">
                 <label className="text-sm text-gray-500 block mb-1">
                   Category
@@ -119,7 +114,7 @@ const AddProduct = () => {
                   <option value="0">Shoes</option>
                 </SelectCustom>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
