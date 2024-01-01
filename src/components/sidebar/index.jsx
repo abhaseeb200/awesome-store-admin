@@ -88,11 +88,11 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
           title="Order List"
           icon={<GoChecklist size="1.1rem" />}
         />
-        <NavbarLink
+        {/* <NavbarLink
           to="/orderdetails"
           title="Order Details"
           icon={<LiaFileInvoiceSolid size="1.1rem" />}
-        />
+        /> */}
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           product
         </div>

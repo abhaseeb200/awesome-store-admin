@@ -31,7 +31,7 @@ const Main = () => {
             }
           />
           <Route
-            path="/orderdetails"
+            path="/orderlist/:paramsDocID"
             element={
               <Layout>
                 <OrderDetails />

@@ -24,3 +24,8 @@ nav .active:hover {
 table {
   white-space: nowrap;
 }
+
+.my-disabled {
+  opacity: 0.7 !important;
+  cursor: not-allowed;
+}
