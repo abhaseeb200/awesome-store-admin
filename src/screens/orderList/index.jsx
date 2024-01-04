@@ -121,7 +121,7 @@ const OrderList = () => {
         ) : orderData?.length > 0 ? (
           <Card>
             {/* head - search & filter */}
-            <div className="py-6 flex sm:flex-row flex-col gap-4 justify-between">
+            <div className="py-6 flex sm:flex-row flex-col gap-4 justify-between px-5">
               <span className="sm:w-48 w-full block">
                 <InputCustom
                   type="text"
@@ -155,13 +155,13 @@ const OrderList = () => {
               <table className="table-auto w-full">
                 <thead>
                   <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
-                    <th className="text-left py-4 font-medium">Order</th>
+                    <th className="text-left py-4 font-medium pl-5">Order</th>
                     <th className="text-left py-4 px-3 font-medium">Date</th>
                     <th className="text-left py-4 px-3 font-medium">
                       Customer
                     </th>
                     <th className="text-left py-4 px-3 font-medium">Status</th>
-                    <th className="py-4 font-medium">Action</th>
+                    <th className="py-4 font-medium pr-5">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,7 +172,7 @@ const OrderList = () => {
                           key={index}
                           className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
                         >
-                          <td className="py-4 text-primary">{order?.docID}</td>
+                          <td className="py-4 text-primary pl-5">{order?.docID}</td>
                           <td className="py-4 px-3">
                             {handleDateFormat(order?.dateAndTime)}
                           </td>
@@ -182,7 +182,7 @@ const OrderList = () => {
                           <td className="py-4 px-3 capitalize">
                             {order?.status}
                           </td>
-                          <td className="py-4">
+                          <td className="py-4 pr-5">
                             <span className="hover:text-primaryDark">
                               <Link to={`/orderList/${order?.docID}`}>
                                 <LuEye

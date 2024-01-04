@@ -64,7 +64,9 @@ const OrderDetails = () => {
 
   const handleSubTotal = () => {
     let subTotal = 0;
-    products.map((product) => (subTotal += product?.price * product?.quantity));
+    products.map(
+      (product) => (subTotal += product?.currentPrice * product?.quantity)
+    );
     return subTotal;
   };
 
@@ -131,10 +133,10 @@ const OrderDetails = () => {
                 <table className="table-auto w-full">
                   <thead>
                     <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
-                      <th className="text-left py-4 font-medium">Products</th>
+                      <th className="text-left py-4 font-medium pl-5">Products</th>
                       <th className="text-left py-4 px-3 font-medium">Price</th>
                       <th className="text-left py-4 px-3 font-medium">QTY</th>
-                      <th className="text-left py-4 px-3 font-medium">Total</th>
+                      <th className="text-left py-4 px-3 font-medium pr-5">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -144,25 +146,28 @@ const OrderDetails = () => {
                           key={index}
                           className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
                         >
-                          <td className="py-4 flex gap-2">
+                          <td className="py-4 flex gap-2 pl-5">
                             <span>
                               <img
                                 src={product.thumbnail}
-                                width="40"
+                                width="50"
                                 className="object-cover h-full"
                               />
                             </span>
                             <span className="flex flex-col">
-                              <h5>{product?.title}</h5>
-                              <p className="text-gray-400">
-                                Category: {product?.category}
-                              </p>
+                              <h5 className="capitalize">{product?.title}</h5>
+                              <span className="text-gray-400 capitalize text-xs">
+                                <p>size: {product?.currentSize}</p>
+                                <p>color: {product?.currentColor}</p>
+                              </span>
                             </span>
                           </td>
-                          <td className="py-4 px-3">${product?.price}</td>
-                          <td className="py-4 px-3">{product?.quantity}</td>
                           <td className="py-4 px-3">
-                            ${product.price * product?.quantity}
+                            ${product?.currentPrice}
+                          </td>
+                          <td className="py-4 px-3">{product?.quantity}</td>
+                          <td className="py-4 px-3 pr-5">
+                            ${product?.currentPrice * product?.quantity}
                           </td>
                         </tr>
                       );
@@ -171,9 +176,9 @@ const OrderDetails = () => {
                 </table>
               </div>
               <div className="flex flex-col py-6 gap-2 text-sm text-gray-600">
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between px-5">
                   <span>Subtotal :</span>
-                  <span>${handleSubTotal()}</span>
+                  <span>${handleSubTotal().toFixed(2)}</span>
                 </div>
               </div>
             </Card>
@@ -186,7 +191,7 @@ const OrderDetails = () => {
           ) : (
             <Card>
               <CardHeading title=" Customer details" />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-5">
                 <span className="bg-primary text-white p-2.5 rounded-full">
                   <FiUser size="1.3rem" />
                 </span>
@@ -197,7 +202,7 @@ const OrderDetails = () => {
                   {/* <p className="text-sm text-gray-400">Customer ID: {userData?.userID}</p> */}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-gray-500 py-5">
+              <div className="flex items-center gap-2 px-5 text-gray-500 py-5">
                 <span className="bg-green-100 text-green-600 p-2.5 rounded-full">
                   <FiShoppingCart size="1.3rem" />
                 </span>
@@ -205,7 +210,7 @@ const OrderDetails = () => {
                   <p>{products.length} Products</p>
                 </span>
               </div>
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <h4 className="text-md text-gray-600 font-medium">
                   Contact info
                 </h4>
@@ -224,7 +229,7 @@ const OrderDetails = () => {
           ) : (
             <Card>
               <CardHeading title="Order Status" />
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <SelectCustom
                   customClass="py-1.5 w-full"
                   value={status}

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { MdMoreVert } from "react-icons/md";
 import { IoPrintOutline } from "react-icons/io5";
 import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { GoDownload } from "react-icons/go";
 import { GrAdd } from "react-icons/gr";
 import { LuEye } from "react-icons/lu";
+import { MdMoreVert } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 import InputCustom from "../../components/inputs";
@@ -18,11 +17,14 @@ import Button from "../../components/button";
 import PageHeading from "../../components/pageTitle";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
+import Modal from "../../components/modal";
 import { getCategories, getCategoryData, getProducts } from "../../api/api";
 
 const ProductList = () => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [mainLoader, setMainLoader] = useState(true);
   const [cardInnerLoader, setCardInnerLoader] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState({});
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [categoriesName, setCategoriesName] = useState([]);
   const [categoryFilterValue, setCategoryFilterValue] = useState("");
@@ -52,6 +54,20 @@ const ProductList = () => {
   const handlePostPerPage = (e) => {
     console.log(e.target.value);
     setPostPerPage(e.target.value);
+  };
+
+  // const openModal = () => {
+  //   setIsOpenModal(true);
+  // };
+
+  const handleView = (product) => {
+    console.log({ product }, "VIEW");
+    setIsOpenModal(true);
+    setCurrentProduct(product);
+  };
+
+  const handleEdit = (product) => {
+    // console.log({ product }, "EDIT");
   };
 
   const handleCategoryFilter = (e) => {
@@ -121,7 +137,7 @@ const ProductList = () => {
         ) : (
           <Card>
             {/* head - filter */}
-            <div className="filter py-6">
+            <div className="filter py-6 px-5">
               <h4 className="text-lg text-gray-600 font-medium pb-2">Filter</h4>
               <div className="flex sm:flex-row flex-col gap-4">
                 <span
@@ -146,7 +162,7 @@ const ProductList = () => {
             </div>
             <hr className="bg-gray-400 h-0.5" />
             {/* head - search */}
-            <div className="py-6 flex sm:flex-row flex-col gap-4 justify-between">
+            <div className="py-6 px-5 flex sm:flex-row flex-col gap-4 justify-between">
               <span className="sm:w-48 w-full block">
                 <InputCustom type="text" placeholder="Search Product" />
               </span>
@@ -179,7 +195,7 @@ const ProductList = () => {
             {/* body - table */}
             <div className="overflow-auto">
               {cardInnerLoader ? (
-                <div className="animate-pulse">
+                <div className="animate-pulse px-5">
                   <div className="p-4 bg-gray-300"></div>
                   <div className="p-4 my-2 bg-gray-300"></div>
                   <div className="p-4 bg-gray-300"></div>
@@ -188,13 +204,15 @@ const ProductList = () => {
                 <table className="table-auto w-full">
                   <thead>
                     <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
-                      <th className="text-left py-4 font-medium">Product</th>
+                      <th className="text-left py-4 font-medium pl-5">
+                        Product
+                      </th>
                       <th className="text-left py-4 px-3 font-medium">
                         Category
                       </th>
                       <th className="text-left py-4 px-3 font-medium">Price</th>
                       <th className="text-left py-4 px-3 font-medium">QTY</th>
-                      <th className="py-4 px-3 font-medium">Actions</th>
+                      <th className="py-4 font-medium pr-5">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -204,7 +222,7 @@ const ProductList = () => {
                           className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
                           key={index}
                         >
-                          <td className="py-4 flex gap-2">
+                          <td className="py-4 flex gap-2 pl-5">
                             <span>
                               <img
                                 src={product.thumbnail}
@@ -226,14 +244,23 @@ const ProductList = () => {
                           </td>
                           <td className="py-4 px-3">${product.price}</td>
                           <td className="py-4 px-3">{product.stock}</td>
-                          <td className="py-4">
-                            <span className="hover:text-primaryDark">
-                              <Link to={`/productList/${product.id}`}>
-                                <LuEye
-                                  size="1.1rem"
-                                  className="mx-auto cursor-pointer"
-                                />
-                              </Link>
+                          <td className="py-4 pr-5">
+                            <span className="flex gap-1.5 justify-center text-gray-500">
+                              <span
+                                className="hover:text-primaryDark cursor-pointer"
+                                onClick={() => handleEdit(product)}
+                              >
+                                <TbEdit size="1.3rem" />
+                              </span>
+                              <span className="hover:text-primaryDark cursor-pointer">
+                                <MdOutlineDeleteOutline size="1.3rem" />
+                              </span>
+                              <span
+                                className="hover:text-primaryDark cursor-pointer"
+                                onClick={() => handleView(product)}
+                              >
+                                <LuEye size="1.3rem" />
+                              </span>
                             </span>
                           </td>
                         </tr>
@@ -244,7 +271,7 @@ const ProductList = () => {
               )}
             </div>
             {/* footer - pagination */}
-            <div className="py-6 flex sm:flex-row flex-col gap-3 justify-between items-center">
+            <div className="py-6 flex sm:flex-row flex-col gap-3 justify-between items-center px-5">
               {productData.length >= 10 && (
                 <>
                   <p className="text-xs text-gray-500">
@@ -261,6 +288,47 @@ const ProductList = () => {
           </Card>
         )}
       </div>
+
+      <Modal
+        isOpenModal={isOpenModal}
+        setIsOpenModal={setIsOpenModal}
+        currentProduct={currentProduct}
+      >
+        <div className="flex item-center sm:flex-row flex-col gap-5 items-center">
+          <div className="sm:w-1/2 w-full  aspect-square bg-gray-200">
+            <img
+              src={currentProduct?.thumbnail}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="sm:w-1/2 w-full text-gray-600">
+            <p className="bg-gray-800 text-white px-3 py-1 uppercase text-sm inline">
+              {currentProduct?.brand}
+            </p>
+            <h3 className="text-2xl font-semibold pt-2 pb-4">
+              {currentProduct?.title}
+              <span className="text-sm pl-2">
+                ({currentProduct?.discountPercentage}% OFF)
+              </span>
+            </h3>
+            <p className="pb-2 font-semibold">
+              <span className="text-lg line-through text-gray-400 pe-2">
+                ${currentProduct?.price}
+              </span>
+              <span className="text-lg">$200</span>
+            </p>
+            <p className="text-sm pb-3">{currentProduct?.description}</p>
+            <p className="text-sm">
+              <span className="font-semibold mr-2">Availability:</span>
+              {currentProduct?.stock} in Stock
+            </p>
+            <p className="text-sm">
+              <span className="font-semibold mr-2">Category:</span>
+              <span className="capitalize">{currentProduct?.category}</span>
+            </p>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

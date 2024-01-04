@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { TbLoader2 } from "react-icons/tb";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { TbLoader2 } from "react-icons/tb";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
 

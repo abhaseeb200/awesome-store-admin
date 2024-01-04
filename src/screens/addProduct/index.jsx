@@ -6,8 +6,7 @@ import SelectCustom from "../../components/select";
 import TextareaCustom from "../../components/textarea";
 import PageHeading from "../../components/pageTitle";
 import { Card, CardHeading } from "../../components/card";
-import axios from "axios";
-import { addProduct } from "../../api/api";
+import { addProduct, getCategories } from "../../api/api";
 
 const AddProduct = () => {
   const [title, setTitle] = useState({
@@ -38,12 +37,20 @@ const AddProduct = () => {
   });
   const [gallary, setGallary] = useState();
   const [gallaryData, setGallaryData] = useState([]);
+  const [categoriesName, setCategoriesName] = useState([]);
+
+  const fetchCategoriesName = async () => {
+    try {
+      let response = await getCategories();
+      setCategoriesName(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleThumbnail = (e) => {
     if (e.target.files[0]) {
       let tempImgURL = URL.createObjectURL(e.target.files[0]);
-      console.log(tempImgURL, "______-", e.target.files[0]?.name);
-      // console.log(e.target.files[0].name, "------",tempImgURL);
       setThumbnail({
         value: e.target.value,
         url: tempImgURL,
@@ -61,8 +68,6 @@ const AddProduct = () => {
       setGallaryData([...newImages, ...gallaryData]);
     }
   };
-
-  console.log(gallaryData, "GALLARY DATA");
 
   const handlePusblishProduct = () => {
     //TITLE
@@ -143,6 +148,10 @@ const AddProduct = () => {
     }
   };
 
+  useEffect(() => {
+    fetchCategoriesName();
+  }, []);
+
   return (
     <>
       <div className="">
@@ -166,7 +175,7 @@ const AddProduct = () => {
             {/* product information */}
             <Card>
               <CardHeading title="Product information" />
-              <div className="pb-4">
+              <div className="pb-4 px-5">
                 <label className="text-sm text-gray-500">Name</label>
                 <InputCustom
                   placeholder="Product title"
@@ -177,10 +186,12 @@ const AddProduct = () => {
                   onChange={(e) => setTitle({ value: e.target.value })}
                 />
               </div>
-              <div className="pb-4">
-                <label className="text-sm text-gray-500">Quantity</label>
+              <div className="pb-4 px-5">
+                <label className="text-sm text-gray-500">
+                  Quantity / Stock
+                </label>
                 <InputCustom
-                  placeholder="Product Qunatity"
+                  placeholder="Product qunatity"
                   type="number"
                   value={quantity.value}
                   isError={quantity.isError}
@@ -188,7 +199,7 @@ const AddProduct = () => {
                   onChange={(e) => setQuantity({ value: e.target.value })}
                 />
               </div>
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <label className="text-sm text-gray-500">
                   Description (Optional)
                 </label>
@@ -198,7 +209,7 @@ const AddProduct = () => {
             {/* Media */}
             <Card>
               <CardHeading title="Media" />
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <label className="text-sm text-gray-500">Thumbnail</label>
                 <label
                   className={`w-full flex flex-col items-center rounded-md border border-2 border-dashed tracking-wide cursor-pointer py-14 ${
@@ -233,7 +244,7 @@ const AddProduct = () => {
                   )}
                 </div>
               </div>
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <label className="text-sm text-gray-500">
                   Gallary(Optional)
                 </label>
@@ -294,7 +305,7 @@ const AddProduct = () => {
             {/* Pricing */}
             <Card>
               <CardHeading title="Pricing" />
-              <div className="pb-4">
+              <div className="pb-4 px-5">
                 <label className="text-sm text-gray-500">Base Price</label>
                 <InputCustom
                   placeholder="Price"
@@ -305,7 +316,7 @@ const AddProduct = () => {
                   onChange={(e) => setPrice({ value: e.target.value })}
                 />
               </div>
-              <div className="pb-6">
+              <div className="pb-6 px-5">
                 <label className="text-sm text-gray-500">
                   Discounted Price (Optional)
                 </label>
@@ -315,12 +326,18 @@ const AddProduct = () => {
             {/* Organize */}
             <Card>
               <CardHeading title="Organize" />
-              <div className="pb-6">
+              <div className="pb-4 px-5">
+                <label className="text-sm text-gray-500 block mb-1">
+                  Brand
+                </label>
+                <InputCustom placeholder="Product brand" />
+              </div>
+              <div className="pb-6 px-5">
                 <label className="text-sm text-gray-500 block mb-1">
                   Category
                 </label>
                 <SelectCustom
-                  customClass="py-2 w-full"
+                  customClass="py-2 w-full capitalize"
                   value={category.value}
                   isError={category.isError}
                   messageError={category.messageError}
@@ -329,8 +346,9 @@ const AddProduct = () => {
                   <option value="0" select="select">
                     Select Category
                   </option>
-                  <option value="office">Office</option>
-                  <option value="shoes">Shoes</option>
+                  {categoriesName.map((category) => {
+                    return <option value={category}>{category}</option>;
+                  })}
                 </SelectCustom>
               </div>
             </Card>

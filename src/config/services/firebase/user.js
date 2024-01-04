@@ -1,8 +1,12 @@
 import { db } from "../../firebaseConfig"
 
 const getUserData = (userID) => {
-    return db.collection("users").where("userID","==",userID).get()
+    return db.collection("users").where("userID", "==", userID).get()
+}
+
+const getAllUsers = () => {
+    return db.collection("users").get()
 }
 
 
-export { getUserData }
+export { getUserData, getAllUsers }
