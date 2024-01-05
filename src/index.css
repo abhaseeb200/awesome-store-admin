@@ -29,3 +29,9 @@ table {
   opacity: 0.7 !important;
   cursor: not-allowed;
 }
+
+.customSecondaryButton {
+  background-color: #eae8fd !important;
+  color: #685dd8 !important;
+  filter: none;
+}

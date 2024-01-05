@@ -18,6 +18,7 @@ import PageHeading from "../../components/pageTitle";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import Modal from "../../components/modal";
+import ThumbnailSlider from "../../components/slider";
 import { getCategories, getCategoryData, getProducts } from "../../api/api";
 
 const ProductList = () => {
@@ -68,6 +69,11 @@ const ProductList = () => {
 
   const handleEdit = (product) => {
     // console.log({ product }, "EDIT");
+  };
+
+  const discountPrice = (price, discountPercentage) => {
+    let priceAfterDiscount = price - (discountPercentage / 100) * price;
+    return priceAfterDiscount.toFixed(2);
   };
 
   const handleCategoryFilter = (e) => {
@@ -187,7 +193,7 @@ const ProductList = () => {
                   titleClass="relative bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600 text-sm"
                   menuItemsClass="absolute left-0 w-full"
                 />
-                <Link to="/addproduct">
+                <Link to="/productEditor">
                   <Button name="Add Product" icon={<GrAdd size="1rem" />} />
                 </Link>
               </span>
@@ -246,12 +252,11 @@ const ProductList = () => {
                           <td className="py-4 px-3">{product.stock}</td>
                           <td className="py-4 pr-5">
                             <span className="flex gap-1.5 justify-center text-gray-500">
-                              <span
-                                className="hover:text-primaryDark cursor-pointer"
-                                onClick={() => handleEdit(product)}
-                              >
-                                <TbEdit size="1.3rem" />
-                              </span>
+                              <Link to={`/productEditor/${product?.id}`}>
+                                <span className="hover:text-primaryDark cursor-pointer">
+                                  <TbEdit size="1.3rem" />
+                                </span>
+                              </Link>
                               <span className="hover:text-primaryDark cursor-pointer">
                                 <MdOutlineDeleteOutline size="1.3rem" />
                               </span>
@@ -292,14 +297,11 @@ const ProductList = () => {
       <Modal
         isOpenModal={isOpenModal}
         setIsOpenModal={setIsOpenModal}
-        currentProduct={currentProduct}
+        customWidth="w-full max-w-4xl"
       >
         <div className="flex item-center sm:flex-row flex-col gap-5 items-center">
           <div className="sm:w-1/2 w-full  aspect-square bg-gray-200">
-            <img
-              src={currentProduct?.thumbnail}
-              className="w-full h-full object-contain"
-            />
+            <ThumbnailSlider currentProductData={currentProduct} />
           </div>
           <div className="sm:w-1/2 w-full text-gray-600">
             <p className="bg-gray-800 text-white px-3 py-1 uppercase text-sm inline">
@@ -315,7 +317,18 @@ const ProductList = () => {
               <span className="text-lg line-through text-gray-400 pe-2">
                 ${currentProduct?.price}
               </span>
-              <span className="text-lg">$200</span>
+              <span className="text-lg">
+                $
+                {discountPrice(
+                  currentProduct?.price,
+                  currentProduct?.discountPercentage
+                )}
+                {/* {(
+                  currentProduct?.price -
+                  (currentProduct?.discountPercentage / 100) *
+                    currentProduct?.price
+                ).toFixed(2)} */}
+              </span>
             </p>
             <p className="text-sm pb-3">{currentProduct?.description}</p>
             <p className="text-sm">

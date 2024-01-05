@@ -9,10 +9,8 @@ const TextareaCustom = ({ isError, messageError, name, ...props }) => {
       >
         {name}
       </textarea>
-      {messageError !== "" ? (
+      {messageError !== "" && (
         <small className="text-red-500 block">{messageError}</small>
-      ) : (
-        ""
       )}
     </>
   );

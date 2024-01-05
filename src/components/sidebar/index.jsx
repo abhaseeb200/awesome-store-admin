@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { IoHomeOutline } from "react-icons/io5";
 import { GoChecklist } from "react-icons/go";
 import { CiBoxList } from "react-icons/ci";
+import { TbCategoryPlus } from "react-icons/tb";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
@@ -102,10 +103,19 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
           icon={<CiBoxList size="1.1rem" />}
         />
         <NavbarLink
-          to="/addproduct"
-          title="Add Product"
+          to="/productEditor"
+          title="Product Editor"
           icon={<IoBagAddOutline size="1.1rem" />}
         />
+        <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
+          category
+        </div>
+        <NavbarLink
+          to="/categoryList"
+          title="Category List"
+          icon={<TbCategoryPlus  size="1.1rem" />}
+        />
+        
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           auth
         </div>

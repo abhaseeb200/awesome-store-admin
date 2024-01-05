@@ -6,9 +6,9 @@ import OrderList from "../../screens/orderList/index.jsx";
 import ProtectRoute from "../protectedRoute/index.jsx";
 import OrderDetails from "../../screens/orderDetails/index.jsx";
 import ProductList from "../../screens/productList/index.jsx";
-import AddProduct from "../../screens/addProduct/index.jsx";
 import PageNotFound from "../../screens/pageNotFound/index.jsx";
-import ProductDetails from "../../screens/productDetails/index.jsx";
+import ProductEditor from "../../screens/productEditor/index.jsx";
+import CategoryList from "../../screens/categoryList/index.jsx";
 
 const Main = () => {
   return (
@@ -48,18 +48,26 @@ const Main = () => {
             }
           />
           <Route
-            path="/productlist/:productID"
+            path="/productEditor"
             element={
               <Layout>
-                <ProductDetails />
+                <ProductEditor />
               </Layout>
             }
           />
           <Route
-            path="/addProduct"
+            path="/productEditor/:productID"
             element={
               <Layout>
-                <AddProduct />
+                <ProductEditor />
+              </Layout>
+            }
+          />
+          <Route
+            path="/categoryList"
+            element={
+              <Layout>
+                <CategoryList />
               </Layout>
             }
           />

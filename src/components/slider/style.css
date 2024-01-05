@@ -1,0 +1,38 @@
+/* Custom CSS */
+.thumbnail-slider .slick-slide img {
+  height: 100% !important;
+  width: 100% !important; 
+  object-fit: contain !important;
+}
+.thumbnail-slider .slick-slider li img {
+  height: 53px !important;
+  /* padding: 2px; */
+  object-fit: contain !important;
+  border: 2px solid transparent;
+  width: 100%;
+}
+
+.thumbnail-slider .slick-dots li {
+  width: 75px !important;
+  height: 100% !important;
+  flex: 25%;
+}
+
+.thumbnail-slider .slick-dots {
+  display: flex !important;
+  position: static !important;
+  background-color: #fff;
+  padding-top: 5px;
+}
+
+.thumbnail-slider li.slick-active img {
+  border: 2px solid #685dd8 !important;
+}
+
+.thumbnail-slider {
+  aspect-ratio: 1 / 1 !important;
+}
+
+button.slick-arrow.slick-next {
+  display: none !important;
+}

@@ -1,11 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
+import { IoClose } from "react-icons/io5";
 
-const Modal = ({ isOpenModal, setIsOpenModal, currentProduct, children }) => {
+const Modal = ({ isOpenModal, setIsOpenModal, customWidth, children }) => {
   function closeModal() {
     setIsOpenModal(false);
   }
-  //   console.log({ currentProduct }, "CURRENT PRODUCT DATA");
   return (
     <>
       <Transition appear show={isOpenModal} as={Fragment}>
@@ -33,13 +33,12 @@ const Modal = ({ isOpenModal, setIsOpenModal, currentProduct, children }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  {/* <Dialog.Title
-                    as="h3"
-                    className="text-xl font-medium leading-6 text-gray-600"
-                  >
-                    Product Details
-                  </Dialog.Title> */}
+                <Dialog.Panel
+                  className={`transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all ${customWidth}`}
+                >
+                  <span className="absolute top-6 right-6 bg-primaryLight text-primaryDark primaryLight p-1.5 rounded-md cursor-pointer z-30" onClick={closeModal}>
+                    <IoClose size="1.15rem" />
+                  </span>
                   <div>{children}</div>
                 </Dialog.Panel>
               </Transition.Child>
