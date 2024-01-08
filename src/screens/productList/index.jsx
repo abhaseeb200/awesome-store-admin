@@ -5,9 +5,10 @@ import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { GoDownload } from "react-icons/go";
 import { GrAdd } from "react-icons/gr";
-import { LuEye } from "react-icons/lu";
+import { LuEye, LuLoader2 } from "react-icons/lu";
 import { MdMoreVert } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { IoIosSearch } from "react-icons/io";
 import { TbEdit } from "react-icons/tb";
 import InputCustom from "../../components/inputs";
 import Dropdown from "../../components/dropdown";
@@ -19,16 +20,23 @@ import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import Modal from "../../components/modal";
 import ThumbnailSlider from "../../components/slider";
-import { getCategories, getCategoryData, getProducts } from "../../api/api";
+import {
+  getCategories,
+  getCategoryData,
+  getProducts,
+  searchProduct,
+} from "../../api/api";
 
 const ProductList = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [mainLoader, setMainLoader] = useState(true);
   const [cardInnerLoader, setCardInnerLoader] = useState(false);
+  const [searchLoader, setSearchLoader] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({});
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [categoriesName, setCategoriesName] = useState([]);
   const [categoryFilterValue, setCategoryFilterValue] = useState("");
+  const [search, setSearch] = useState("");
   const [productData, setProductData] = useState([]);
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -49,12 +57,13 @@ const ProductList = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
-    setSkip((pageNumber - 1) * 10); //10 is post per page
+    setSkip((pageNumber - 1) * postPerPage); //10 is post per page
   };
 
   const handlePostPerPage = (e) => {
-    console.log(e.target.value);
     setPostPerPage(e.target.value);
+    setLimit(e.target.value);
+    fetchProductData(e.target.value);
   };
 
   // const openModal = () => {
@@ -108,10 +117,32 @@ const ProductList = () => {
     }
   };
 
-  const fetchProductData = async () => {
+  const handleSearch = async () => {
+    if (search.trim() !== "" && !searchLoader) {
+      try {
+        setSearchLoader(true);
+        let response = await searchProduct(search);
+        console.log(response.data);
+        setSearch("");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setSearchLoader(false);
+      }
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !searchLoader) {
+      handleSearch();
+    }
+  };
+
+  const fetchProductData = async (limit) => {
     try {
       let option = { limit: limit, skip: skip };
       let response = await getProducts(option);
+      console.log(response, "___________-");
       setProductData(response.data.products);
       setSkip(response.data.skip);
       setTotal(response.data.total);
@@ -125,13 +156,13 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    fetchCategoriesName();
-    fetchProductData();
+    // fetchCategoriesName();
+    // fetchProductData(limit);
   }, []);
 
   useEffect(() => {
     setCardInnerLoader(true);
-    fetchProductData();
+    fetchProductData(limit);
   }, [skip]);
 
   return (
@@ -169,11 +200,27 @@ const ProductList = () => {
             <hr className="bg-gray-400 h-0.5" />
             {/* head - search */}
             <div className="py-6 px-5 flex sm:flex-row flex-col gap-4 justify-between">
-              <span className="sm:w-48 w-full block">
-                <InputCustom type="text" placeholder="Search Product" />
+              <span className="sm:w-48 w-full block relative">
+                <InputCustom
+                  type="text"
+                  placeholder="Search Product"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                />
+                <span
+                  className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight hover:text-white hover:bg-primaryDark transition "
+                  onClick={handleSearch}
+                >
+                  {searchLoader ? (
+                    <LuLoader2 className="animate-spin" />
+                  ) : (
+                    <IoIosSearch />
+                  )}
+                </span>
               </span>
               <span className="flex flex-wrap gap-2 items-center">
-                {productData.length > 10 && (
+                {total > 10 && (
                   <SelectCustom
                     customClass="py-2"
                     onChange={handlePostPerPage}
@@ -283,7 +330,7 @@ const ProductList = () => {
                     {/* Displaying 1 to 10 of 100 entries */}
                   </p>
                   <Pagination
-                    totalPages={Math.ceil(total / 10)} //10 is post per page
+                    totalPages={Math.ceil(total / postPerPage)} //10 is post per page
                     currentPage={currentPaginationNum}
                     onPageChange={handlePageChange}
                   />

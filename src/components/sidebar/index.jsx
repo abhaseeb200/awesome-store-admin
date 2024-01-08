@@ -9,6 +9,7 @@ import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
 import NavbarLink from "../navbarLink";
+import { authLogout } from "../../config/services/firebase/auth";
 
 const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
   return (
@@ -65,9 +66,14 @@ const OffCanvas = ({ showSidebar, handleSidebar, children }) => {
 const SidebarContent = ({ screenWidth, handleSidebar }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    try {
+      await authLogout();
+      navigate("/login", { replace: true });
+      localStorage.removeItem("currentUser");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -113,9 +119,9 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
         <NavbarLink
           to="/categoryList"
           title="Category List"
-          icon={<TbCategoryPlus  size="1.1rem" />}
+          icon={<TbCategoryPlus size="1.1rem" />}
         />
-        
+
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           auth
         </div>

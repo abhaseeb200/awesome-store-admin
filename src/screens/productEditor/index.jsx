@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
+import { useParams } from "react-router";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
 import SelectCustom from "../../components/select";
 import TextareaCustom from "../../components/textarea";
 import PageHeading from "../../components/pageTitle";
 import { Card, CardHeading } from "../../components/card";
+import AddCategoryModal from "../../components/modal/addCategoryModal";
 import { addProduct, getCategories, getSingleProduct } from "../../api/api";
-import { useParams } from "react-router";
-import { Link } from "react-router-dom";
 
 const ProductEditor = () => {
   const [title, setTitle] = useState({
@@ -52,6 +53,12 @@ const ProductEditor = () => {
   const [categoriesName, setCategoriesName] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [isProductFound, setIsProductFound] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState({
+    value: "",
+    isError: false,
+    messageError: "",
+  });
 
   const { productID } = useParams();
   // console.log(productID, ":________");
@@ -115,6 +122,12 @@ const ProductEditor = () => {
     }
   };
 
+  const handleAddNewCategory = () => {
+    console.log("----");
+    setIsOpenModal(true);
+    setCurrentCategory({ value: "" });
+  };
+
   const handlePusblishProduct = () => {
     //TITLE
     if (title.value.trim() === "") {
@@ -133,7 +146,7 @@ const ProductEditor = () => {
       });
     }
     //DESCRIPTION
-    if (description.value === "") {
+    if (description.value.trim() === "") {
       setDescription({
         value: description.value,
         isError: true,
@@ -148,6 +161,14 @@ const ProductEditor = () => {
         messageError: "Price should be valid",
       });
     }
+    //BRAND
+    if (brand.value.trim() === "") {
+      setBrand({
+        value: brand.value,
+        isError: true,
+        messageError: "Brand should not be empty",
+      });
+    }
     //CATEGORY
     if (category.value === "" || category.value === "0") {
       setCategory({
@@ -157,7 +178,7 @@ const ProductEditor = () => {
       });
     }
     //MEDIA
-    if (thumbnail.value === "") {
+    if (thumbnail.value === "" || thumbnail.url === "") {
       setThumbnail({
         value: thumbnail.value,
         isError: true,
@@ -169,9 +190,10 @@ const ProductEditor = () => {
       title.value.trim() !== "" &&
       quantity.value !== "" &&
       quantity.value > 0 &&
-      description.value !== "" &&
+      description.value.trim() !== "" &&
       price.value !== "" &&
       price.value > 0 &&
+      brand.value.trim() !== "" &&
       category.value !== "" &&
       category.value !== "0" &&
       thumbnail.url !== ""
@@ -348,7 +370,7 @@ const ProductEditor = () => {
                     />
                   </label>
                   <div>
-                    {thumbnail?.isError && (
+                    {thumbnail.isError && (
                       <small className="text-red-500 block">
                         Please upload media
                       </small>
@@ -449,12 +471,20 @@ const ProductEditor = () => {
                   <InputCustom
                     placeholder="Product brand"
                     value={brand.value}
+                    isError={brand.isError}
+                    messageError={brand.messageError}
                     onChange={(e) => setBrand({ value: e.target.value })}
                   />
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500 block mb-1">
-                    Category
+                  <label className="text-sm text-gray-500 block mb-1 flex justify-between">
+                    <span>Category</span>
+                    <span
+                      className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition "
+                      onClick={handleAddNewCategory}
+                    >
+                      Add New Category
+                    </span>
                   </label>
                   <SelectCustom
                     customClass="py-2 w-full capitalize"
@@ -480,6 +510,12 @@ const ProductEditor = () => {
           </div>
         </div>
       )}
+      <AddCategoryModal
+        isOpenModal={isOpenModal}
+        setIsOpenModal={setIsOpenModal}
+        currentCategory={currentCategory}
+        setCurrentCategory={setCurrentCategory}
+      />
     </>
   );
 };

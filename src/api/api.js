@@ -18,6 +18,10 @@ const getProducts = (option) => {
     return apiService.get(`/products?limit=${limit}&skip=${skip}`);
 }
 
+const searchProduct = (search) => {
+    return apiService.get(`/products/search?q=${search}`);
+}
+
 const getSingleProduct = (productID) => {
     return apiService.get(`/products/${productID}`)
 }
@@ -30,4 +34,4 @@ const getCategoryData = (category) => {
     return apiService.get(`/products/category/${category}`)
 }
 
-export { addProduct, getProducts, getSingleProduct, getCategories, getCategoryData }
+export { addProduct, getProducts, getSingleProduct, searchProduct, getCategories, getCategoryData }
