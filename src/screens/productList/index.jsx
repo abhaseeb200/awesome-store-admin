@@ -32,16 +32,19 @@ const ProductList = () => {
   const [mainLoader, setMainLoader] = useState(true);
   const [cardInnerLoader, setCardInnerLoader] = useState(false);
   const [searchLoader, setSearchLoader] = useState(false);
-  const [currentProduct, setCurrentProduct] = useState({});
-  const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [categoriesName, setCategoriesName] = useState([]);
   const [categoryFilterValue, setCategoryFilterValue] = useState("");
-  const [search, setSearch] = useState("");
+  const [currentProduct, setCurrentProduct] = useState({});
+  const [productDataBackUP, setProductDataBackUP] = useState([]);
   const [productData, setProductData] = useState([]);
+  const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
+  const [currentPaginationNumBK, setCurrentPaginationNumBK] = useState(1);
   const [skip, setSkip] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [skipSearch, setSkipSearch] = useState(0);
+  // const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
-  const [postPerPage, setPostPerPage] = useState(10);
+  const [postPerPage, setPostPerPage] = useState(10); //work as a limit
+  const [search, setSearch] = useState("");
 
   const exportDropdownItems = [
     { label: "Print", icon: <IoPrintOutline size="1.1rem" /> },
@@ -57,18 +60,27 @@ const ProductList = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
-    setSkip((pageNumber - 1) * postPerPage); //10 is post per page
+    // setCurrentPaginationNumBK(pageNumber);
+    if (search.trim() !== "") {
+      setSkipSearch((pageNumber - 1) * postPerPage);
+    } else {
+      console.log({ pageNumber });
+      setSkip((pageNumber - 1) * postPerPage);
+    }
   };
 
   const handlePostPerPage = (e) => {
-    setPostPerPage(e.target.value);
-    setLimit(e.target.value);
-    fetchProductData(e.target.value);
+    let val = e.target.value;
+    setPostPerPage(val);
+    // fetchProductData(e.target.value);
+    if (search.trim() !== "") {
+      handleSearch(val, skipSearch);
+    } else {
+      // let tempSkip = (currentPaginationNum - 1) * val;
+      setCurrentPaginationNum(1);
+      fetchProductData(val, 0);
+    }
   };
-
-  // const openModal = () => {
-  //   setIsOpenModal(true);
-  // };
 
   const handleView = (product) => {
     console.log({ product }, "VIEW");
@@ -103,7 +115,7 @@ const ProductList = () => {
   const fetchCategoryData = async (category) => {
     setCardInnerLoader(true);
     if (category === "0") {
-      fetchProductData();
+      fetchProductData(postPerPage, skip);
     } else {
       try {
         let response = await getCategoryData(category);
@@ -117,36 +129,50 @@ const ProductList = () => {
     }
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (postPerPage, skipSearch) => {
+    console.log({ postPerPage }, { skipSearch });
     if (search.trim() !== "" && !searchLoader) {
       try {
         setSearchLoader(true);
-        let response = await searchProduct(search);
-        console.log(response.data);
-        setSearch("");
+        let option = {
+          limit: postPerPage,
+          skip: skipSearch,
+          search: search,
+        };
+        let response = await searchProduct(option);
+        setProductData(response.data.products);
+        setTotal(response.data.total);
+        setSkipSearch(response.data.skip);
+        if (response.data.skip === 0) {
+          setCurrentPaginationNum(1);
+        }
       } catch (error) {
         console.log(error);
       } finally {
         setSearchLoader(false);
+        setCardInnerLoader(false);
       }
+    } else {
+      // console.log("SEARCH IS NOTING....");
+      fetchProductData(postPerPage, 0);
+      setCurrentPaginationNum(1);
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !searchLoader) {
-      handleSearch();
+      handleSearch(postPerPage, 0);
     }
   };
 
-  const fetchProductData = async (limit) => {
+  const fetchProductData = async (postPerPage, skip) => {
+    // console.log("--------------", { skip });
     try {
-      let option = { limit: limit, skip: skip };
+      let option = { limit: postPerPage, skip: skip };
       let response = await getProducts(option);
-      console.log(response, "___________-");
       setProductData(response.data.products);
       setSkip(response.data.skip);
       setTotal(response.data.total);
-      setLimit(response.data.limit);
     } catch (error) {
       console.log(error);
     } finally {
@@ -156,14 +182,14 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    // fetchCategoriesName();
-    // fetchProductData(limit);
-  }, []);
-
-  useEffect(() => {
+    console.log("+++++++++++++++++++++++++++");
     setCardInnerLoader(true);
-    fetchProductData(limit);
-  }, [skip]);
+    if (search.trim() !== "") {
+      handleSearch(postPerPage, skipSearch);
+    } else {
+      fetchProductData(postPerPage, skip);
+    }
+  }, [currentPaginationNum]);
 
   return (
     <>
@@ -210,7 +236,7 @@ const ProductList = () => {
                 />
                 <span
                   className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight hover:text-white hover:bg-primaryDark transition "
-                  onClick={handleSearch}
+                  onClick={() => handleSearch(postPerPage, 0)}
                 >
                   {searchLoader ? (
                     <LuLoader2 className="animate-spin" />
@@ -222,9 +248,9 @@ const ProductList = () => {
               <span className="flex flex-wrap gap-2 items-center">
                 {total > 10 && (
                   <SelectCustom
-                    customClass="py-2"
+                    customClass="py-2 sm:w-auto sm:flex-none w-1/2 flex-1"
                     onChange={handlePostPerPage}
-                    value={limit}
+                    value={postPerPage}
                   >
                     <option value="10" select="select">
                       10
@@ -237,11 +263,15 @@ const ProductList = () => {
                   title="Export"
                   items={exportDropdownItems}
                   icon={<GoDownload size="1rem" className="mr-2" />}
-                  titleClass="relative bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600 text-sm"
+                  titleClass="relative bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600 text-sm w-full justify-center"
                   menuItemsClass="absolute left-0 w-full"
                 />
-                <Link to="/productEditor">
-                  <Button name="Add Product" icon={<GrAdd size="1rem" />} />
+                <Link to="/productEditor" className="sm:w-auto w-full">
+                  <Button
+                    name="Add Product"
+                    icon={<GrAdd size="1rem" />}
+                    className="w-full justify-center"
+                  />
                 </Link>
               </span>
             </div>
@@ -269,62 +299,70 @@ const ProductList = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {productData.map((product, index) => {
-                      return (
-                        <tr
-                          className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
-                          key={index}
-                        >
-                          <td className="py-4 flex gap-2 pl-5">
-                            <span>
-                              <img
-                                src={product.thumbnail}
-                                width="40"
-                                className="object-cover h-10"
-                              />
-                            </span>
-                            <span className="flex flex-col">
-                              <h5>{product.title}</h5>
-                              <p className="text-gray-400">
-                                {product.description.length >= 26
-                                  ? product.description.slice(0, 26) + "..."
-                                  : product.description}
-                              </p>
-                            </span>
-                          </td>
-                          <td className="py-4 px-3 capitalize">
-                            {product.category}
-                          </td>
-                          <td className="py-4 px-3">${product.price}</td>
-                          <td className="py-4 px-3">{product.stock}</td>
-                          <td className="py-4 pr-5">
-                            <span className="flex gap-1.5 justify-center text-gray-500">
-                              <Link to={`/productEditor/${product?.id}`}>
+                    {productData.length > 0 ? (
+                      productData.map((product, index) => {
+                        return (
+                          <tr
+                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
+                            key={index}
+                          >
+                            <td className="py-4 flex gap-2 pl-5">
+                              <span>
+                                <img
+                                  src={product.thumbnail}
+                                  width="40"
+                                  className="object-cover h-10"
+                                />
+                              </span>
+                              <span className="flex flex-col">
+                                <h5>{product.title}</h5>
+                                <p className="text-gray-400">
+                                  {product.description.length >= 26
+                                    ? product.description.slice(0, 26) + "..."
+                                    : product.description}
+                                </p>
+                              </span>
+                            </td>
+                            <td className="py-4 px-3 capitalize">
+                              {product.category}
+                            </td>
+                            <td className="py-4 px-3">${product.price}</td>
+                            <td className="py-4 px-3">{product.stock}</td>
+                            <td className="py-4 pr-5">
+                              <span className="flex gap-1.5 justify-center text-gray-500">
+                                <Link to={`/productEditor/${product?.id}`}>
+                                  <span className="hover:text-primaryDark cursor-pointer">
+                                    <TbEdit size="1.3rem" />
+                                  </span>
+                                </Link>
                                 <span className="hover:text-primaryDark cursor-pointer">
-                                  <TbEdit size="1.3rem" />
+                                  <MdOutlineDeleteOutline size="1.3rem" />
                                 </span>
-                              </Link>
-                              <span className="hover:text-primaryDark cursor-pointer">
-                                <MdOutlineDeleteOutline size="1.3rem" />
+                                <span
+                                  className="hover:text-primaryDark cursor-pointer"
+                                  onClick={() => handleView(product)}
+                                >
+                                  <LuEye size="1.3rem" />
+                                </span>
                               </span>
-                              <span
-                                className="hover:text-primaryDark cursor-pointer"
-                                onClick={() => handleView(product)}
-                              >
-                                <LuEye size="1.3rem" />
-                              </span>
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm">
+                        <td className="py-4 text-center" colSpan="5">
+                          No matching records found
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               )}
             </div>
             {/* footer - pagination */}
             <div className="py-6 flex sm:flex-row flex-col gap-3 justify-between items-center px-5">
-              {productData.length >= 10 && (
+              {total > 10 && (
                 <>
                   <p className="text-xs text-gray-500">
                     {/* Displaying 1 to 10 of 100 entries */}

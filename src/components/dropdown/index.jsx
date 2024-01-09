@@ -11,7 +11,7 @@ const Dropdown = ({
   currentDocID
 }) => {
   return (
-    <div className="relative">
+    <div className="relative sm:w-auto w-1/2">
       <Menu>
         <Menu.Button className={titleClass}>
           {icon} {title}

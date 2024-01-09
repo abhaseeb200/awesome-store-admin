@@ -18,8 +18,9 @@ const getProducts = (option) => {
     return apiService.get(`/products?limit=${limit}&skip=${skip}`);
 }
 
-const searchProduct = (search) => {
-    return apiService.get(`/products/search?q=${search}`);
+const searchProduct = (option) => {
+    let { limit, skip, search } = option
+    return apiService.get(`/products/search?q=${search}&limit=${limit}&skip=${skip}`);
 }
 
 const getSingleProduct = (productID) => {
