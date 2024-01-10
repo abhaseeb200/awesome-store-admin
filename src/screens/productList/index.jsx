@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IoPrintOutline } from "react-icons/io5";
 import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
@@ -32,19 +32,24 @@ const ProductList = () => {
   const [mainLoader, setMainLoader] = useState(true);
   const [cardInnerLoader, setCardInnerLoader] = useState(false);
   const [searchLoader, setSearchLoader] = useState(false);
-  const [categoriesName, setCategoriesName] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState("");
   const [categoryFilterValue, setCategoryFilterValue] = useState("");
   const [currentProduct, setCurrentProduct] = useState({});
-  const [productDataBackUP, setProductDataBackUP] = useState([]);
   const [productData, setProductData] = useState([]);
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
-  const [currentPaginationNumBK, setCurrentPaginationNumBK] = useState(1);
   const [skip, setSkip] = useState(0);
-  const [skipSearch, setSkipSearch] = useState(0);
-  // const [limit, setLimit] = useState(10);
+  // const [skipSearch, setSkipSearch] = useState(0);
   const [total, setTotal] = useState(0);
   const [postPerPage, setPostPerPage] = useState(10); //work as a limit
   const [search, setSearch] = useState("");
+
+  const location = useLocation();
+  const currentParams = new URLSearchParams(location.search);
+  const queryParam = currentParams.get("q");
+  const postPerPageParam = currentParams.get("postPerPage");
+  const skipParam = currentParams.get("offset");
+  const categoryParam = currentParams.get("category");
 
   const exportDropdownItems = [
     { label: "Print", icon: <IoPrintOutline size="1.1rem" /> },
@@ -60,26 +65,21 @@ const ProductList = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
+    setSkip((pageNumber - 1) * postPerPage);
     // setCurrentPaginationNumBK(pageNumber);
-    if (search.trim() !== "") {
-      setSkipSearch((pageNumber - 1) * postPerPage);
-    } else {
-      console.log({ pageNumber });
-      setSkip((pageNumber - 1) * postPerPage);
-    }
+    // if (search.trim() !== "") {
+    //   setSkip((pageNumber - 1) * postPerPage);
+    // } else {
+    // console.log({ pageNumber });
+    // }
   };
 
   const handlePostPerPage = (e) => {
     let val = e.target.value;
     setPostPerPage(val);
-    // fetchProductData(e.target.value);
-    if (search.trim() !== "") {
-      handleSearch(val, skipSearch);
-    } else {
-      // let tempSkip = (currentPaginationNum - 1) * val;
-      setCurrentPaginationNum(1);
-      fetchProductData(val, 0);
-    }
+    setSkip(0);
+    // setSkipSearch(0);
+    setCurrentPaginationNum(1); //WHY does't call UseEffect even the value has changed
   };
 
   const handleView = (product) => {
@@ -98,29 +98,31 @@ const ProductList = () => {
   };
 
   const handleCategoryFilter = (e) => {
-    console.log(e.target.value);
-    setCategoryFilterValue(e.target.value);
-    fetchCategoryData(e.target.value);
+    let val = e.target.value;
+    setCategoryFilterValue(val);
+    // fetchCategoryProducts(val);
+    setCurrentCategory(val);
   };
 
-  const fetchCategoriesName = async () => {
+  const fetchCategories = async () => {
     try {
       let response = await getCategories();
-      setCategoriesName(response.data);
+      setCategories(response.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const fetchCategoryData = async (category) => {
+  const fetchCategoryProducts = async (category) => {
     setCardInnerLoader(true);
     if (category === "0") {
-      fetchProductData(postPerPage, skip);
+      fetchProductData();
     } else {
       try {
         let response = await getCategoryData(category);
-        console.log(response);
+        // console.log(response);
         setProductData(response.data.products);
+        setTotal(response.data.total);
       } catch (error) {
         console.log(error);
       } finally {
@@ -129,20 +131,23 @@ const ProductList = () => {
     }
   };
 
-  const handleSearch = async (postPerPage, skipSearch) => {
-    console.log({ postPerPage }, { skipSearch });
+  const handleSearch = async (
+    currentPostPerPage = postPerPage,
+    currentSkip = skip
+  ) => {
+    // console.log({ currentPostPerPage }, { currentSkip });
     if (search.trim() !== "" && !searchLoader) {
       try {
         setSearchLoader(true);
         let option = {
-          limit: postPerPage,
-          skip: skipSearch,
+          limit: currentPostPerPage,
+          skip: currentSkip,
           search: search,
         };
         let response = await searchProduct(option);
         setProductData(response.data.products);
         setTotal(response.data.total);
-        setSkipSearch(response.data.skip);
+        setSkip(response.data.skip);
         if (response.data.skip === 0) {
           setCurrentPaginationNum(1);
         }
@@ -153,20 +158,22 @@ const ProductList = () => {
         setCardInnerLoader(false);
       }
     } else {
-      // console.log("SEARCH IS NOTING....");
-      fetchProductData(postPerPage, 0);
+      console.log("SEARCH IS NOTING....");
+      setSkip(0);
+      fetchProductData();
       setCurrentPaginationNum(1);
     }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !searchLoader) {
+      // console.log("PRESS ENTERR");
       handleSearch(postPerPage, 0);
     }
   };
 
-  const fetchProductData = async (postPerPage, skip) => {
-    // console.log("--------------", { skip });
+  const fetchProductData = async () => {
+    console.log("--------------", { skip }, { postPerPage });
     try {
       let option = { limit: postPerPage, skip: skip };
       let response = await getProducts(option);
@@ -181,15 +188,84 @@ const ProductList = () => {
     }
   };
 
+  const handleParams = () => {
+    //QUERY SEARCH
+    if (search) {
+      currentParams.set("q", search);
+    } else {
+      currentParams.delete("q");
+    }
+
+    if (postPerPage > 10) {
+      currentParams.set("postPerPage", postPerPage);
+    } else {
+      currentParams.delete("postPerPage");
+    }
+
+    // console.log({ currentPaginationNum, postPerPage, skip }, "+++==");
+    if (skip >= postPerPage) {
+      currentParams.set("offset", skip);
+    } else {
+      currentParams.delete("offset");
+    }
+
+    if (currentCategory) {
+      currentParams.delete("q");
+      currentParams.delete("postPerPage"); //This should be removed after...
+      currentParams.delete("offset"); //This should be removed after...
+      currentParams.set("category", currentCategory);
+    } else {
+      currentParams.delete("category");
+    }
+
+    const newURL = currentParams.toString()
+      ? `${location.pathname}?${currentParams.toString()}`
+      : location.pathname;
+
+    history.replaceState({}, "", newURL);
+  };
+
   useEffect(() => {
-    console.log("+++++++++++++++++++++++++++");
+    fetchCategories();
+    // console.log({ queryParam, postPerPageParam, skipParam });
+    let postPerPageTEMP = 10;
+    if (postPerPageParam) {
+      setPostPerPage(parseInt(postPerPageParam));
+      postPerPageTEMP = parseInt(postPerPageParam);
+    }
+    if (skipParam) {
+      setSkip(parseInt(skipParam));
+      console.log({ skipParam, postPerPageTEMP });
+      let pageNumber = Math.ceil(parseInt(skipParam) / postPerPageTEMP + 1);
+      setCurrentPaginationNum(pageNumber);
+    }
+    if (queryParam) {
+      setSearch(queryParam);
+    }
+    if (categoryParam) {
+      setCurrentCategory(categoryParam);
+    }
+  }, []);
+
+  useEffect(() => {
+    // console.log("+++++++++++++++++++++++++++");
     setCardInnerLoader(true);
     if (search.trim() !== "") {
-      handleSearch(postPerPage, skipSearch);
+      console.log("SEARCHING...");
+      handleSearch();
+    } else if (currentCategory) {
+      fetchCategoryProducts(currentCategory);
     } else {
-      fetchProductData(postPerPage, skip);
+      console.log("PRODUCTS...");
+      fetchProductData();
     }
-  }, [currentPaginationNum]);
+  }, [currentPaginationNum, postPerPage, currentCategory]);
+
+  // console.log({ queryParam, postPerPageParam, skipParam });
+  useEffect(() => {
+    console.log("PARRAMS ");
+    handleParams();
+  }, [search, postPerPage, skip]);
 
   return (
     <>
@@ -212,7 +288,7 @@ const ProductList = () => {
                     <option value="0" select="select">
                       Select Category
                     </option>
-                    {categoriesName.map((item, index) => {
+                    {categories.map((item, index) => {
                       return (
                         <option value={item} key={index}>
                           {item}
