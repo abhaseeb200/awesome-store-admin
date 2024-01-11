@@ -34,7 +34,7 @@ const ProductList = () => {
   const [searchLoader, setSearchLoader] = useState(false);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("");
-  const [categoryFilterValue, setCategoryFilterValue] = useState("");
+  // const [categoryFilterValue, setCategoryFilterValue] = useState("");
   const [currentProduct, setCurrentProduct] = useState({});
   const [productData, setProductData] = useState([]);
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
@@ -43,6 +43,9 @@ const ProductList = () => {
   const [total, setTotal] = useState(0);
   const [postPerPage, setPostPerPage] = useState(10); //work as a limit
   const [search, setSearch] = useState("");
+  const [searchButtton, setSearchButtton] = useState("");
+  const [isSearch, setIsSearch] = useState(false);
+  const [isOnLoaded, setIsOnLoaded] = useState(true);
 
   const location = useLocation();
   const currentParams = new URLSearchParams(location.search);
@@ -66,12 +69,6 @@ const ProductList = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
     setSkip((pageNumber - 1) * postPerPage);
-    // setCurrentPaginationNumBK(pageNumber);
-    // if (search.trim() !== "") {
-    //   setSkip((pageNumber - 1) * postPerPage);
-    // } else {
-    // console.log({ pageNumber });
-    // }
   };
 
   const handlePostPerPage = (e) => {
@@ -88,10 +85,6 @@ const ProductList = () => {
     setCurrentProduct(product);
   };
 
-  const handleEdit = (product) => {
-    // console.log({ product }, "EDIT");
-  };
-
   const discountPrice = (price, discountPercentage) => {
     let priceAfterDiscount = price - (discountPercentage / 100) * price;
     return priceAfterDiscount.toFixed(2);
@@ -99,9 +92,9 @@ const ProductList = () => {
 
   const handleCategoryFilter = (e) => {
     let val = e.target.value;
-    setCategoryFilterValue(val);
-    // fetchCategoryProducts(val);
+    // setCategoryFilterValue(val);
     setCurrentCategory(val);
+    fetchCategoryProducts(val);
   };
 
   const fetchCategories = async () => {
@@ -114,40 +107,48 @@ const ProductList = () => {
   };
 
   const fetchCategoryProducts = async (category) => {
+    console.log({ category, categoryParam, currentCategory });
     setCardInnerLoader(true);
     if (category === "0") {
       fetchProductData();
     } else {
       try {
+        setSearch("");
         let response = await getCategoryData(category);
         // console.log(response);
         setProductData(response.data.products);
         setTotal(response.data.total);
+        setSkip(0);
+        setCurrentPaginationNum(1);
       } catch (error) {
         console.log(error);
       } finally {
         setCardInnerLoader(false);
+        setMainLoader(false);
       }
     }
   };
 
   const handleSearch = async (
     currentPostPerPage = postPerPage,
-    currentSkip = skip
+    currentSkip = skip,
+    currentSearch = search
   ) => {
-    // console.log({ currentPostPerPage }, { currentSkip });
-    if (search.trim() !== "" && !searchLoader) {
+    console.log({ currentSearch, currentPostPerPage, searchLoader });
+    if (currentSearch.trim() !== "") {
       try {
         setSearchLoader(true);
+        setCurrentCategory("");
         let option = {
           limit: currentPostPerPage,
           skip: currentSkip,
-          search: search,
+          search: currentSearch,
         };
         let response = await searchProduct(option);
         setProductData(response.data.products);
         setTotal(response.data.total);
         setSkip(response.data.skip);
+        setIsSearch(true);
         if (response.data.skip === 0) {
           setCurrentPaginationNum(1);
         }
@@ -156,6 +157,7 @@ const ProductList = () => {
       } finally {
         setSearchLoader(false);
         setCardInnerLoader(false);
+        setMainLoader(false);
       }
     } else {
       console.log("SEARCH IS NOTING....");
@@ -168,7 +170,9 @@ const ProductList = () => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !searchLoader) {
       // console.log("PRESS ENTERR");
+      // let isSearch = true;
       handleSearch(postPerPage, 0);
+      setSearchButtton(search);
     }
   };
 
@@ -209,10 +213,13 @@ const ProductList = () => {
       currentParams.delete("offset");
     }
 
-    if (currentCategory) {
-      currentParams.delete("q");
-      currentParams.delete("postPerPage"); //This should be removed after...
-      currentParams.delete("offset"); //This should be removed after...
+    if (currentCategory !== "0" && currentCategory) {
+      console.log({ currentCategory }, "+++++++");
+      currentParams.forEach((value, key) => {
+        if (key !== "category") {
+          currentParams.delete(key);
+        }
+      });
       currentParams.set("category", currentCategory);
     } else {
       currentParams.delete("category");
@@ -228,6 +235,7 @@ const ProductList = () => {
   useEffect(() => {
     fetchCategories();
     // console.log({ queryParam, postPerPageParam, skipParam });
+    console.log("11111111111111111111111111-----1111111111111111111");
     let postPerPageTEMP = 10;
     if (postPerPageParam) {
       setPostPerPage(parseInt(postPerPageParam));
@@ -240,32 +248,40 @@ const ProductList = () => {
       setCurrentPaginationNum(pageNumber);
     }
     if (queryParam) {
+      // setIsSearch(true);
+      console.log({ queryParam }, "!!!!!!!!!!!!!");
       setSearch(queryParam);
+      // setSearchButtton(queryParam);
+      // handleSearch(postPerPage, skip, queryParam);
     }
     if (categoryParam) {
-      setCurrentCategory(categoryParam);
+      console.log({ categoryParam }, "!!!!!!!!!!!!!");
+      // setCurrentCategory(categoryParam);
+      fetchCategoryProducts(categoryParam);
+      // setCurrentCategory(categoryParam);
     }
+    // setIsOnLoaded(false);
   }, []);
 
   useEffect(() => {
-    // console.log("+++++++++++++++++++++++++++");
     setCardInnerLoader(true);
-    if (search.trim() !== "") {
+    console.log({ categoryParam, search }, "+++++++++++++++++++++++");
+    if (search !== "") {
       console.log("SEARCHING...");
       handleSearch();
     } else if (currentCategory) {
-      fetchCategoryProducts(currentCategory);
+      console.log("CATEOGRY...");
+      fetchCategoryProducts(categoryParam);
     } else {
       console.log("PRODUCTS...");
       fetchProductData();
     }
-  }, [currentPaginationNum, postPerPage, currentCategory]);
+  }, [currentPaginationNum, postPerPage, searchButtton]); //Does't add skip beacause skip effect the currentPagination
 
-  // console.log({ queryParam, postPerPageParam, skipParam });
   useEffect(() => {
     console.log("PARRAMS ");
     handleParams();
-  }, [search, postPerPage, skip]);
+  }, [searchButtton, postPerPage, skip, currentCategory]);
 
   return (
     <>
@@ -279,12 +295,12 @@ const ProductList = () => {
             <div className="filter py-6 px-5">
               <h4 className="text-lg text-gray-600 font-medium pb-2">Filter</h4>
               <div className="flex sm:flex-row flex-col gap-4">
-                <span
-                  className="sm:w-1/2 w-full"
-                  onChange={handleCategoryFilter}
-                  value={categoryFilterValue}
-                >
-                  <SelectCustom customClass="w-full py-2 capitalize">
+                <span className="sm:w-1/2 w-full">
+                  <SelectCustom
+                    customClass="w-full py-2 capitalize"
+                    onChange={handleCategoryFilter}
+                    value={currentCategory}
+                  >
                     <option value="0" select="select">
                       Select Category
                     </option>
@@ -312,7 +328,11 @@ const ProductList = () => {
                 />
                 <span
                   className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight hover:text-white hover:bg-primaryDark transition "
-                  onClick={() => handleSearch(postPerPage, 0)}
+                  onClick={() => {
+                    // let isSearch = true;
+                    handleSearch(postPerPage, 0);
+                    setSearchButtton(search);
+                  }}
                 >
                   {searchLoader ? (
                     <LuLoader2 className="animate-spin" />
