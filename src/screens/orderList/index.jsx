@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useReactToPrint } from "react-to-print";
+import jsPDF from "jspdf";
+import { CSVLink } from "react-csv";
+import "jspdf-autotable";
 import { IoPrintOutline } from "react-icons/io5";
 import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
@@ -16,19 +20,17 @@ import PageHeading from "../../components/pageTitle";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import { getOrders } from "../../config/services/firebase/order";
+import PrintTable from "../../components/table/printTable";
+import ExportDropDown from "../../components/exportDropdown";
 
 const OrderList = () => {
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [mainLoader, setMainLoader] = useState(true);
   const [orderData, setOrderData] = useState([]);
   const [orderDataBackUP, setOrderDataBackUP] = useState([]);
-  const [search, setSearch] = useState("");
+  const [exportTableData, setExportTableData] = useState([]);
 
-  const exportDropdownItems = [
-    { label: "Print", action: "print", icon: <IoPrintOutline size="1.1rem" /> },
-    { label: "Cvs", action: "cvs", icon: <PiNewspaperLight size="1.1rem" /> },
-    { label: "Pdf", action: "pdf", icon: <HiOutlineNewspaper size="1.1rem" /> },
-  ];
+  const [search, setSearch] = useState("");
 
   // const actionDropdownItems = [
   //   { label: "View", icon: <LuEye size="1.1rem" />, action: "view" },
@@ -90,27 +92,19 @@ const OrderList = () => {
     }
   };
 
-  // const handleDropdownActions = (action, id) => {
-  //   if (action === "delete") {
-  //     console.log("Delete =>", id);
-  //   } else if (action === "view") {
-  //     console.log("View =>", id);
-  //   }
-  // };
-
-  const handleDropdownExport = (action) => {
-    if (action === "print") {
-      console.log(action);
-    } else if (action === "cvs") {
-      console.log(action);
-    } else if (action === "pdf") {
-      console.log(action);
-    }
-  };
-
   useEffect(() => {
     handleGetOrders();
   }, []);
+
+  useEffect(() => {
+    let newData = orderDataBackUP.map((item) => ({
+      order: item?.docID,
+      date: handleDateFormat(item?.dateAndTime),
+      customer: item?.fullName,
+      status: item?.status,
+    }));
+    setExportTableData(newData);
+  }, [orderDataBackUP]);
 
   return (
     <>
@@ -140,19 +134,18 @@ const OrderList = () => {
                     <option value="30">30</option>
                   </SelectCustom>
                 )}
-                <Dropdown
-                  title="Export"
-                  items={exportDropdownItems}
-                  icon={<GoDownload size="1rem" className="mr-2" />}
-                  titleClass="text-sm relative bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600"
-                  menuItemsClass="absolute left-0 w-full"
-                  handleOnClick={handleDropdownExport}
-                />
+                {orderDataBackUP.length > 0 && (
+                  <ExportDropDown
+                    exportData={exportTableData}
+                    title="Order List Data"
+                    filename="order_list_data"
+                  />
+                )}
               </span>
             </div>
             {/* body - table */}
             <div className="overflow-auto">
-              <table className="table-auto w-full">
+              <table className="table-auto w-full" id="orderListTable">
                 <thead>
                   <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
                     <th className="text-left py-4 font-medium pl-5">Order</th>
@@ -172,7 +165,9 @@ const OrderList = () => {
                           key={index}
                           className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
                         >
-                          <td className="py-4 text-primary pl-5">{order?.docID}</td>
+                          <td className="py-4 text-primary pl-5">
+                            {order?.docID}
+                          </td>
                           <td className="py-4 px-3">
                             {handleDateFormat(order?.dateAndTime)}
                           </td>
@@ -206,7 +201,7 @@ const OrderList = () => {
                     })
                   ) : (
                     <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm">
-                      <td className="py-4 text-center" colspan="5">
+                      <td className="py-4 text-center" colSpan="5">
                         No matching records found
                       </td>
                     </tr>

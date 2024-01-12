@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { CSVLink } from "react-csv";
 import { IoPrintOutline } from "react-icons/io5";
 import { PiNewspaperLight } from "react-icons/pi";
 import { HiOutlineNewspaper } from "react-icons/hi2";
@@ -20,12 +21,14 @@ import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import Modal from "../../components/modal";
 import ThumbnailSlider from "../../components/slider";
+import PrintTable from "../../components/table/printTable";
 import {
   getCategories,
   getCategoryData,
   getProducts,
   searchProduct,
 } from "../../api/api";
+import ExportDropDown from "../../components/exportDropdown";
 
 const ProductList = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -44,6 +47,7 @@ const ProductList = () => {
   const [postPerPage, setPostPerPage] = useState(10); //work as a limit
   const [search, setSearch] = useState("");
   const [searchButtton, setSearchButtton] = useState("");
+  const [exportTableData, setExportTableData] = useState([]);
   const [isSearch, setIsSearch] = useState(false);
   const [isOnLoaded, setIsOnLoaded] = useState(true);
 
@@ -53,18 +57,6 @@ const ProductList = () => {
   const postPerPageParam = currentParams.get("postPerPage");
   const skipParam = currentParams.get("offset");
   const categoryParam = currentParams.get("category");
-
-  const exportDropdownItems = [
-    { label: "Print", icon: <IoPrintOutline size="1.1rem" /> },
-    { label: "Cvs", icon: <PiNewspaperLight size="1.1rem" /> },
-    { label: "Pdf", icon: <HiOutlineNewspaper size="1.1rem" /> },
-  ];
-
-  // const actionDropdownItems = [
-  //   { label: "View", icon: <LuEye size="1.1rem" /> },
-  //   { label: "Edit", icon: <TbEdit size="1.1rem" /> },
-  //   { label: "Delete", icon: <MdOutlineDeleteOutline size="1.1rem" /> },
-  // ];
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
@@ -278,6 +270,21 @@ const ProductList = () => {
     handleParams();
   }, [searchButtton, postPerPage, skip, currentCategory]);
 
+  useEffect(() => {
+    let newData = productData.map((item) => ({
+      id: item?.id,
+      brand: item?.brand,
+      product: item?.title,
+      description: item?.description,
+      category: item?.category,
+      rating: item?.rating,
+      discount: item?.discountPercentage+"%",
+      price: "$" + item?.price,
+      stock: item?.stock,
+    }));
+    setExportTableData(newData);
+  }, [productData]);
+
   return (
     <>
       <div>
@@ -350,13 +357,13 @@ const ProductList = () => {
                     <option value="30">30</option>
                   </SelectCustom>
                 )}
-                <Dropdown
-                  title="Export"
-                  items={exportDropdownItems}
-                  icon={<GoDownload size="1rem" className="mr-2" />}
-                  titleClass="relative bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600 text-sm w-full justify-center"
-                  menuItemsClass="absolute left-0 w-full"
-                />
+                {productData?.length > 0 && (
+                  <ExportDropDown
+                    title="Product List"
+                    filename="product_list_data"
+                    exportData={exportTableData}
+                  />
+                )}
                 <Link to="/productEditor" className="sm:w-auto w-full">
                   <Button
                     name="Add Product"
