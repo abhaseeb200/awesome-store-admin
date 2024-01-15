@@ -34,7 +34,7 @@ const Modal = ({ isOpenModal, setIsOpenModal, customWidth, children }) => {
                 leaveTo="opacity-0 scale-95"
               >
                 <Dialog.Panel
-                  className={`transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all ${customWidth}`}
+                  className={`transform overflow-hidden rounded-md bg-white dark:bg-dark-200 p-6 text-left align-middle shadow-xl transition-all ${customWidth}`}
                 >
                   <span className="absolute top-6 right-6 bg-primaryLight text-primaryDark primaryLight p-1.5 rounded-md cursor-pointer z-30" onClick={closeModal}>
                     <IoClose size="1.15rem" />

@@ -2,13 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "../../components/layout/index.jsx";
 import Dashboard from "../../screens/dashboard/index.jsx";
 import Login from "../../screens/login/index.jsx";
-import OrderList from "../../screens/orderList/index.jsx";
 import ProtectRoute from "../protectedRoute/index.jsx";
-import OrderDetails from "../../screens/orderDetails/index.jsx";
-import ProductList from "../../screens/productList/index.jsx";
 import PageNotFound from "../../screens/pageNotFound/index.jsx";
-import ProductEditor from "../../screens/productEditor/index.jsx";
-import CategoryList from "../../screens/categoryList/index.jsx";
+import CategoryList from "../../screens/categories/index.jsx";
+import OrderList from "../../screens/orders/orderList.jsx";
+import OrderDetails from "../../screens/orders/orderDetails.jsx";
+import ProductList from "../../screens/products/productList.jsx";
+import ProductEditor from "../../screens/products/productEditor.jsx";
 
 const Main = () => {
   return (
@@ -24,7 +24,7 @@ const Main = () => {
             }
           />
           <Route
-            path="/orderlist"
+            path="/orders"
             element={
               <Layout>
                 <OrderList />
@@ -32,7 +32,7 @@ const Main = () => {
             }
           />
           <Route
-            path="/orderlist/:paramsDocID"
+            path="/orders/:paramsDocID"
             element={
               <Layout>
                 <OrderDetails />
@@ -40,31 +40,24 @@ const Main = () => {
             }
           />
           <Route
-            path="/productlist"
+            path="products"
             element={
               <Layout>
                 <ProductList />
               </Layout>
             }
-          />
+          >
+            <Route
+              path="create"
+              element={
+                <Layout>
+                  <ProductEditor />
+                </Layout>
+              }
+            />
+          </Route>
           <Route
-            path="/productEditor"
-            element={
-              <Layout>
-                <ProductEditor />
-              </Layout>
-            }
-          />
-          <Route
-            path="/productEditor/:productID"
-            element={
-              <Layout>
-                <ProductEditor />
-              </Layout>
-            }
-          />
-          <Route
-            path="/categoryList"
+            path="/categories"
             element={
               <Layout>
                 <CategoryList />

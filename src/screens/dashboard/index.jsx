@@ -43,29 +43,33 @@ const Dashboard = () => {
             <CardHeading title="Statistics" />
             <div className="flex pt-4 pb-10 px-5">
               <div className="w-1/3 flex gap-1.5 items-center">
-                <span className="bg-gray-300 rounded-full flex items-center justify-center w-10 h-10">
+                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
                   <ImCoinDollar size="1.2rem" />
                 </span>
                 <span className="">
-                  <h5 className="text-gray-600">23</h5>
+                  <h5 className="text-gray-600 dark:text-gray-300">23</h5>
                   <p className="text-gray-400">Sales</p>
                 </span>
               </div>
               <div className="w-1/3 flex gap-1.5 items-center">
-                <span className="bg-gray-300 rounded-full flex items-center justify-center w-10 h-10">
+                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
                   <TbUsers size="1.2rem" />
                 </span>
                 <span className="">
-                  <h5 className="text-gray-600">{customerSize}</h5>
+                  <h5 className="text-gray-600 dark:text-gray-300">
+                    {customerSize}
+                  </h5>
                   <p className="text-gray-400">Customers</p>
                 </span>
               </div>
               <div className="w-1/3 flex gap-1.5 items-center">
-                <span className="bg-gray-300 rounded-full flex items-center justify-center w-10 h-10">
+                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
                   <BsCart3 size="1.2rem" />
                 </span>
                 <span className="">
-                  <h5 className="text-gray-600">{productSize}</h5>
+                  <h5 className="text-gray-600 dark:text-gray-300">
+                    {productSize}
+                  </h5>
                   <p className="text-gray-400">Products</p>
                 </span>
               </div>
@@ -82,11 +86,13 @@ const Dashboard = () => {
                   width="52"
                 />
                 <span>
-                  <h5 className="text-gray-600 ">Apple Iphone 13</h5>
+                  <h5 className="text-gray-600 dark:text-gray-300 ">
+                    Apple Iphone 13
+                  </h5>
                   <p className="text-gray-400 text-sm">Item: #FXZ-4567</p>
                 </span>
               </span>
-              <span className="text-gray-600">$72.40</span>
+              <span className="text-gray-600 dark:text-gray-300">$72.40</span>
             </div>
             <div className="flex justify-between items-center pb-6 px-5">
               <span className="flex items-center">
@@ -95,11 +101,13 @@ const Dashboard = () => {
                   width="52"
                 />
                 <span>
-                  <h5 className="text-gray-600 ">Apple Iphone 13</h5>
+                  <h5 className="text-gray-600 dark:text-gray-300 ">
+                    Apple Iphone 13
+                  </h5>
                   <p className="text-gray-400 text-sm">Item: #FXZ-4567</p>
                 </span>
               </span>
-              <span className="text-gray-600">$999.9</span>
+              <span className="text-gray-600 dark:text-gray-300">$999.9</span>
             </div>
           </Card>
         </div>

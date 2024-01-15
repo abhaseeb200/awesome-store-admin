@@ -5,7 +5,7 @@ const TextareaCustom = ({ isError, messageError, name, ...props }) => {
         {...props}
         className={`${
           isError ? `border-red-500` : `border-gray-300 focus:border-primary`
-        } border bg-white rounded-md text-sm leading-none text-gray-800 py-2.5 w-full px-3 placeholder:text-md outline-0 focus:drop-shadow-md transition`}
+        } border bg-white rounded-md text-sm leading-none text-gray-800 dark:text-gray-300 dark:bg-dark-200 py-2.5 w-full px-3 placeholder:text-md outline-0 focus:drop-shadow-md transition`}
       >
         {name}
       </textarea>

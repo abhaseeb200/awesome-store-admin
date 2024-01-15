@@ -55,7 +55,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
         className={`cursor-pointer sm:text-base text-sm rounded-md sm:h-10 h-8 sm:w-10 w-8 flex justify-center items-center transition ${
           currentPage === number
             ? "bg-primary text-white hover:bg-primaryDark"
-            : "bg-gray-200 hover:bg-gray-300"
+            : "bg-gray-200 dark:bg-dark-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
         }`}
         onClick={() => onPageChange(number)}
       >
@@ -80,14 +80,14 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     <nav>
       <ul className="flex sm:gap-2 gap-1.5 items-center text-gray-600">
         <span
-          className="hover:bg-gray-300 bg-gray-200 cursor-pointer sm:h-10 h-8 sm:w-10 w-8 flex justify-center items-center rounded-md transition"
+          className="hover:bg-gray-300 dark:hover:bg-gray-600 bg-gray-200 dark:bg-dark-600 dark:text-gray-300 cursor-pointer sm:h-10 h-8 sm:w-10 w-8 flex justify-center items-center rounded-md transition"
           onClick={prevPagination}
         >
           <FaAngleLeft className="sm:w-4 w-2" />
         </span>
         {getVisiblePageNumbers().map((number) => renderPageNumber(number))}
         <span
-          className="hover:bg-gray-300 bg-gray-200 cursor-pointer sm:h-10 h-8 sm:w-10 w-8 flex justify-center items-center rounded-md transition"
+          className="hover:bg-gray-300 dark:hover:bg-gray-600 bg-gray-200 dark:bg-dark-600 dark:text-gray-300 cursor-pointer sm:h-10 h-8 sm:w-10 w-8 flex justify-center items-center rounded-md transition"
           onClick={nextPagination}
         >
           <FaAngleRight className="sm:w-4 w-2" />

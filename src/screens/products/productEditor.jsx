@@ -257,7 +257,7 @@ const ProductEditor = () => {
   }, [productID]);
 
   useEffect(() => {
-    // fetchCategoriesName();
+    fetchCategoriesName();
   }, []);
 
   return (
@@ -269,10 +269,10 @@ const ProductEditor = () => {
               <div className="text-3xl text-gray-600 pb-2 font-medium">
                 404 - Product Not Found
               </div>
-              <p className="text-gray-500 pb-4">
+              <p className="text-gray-500 dark:text-gray-300 pb-4">
                 Sorry, the product you are looking for does not exist.
               </p>
-              <Link to="/productEditor">
+              <Link to="/products">
                 <Button name="Add Product" className="mx-auto" />
               </Link>
             </div>
@@ -283,10 +283,10 @@ const ProductEditor = () => {
           <PageHeading title="Product Editor" />
           <div className="flex flex-wrap gap-2 justify-between items-end">
             <div className="">
-              <h2 className="text-2xl text-gray-600 font-medium">
+              <h2 className="text-2xl text-gray-600 dark:text-gray-300 font-medium">
                 {isUpdate ? "Update Product" : "Add Product"}
               </h2>
-              <span className="text-gray-500 text-sm">
+              <span className="text-gray-500 dark:text-gray-300 text-sm">
                 Orders placed across your store
               </span>
             </div>
@@ -304,7 +304,7 @@ const ProductEditor = () => {
               <Card>
                 <CardHeading title="Product information" />
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500">Name</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">Name</label>
                   <InputCustom
                     placeholder="Product title"
                     type="text"
@@ -315,7 +315,7 @@ const ProductEditor = () => {
                   />
                 </div>
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500">
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
                     Quantity / Stock
                   </label>
                   <InputCustom
@@ -328,7 +328,7 @@ const ProductEditor = () => {
                   />
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500">Description</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">Description</label>
                   <TextareaCustom
                     placeholder="Product description"
                     rows="10"
@@ -343,7 +343,7 @@ const ProductEditor = () => {
               <Card>
                 <CardHeading title="Media" />
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500">Thumbnail</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">Thumbnail</label>
                   <label
                     className={`w-full flex flex-col items-center rounded-md border border-2 border-dashed tracking-wide cursor-pointer py-14 ${
                       thumbnail.isError ? "border-red-400" : "border-gray-400"
@@ -378,7 +378,7 @@ const ProductEditor = () => {
                   </div>
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500">
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
                     Gallary(Optional)
                   </label>
                   <div className="flex flex-wrap gap-1">
@@ -414,7 +414,7 @@ const ProductEditor = () => {
               <div className="pb-4">
                 <div className="flex sm:flex-row flex-col items-end gap-3">
                   <span className="sm:w-1/3 w-full">
-                    <label className="text-sm text-gray-500 block">
+                    <label className="text-sm text-gray-500 dark:text-gray-300 block">
                       Options
                     </label>
                     <SelectCustom customClass="py-2 w-full">
@@ -439,7 +439,7 @@ const ProductEditor = () => {
               <Card>
                 <CardHeading title="Pricing" />
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500">Base Price</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">Base Price</label>
                   <InputCustom
                     placeholder="Price"
                     type="number"
@@ -450,7 +450,7 @@ const ProductEditor = () => {
                   />
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500">
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
                     Discounted Price (Optional)
                   </label>
                   <InputCustom
@@ -465,7 +465,7 @@ const ProductEditor = () => {
               <Card>
                 <CardHeading title="Organize" />
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500 block mb-1">
+                  <label className="text-sm text-gray-500 dark:text-gray-300 block mb-1">
                     Brand
                   </label>
                   <InputCustom
@@ -477,10 +477,10 @@ const ProductEditor = () => {
                   />
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500 block mb-1 flex justify-between">
+                  <label className="text-sm text-gray-500 dark:text-gray-300 block mb-1 flex justify-between">
                     <span>Category</span>
                     <span
-                      className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition "
+                      className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition dark:text-primaryLight"
                       onClick={handleAddNewCategory}
                     >
                       Add New Category

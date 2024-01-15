@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../sidebar";
 import Header from "../header";
+import { Outlet } from "react-router";
 
 const Layout = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -22,7 +23,7 @@ const Layout = ({ children }) => {
   }, []);
   return (
     <>
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex h-screen bg-gray-100 dark:bg-dark-100">
         <Sidebar
           showSidebar={showSidebar}
           handleSidebar={handleSidebar}

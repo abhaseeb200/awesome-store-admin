@@ -16,12 +16,12 @@ const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
     <>
       {screenWidth < 768 ? (
         <OffCanvas showSidebar={showSidebar} handleSidebar={handleSidebar}>
-          <aside className="w-64 bg-white text-black drop-shadow h-full absolute top-0 left-0 z-30">
+          <aside className="w-64 bg-white dark:bg-dark-200  drop-shadow h-full absolute top-0 left-0 z-30">
             <SidebarContent handleSidebar={handleSidebar} />
           </aside>
         </OffCanvas>
       ) : (
-        <aside className="w-64 bg-white text-black drop-shadow h-full">
+        <aside className="w-64 bg-white dark:bg-dark-200 drop-shadow h-full">
           <SidebarContent handleSidebar={handleSidebar} />
         </aside>
       )}
@@ -78,8 +78,8 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
 
   return (
     <>
-      <div className="flex items-center h-16 border-b border-gray-200 px-4">
-        <span className="font-bold text-2xl text-gray-700">Awesome</span>
+      <div className="flex items-center h-16 border-b border-gray-600 px-4">
+        <span className="font-bold text-2xl text-gray-700 dark:text-gray-200">Awesome</span>
       </div>
       <nav className="mt-4 px-4" onClick={() => handleSidebar()}>
         <NavbarLink
@@ -91,7 +91,7 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
           Order
         </div>
         <NavbarLink
-          to="/orderlist"
+          to="/orders"
           title="Order List"
           icon={<GoChecklist size="1.1rem" />}
         />
@@ -104,20 +104,20 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
           product
         </div>
         <NavbarLink
-          to="/productlist"
+          to="/products"
           title="Product List"
           icon={<CiBoxList size="1.1rem" />}
         />
-        <NavbarLink
-          to="/productEditor"
+        {/* <NavbarLink
+          to="/product-editor"
           title="Product Editor"
           icon={<IoBagAddOutline size="1.1rem" />}
-        />
+        /> */}
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           category
         </div>
         <NavbarLink
-          to="/categoryList"
+          to="/categories"
           title="Category List"
           icon={<TbCategoryPlus size="1.1rem" />}
         />
@@ -126,7 +126,7 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
           auth
         </div>
         <div
-          className="cursor-pointer block py-2 px-3 mt-1 rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-700 flex items-center gap-2"
+          className="cursor-pointer block py-2 px-3 mt-1 rounded-md text-gray-600 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-dark-600 hover:text-gray-700 dark:hover:text-gray-200 flex items-center gap-2"
           onClick={handleLogout}
         >
           <FiLogOut />

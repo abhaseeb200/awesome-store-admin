@@ -1,0 +1,1 @@
+export const GETPRODUCT = "GETPRODUCT"

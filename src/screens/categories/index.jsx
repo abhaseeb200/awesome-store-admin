@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
+import { useDispatch, useSelector } from "react-redux";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import InputCustom from "../../components/inputs";
@@ -10,6 +11,7 @@ import Pagination from "../../components/pagination";
 import Button from "../../components/button";
 import { getCategories } from "../../api/api";
 import AddCategoryModal from "../../components/modal/addCategoryModal";
+import { getCategoryAction } from "../../redux/actions/categoryAction";
 
 const CategoryList = () => {
   // const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
@@ -26,6 +28,9 @@ const CategoryList = () => {
     messageError: "",
   });
   const [isUpdate, setIsUpdate] = useState(false);
+
+  const { categoryList } = useSelector((state) => state.category);
+  const dispatch = useDispatch();
 
   const handlePageChange = (pageNumber) => {
     // setCurrentPaginationNum(pageNumber);
@@ -57,9 +62,11 @@ const CategoryList = () => {
       let response = await getCategories();
       setCategories(response.data);
       setCategoriesBackUP(response.data);
-      setMainLoader(false);
+      dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setMainLoader(false);
     }
   };
 
@@ -71,6 +78,12 @@ const CategoryList = () => {
   };
 
   useEffect(() => {
+    if (categoryList?.length !== 0) {
+      setMainLoader(false);
+      console.log({ categoryList }, "CATEGORY");
+      setCategories(categoryList);
+      setCategoriesBackUP(categoryList);
+    }
     fetchCategories();
   }, []);
 
@@ -109,14 +122,14 @@ const CategoryList = () => {
             <div className="overflow-auto">
               {cardInnerLoader ? (
                 <div className="animate-pulse px-5">
-                  <div className="p-4 bg-gray-300"></div>
-                  <div className="p-4 my-2 bg-gray-300"></div>
-                  <div className="p-4 bg-gray-300"></div>
+                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
+                  <div className="p-4 my-2 bg-gray-300 dark:bg-dark-600"></div>
+                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
                 </div>
               ) : (
                 <table className="table-auto w-full">
                   <thead>
-                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
+                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
                       <th className="text-left py-4 font-medium pl-5">
                         Category
                       </th>
@@ -130,12 +143,12 @@ const CategoryList = () => {
                       categoriesBackUP.map((category, index) => {
                         return (
                           <tr
-                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
+                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
                             key={index}
                           >
                             <td className="py-4 pl-5 capitalize">{category}</td>
                             <td className="py-4 pr-5">
-                              <span className="flex gap-1.5 justify-end text-gray-500">
+                              <span className="flex gap-1.5 justify-end text-gray-500 dark:text-gray-300">
                                 <span className="hover:text-primaryDark cursor-pointer">
                                   <TbEdit
                                     size="1.3rem"
@@ -151,8 +164,8 @@ const CategoryList = () => {
                         );
                       })
                     ) : (
-                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm">
-                        <td className="py-4 text-center" colspan="5">
+                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm">
+                        <td className="py-4 text-center" colSpan="5">
                           No matching records found
                         </td>
                       </tr>

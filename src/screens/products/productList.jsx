@@ -21,7 +21,6 @@ import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import Modal from "../../components/modal";
 import ThumbnailSlider from "../../components/slider";
-import PrintTable from "../../components/table/printTable";
 import {
   getCategories,
   getCategoryData,
@@ -272,15 +271,15 @@ const ProductList = () => {
 
   useEffect(() => {
     let newData = productData.map((item) => ({
-      id: item?.id,
-      brand: item?.brand,
-      product: item?.title,
-      description: item?.description,
-      category: item?.category,
-      rating: item?.rating,
-      discount: item?.discountPercentage+"%",
-      price: "$" + item?.price,
-      stock: item?.stock,
+      Id: item?.id,
+      Brand: item?.brand,
+      Product: item?.title,
+      Description: item?.description,
+      Category: item?.category[0].toUpperCase() + item.category.slice(1),
+      Rating: item?.rating,
+      Discount: item?.discountPercentage + "%",
+      Price: "$" + item?.price,
+      Stock: item?.stock,
     }));
     setExportTableData(newData);
   }, [productData]);
@@ -295,7 +294,9 @@ const ProductList = () => {
           <Card>
             {/* head - filter */}
             <div className="filter py-6 px-5">
-              <h4 className="text-lg text-gray-600 font-medium pb-2">Filter</h4>
+              <h4 className="text-lg text-gray-600 font-medium pb-2 dark:text-gray-200">
+                Filter
+              </h4>
               <div className="flex sm:flex-row flex-col gap-4">
                 <span className="sm:w-1/2 w-full">
                   <SelectCustom
@@ -319,8 +320,8 @@ const ProductList = () => {
             </div>
             <hr className="bg-gray-400 h-0.5" />
             {/* head - search */}
-            <div className="py-6 px-5 flex sm:flex-row flex-col gap-4 justify-between">
-              <span className="sm:w-48 w-full block relative">
+            <div className="py-6 px-5 flex lg:flex-row flex-col gap-4 justify-between">
+              <span className="lg:w-48 w-full block relative">
                 <InputCustom
                   type="text"
                   placeholder="Search Product"
@@ -329,7 +330,7 @@ const ProductList = () => {
                   onKeyDown={handleKeyPress}
                 />
                 <span
-                  className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight hover:text-white hover:bg-primaryDark transition "
+                  className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight dark:bg-dark-600 dark:text-gray-300 hover:text-white hover:bg-primaryDark transition "
                   onClick={() => {
                     // let isSearch = true;
                     handleSearch(postPerPage, 0);
@@ -346,7 +347,7 @@ const ProductList = () => {
               <span className="flex flex-wrap gap-2 items-center">
                 {total > 10 && (
                   <SelectCustom
-                    customClass="py-2 sm:w-auto sm:flex-none w-1/2 flex-1"
+                    customClass="py-2 lg:w-auto w-1/2 flex-1"
                     onChange={handlePostPerPage}
                     value={postPerPage}
                   >
@@ -364,7 +365,7 @@ const ProductList = () => {
                     exportData={exportTableData}
                   />
                 )}
-                <Link to="/productEditor" className="sm:w-auto w-full">
+                <Link to="/products/create" className="lg:w-auto w-full">
                   <Button
                     name="Add Product"
                     icon={<GrAdd size="1rem" />}
@@ -377,14 +378,14 @@ const ProductList = () => {
             <div className="overflow-auto">
               {cardInnerLoader ? (
                 <div className="animate-pulse px-5">
-                  <div className="p-4 bg-gray-300"></div>
-                  <div className="p-4 my-2 bg-gray-300"></div>
-                  <div className="p-4 bg-gray-300"></div>
+                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
+                  <div className="p-4 my-2 bg-gray-300 dark:bg-dark-600"></div>
+                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
                 </div>
               ) : (
                 <table className="table-auto w-full">
                   <thead>
-                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
+                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
                       <th className="text-left py-4 font-medium pl-5">
                         Product
                       </th>
@@ -401,7 +402,7 @@ const ProductList = () => {
                       productData.map((product, index) => {
                         return (
                           <tr
-                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
+                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
                             key={index}
                           >
                             <td className="py-4 flex gap-2 pl-5">
@@ -427,7 +428,7 @@ const ProductList = () => {
                             <td className="py-4 px-3">${product.price}</td>
                             <td className="py-4 px-3">{product.stock}</td>
                             <td className="py-4 pr-5">
-                              <span className="flex gap-1.5 justify-center text-gray-500">
+                              <span className="flex gap-1.5 justify-center text-gray-500 dark:text-gray-300">
                                 <Link to={`/productEditor/${product?.id}`}>
                                   <span className="hover:text-primaryDark cursor-pointer">
                                     <TbEdit size="1.3rem" />
@@ -448,7 +449,7 @@ const ProductList = () => {
                         );
                       })
                     ) : (
-                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm">
+                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm">
                         <td className="py-4 text-center" colSpan="5">
                           No matching records found
                         </td>

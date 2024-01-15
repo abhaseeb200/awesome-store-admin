@@ -113,7 +113,7 @@ const OrderDetails = () => {
       <PageHeading title="Order Details" />
       <div className="pb-6">
         <span className="flex items-center">
-          <h3 className="text-lg text-gray-600 font-medium mr-2 pb-1 ">
+          <h3 className="text-lg text-gray-600 font-medium mr-2 pb-1 dark:text-gray-300">
             Order #{paramsDocID}
           </h3>
           <span className="bg-primaryLight text-primaryDark font-medium py-0.5 px-5 rounded text-md capitalize">
@@ -132,7 +132,7 @@ const OrderDetails = () => {
               <div className="overflow-auto">
                 <table className="table-auto w-full">
                   <thead>
-                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
+                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
                       <th className="text-left py-4 font-medium pl-5">Products</th>
                       <th className="text-left py-4 px-3 font-medium">Price</th>
                       <th className="text-left py-4 px-3 font-medium">QTY</th>
@@ -144,7 +144,7 @@ const OrderDetails = () => {
                       return (
                         <tr
                           key={index}
-                          className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
+                          className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
                         >
                           <td className="py-4 flex gap-2 pl-5">
                             <span>
@@ -175,7 +175,7 @@ const OrderDetails = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="flex flex-col py-6 gap-2 text-sm text-gray-600">
+              <div className="flex flex-col py-6 gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <div className="flex flex-row justify-between px-5">
                   <span>Subtotal :</span>
                   <span>${handleSubTotal().toFixed(2)}</span>
@@ -196,13 +196,13 @@ const OrderDetails = () => {
                   <FiUser size="1.3rem" />
                 </span>
                 <span>
-                  <p className="text-md text-gray-600 capitalize">
+                  <p className="text-md text-gray-600 dark:text-gray-300 capitalize">
                     {userData?.fullName}
                   </p>
                   {/* <p className="text-sm text-gray-400">Customer ID: {userData?.userID}</p> */}
                 </span>
               </div>
-              <div className="flex items-center gap-2 px-5 text-gray-500 py-5">
+              <div className="flex items-center gap-2 px-5 text-gray-500 dark:text-gray-300 py-5">
                 <span className="bg-green-100 text-green-600 p-2.5 rounded-full">
                   <FiShoppingCart size="1.3rem" />
                 </span>
@@ -211,13 +211,13 @@ const OrderDetails = () => {
                 </span>
               </div>
               <div className="pb-6 px-5">
-                <h4 className="text-md text-gray-600 font-medium">
+                <h4 className="text-md text-gray-600 dark:text-gray-300 font-medium">
                   Contact info
                 </h4>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-gray-300 text-sm">
                   Email: {userData?.email}
                 </p>
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-gray-300 text-sm">
                   Mobile: +1 (609) 972-22-22
                 </p>
               </div>

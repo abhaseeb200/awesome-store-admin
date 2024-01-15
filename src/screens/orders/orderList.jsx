@@ -1,37 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useReactToPrint } from "react-to-print";
-import jsPDF from "jspdf";
-import { CSVLink } from "react-csv";
+import { useDispatch, useSelector } from "react-redux";
 import "jspdf-autotable";
-import { IoPrintOutline } from "react-icons/io5";
-import { PiNewspaperLight } from "react-icons/pi";
-import { HiOutlineNewspaper } from "react-icons/hi2";
-import { GoDownload } from "react-icons/go";
 import { LuEye } from "react-icons/lu";
 import { MdMoreVert } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import InputCustom from "../../components/inputs";
-import Dropdown from "../../components/dropdown";
 import SelectCustom from "../../components/select";
 import Pagination from "../../components/pagination";
 import PageHeading from "../../components/pageTitle";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
 import { getOrders } from "../../config/services/firebase/order";
-import PrintTable from "../../components/table/printTable";
 import ExportDropDown from "../../components/exportDropdown";
+import { getOrderAction } from "../../redux/actions/orderAction";
 
 const OrderList = () => {
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
-  const [mainLoader, setMainLoader] = useState(true);
+  const [mainLoader, setMainLoader] = useState(false);
   const [orderData, setOrderData] = useState([]);
   const [orderDataBackUP, setOrderDataBackUP] = useState([]);
   const [exportTableData, setExportTableData] = useState([]);
-
   const [search, setSearch] = useState("");
 
+  const { orderList } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
+  // console.log(orders);
   // const actionDropdownItems = [
   //   { label: "View", icon: <LuEye size="1.1rem" />, action: "view" },
   //   {
@@ -57,15 +53,17 @@ const OrderList = () => {
   };
 
   const handleGetOrders = async () => {
+    // setMainLoader(true);
     try {
       let response = await getOrders();
       let temp = [];
       response.forEach((product) => {
         temp.push({ ...product.data(), docID: product.id });
       });
-      console.log(temp, "TEMPPPP");
-      setOrderData(temp);
-      setOrderDataBackUP(temp);
+      // console.log(temp, "TEMPPPP");
+      // setOrderData(temp);
+      // setOrderDataBackUP(temp);
+      dispatch(getOrderAction(temp));
     } catch (error) {
       console.log(error);
       toast.error(error.message || "An error occurred", {
@@ -93,19 +91,33 @@ const OrderList = () => {
   };
 
   useEffect(() => {
-    handleGetOrders();
+    if (orderList?.length) {
+      console.log("-----");
+      console.log(orderList, "REDUCERS");
+      setOrderDataBackUP(orderList);
+      setOrderData(orderList);
+      // setMainLoader(false);
+      handleGetOrders();
+    } else {
+      setMainLoader(true);
+      handleGetOrders();
+    }
   }, []);
 
   useEffect(() => {
     let newData = orderDataBackUP.map((item) => ({
       order: item?.docID,
       date: handleDateFormat(item?.dateAndTime),
-      customer: item?.fullName,
-      status: item?.status,
+      customer: item?.fullName[0].toUpperCase() + item?.fullName.slice(1),
+      status: item?.status[0].toUpperCase() + item?.status.slice(1),
     }));
     setExportTableData(newData);
   }, [orderDataBackUP]);
 
+  useEffect(() => {
+    setOrderData(orderList);
+    setOrderDataBackUP(orderList);
+  }, [orderList]);
   return (
     <>
       <div>
@@ -147,7 +159,7 @@ const OrderList = () => {
             <div className="overflow-auto">
               <table className="table-auto w-full" id="orderListTable">
                 <thead>
-                  <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 uppercase text-sm">
+                  <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
                     <th className="text-left py-4 font-medium pl-5">Order</th>
                     <th className="text-left py-4 px-3 font-medium">Date</th>
                     <th className="text-left py-4 px-3 font-medium">
@@ -163,7 +175,7 @@ const OrderList = () => {
                       return (
                         <tr
                           key={index}
-                          className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm"
+                          className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
                         >
                           <td className="py-4 text-primary pl-5">
                             {order?.docID}
@@ -179,7 +191,7 @@ const OrderList = () => {
                           </td>
                           <td className="py-4 pr-5">
                             <span className="hover:text-primaryDark">
-                              <Link to={`/orderList/${order?.docID}`}>
+                              <Link to={`/orders/${order?.docID}`}>
                                 <LuEye
                                   size="1.1rem"
                                   className="mx-auto cursor-pointer"
@@ -200,7 +212,7 @@ const OrderList = () => {
                       );
                     })
                   ) : (
-                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 text-sm">
+                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm">
                       <td className="py-4 text-center" colSpan="5">
                         No matching records found
                       </td>
