@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
 import Layout from "../../components/layout/index.jsx";
 import Dashboard from "../../screens/dashboard/index.jsx";
 import Login from "../../screens/login/index.jsx";
@@ -9,74 +14,75 @@ import OrderList from "../../screens/orders/orderList.jsx";
 import OrderDetails from "../../screens/orders/orderDetails.jsx";
 import ProductList from "../../screens/products/productList.jsx";
 import ProductEditor from "../../screens/products/productEditor.jsx";
+import Orders from "../../screens/orders/index.jsx";
+import Products from "../../screens/products/index.jsx";
 
 const Main = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route element={<ProtectRoute />}>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Dashboard />
-              </Layout>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <Layout>
-                <OrderList />
-              </Layout>
-            }
-          />
-          <Route
-            path="/orders/:paramsDocID"
-            element={
-              <Layout>
-                <OrderDetails />
-              </Layout>
-            }
-          />
-          <Route
-            path="products"
-            element={
-              <Layout>
-                <ProductList />
-              </Layout>
-            }
-          >
-            <Route
-              path="create"
-              element={
-                <Layout>
-                  <ProductEditor />
-                </Layout>
-              }
-            />
+  // const router = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     element: <Layout />,
+  //     errorElement: <PageNotFound />,
+  //     children: [
+  //       {
+  //         path: "/",
+  //         element: <Dashboard />,
+  //       },
+  //       {
+  //         path: "orders",
+  //         element: <OrderList />,
+  //       },
+  //       {
+  //         path: "orders/:paramsDocID",
+  //         element: <OrderDetails />,
+  //       },
+  //       {
+  //         path: "products",
+  //         element: <ProductList />,
+  //       },
+  //       {
+  //         path: "products/create",
+  //         element: <ProductEditor />,
+  //       },
+  //       {
+  //         path: "products/:productID/edit",
+  //         element: <ProductEditor />,
+  //       },
+  //       {
+  //         path: "categories",
+  //         element: <CategoryList />,
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     path: "login",
+  //     element: <Login />,
+  //   },
+  // ]);
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route path="/" element={<Layout />} errorElement={<PageNotFound />}>
+          <Route element={<ProtectRoute />}>
+            <Route index element={<Dashboard />} />
+            <Route path="orders" element={<Orders />}>
+              <Route index element={<OrderList />} />
+              <Route path=":id" element={<OrderDetails />} />
+            </Route>
+            <Route path="products" element={<Products />}>
+              <Route index element={<ProductList />} />
+              <Route path="create" element={<ProductEditor />} />
+              <Route path=":id/update" element={<ProductEditor />} />
+            </Route>
+            <Route path="categories" element={<CategoryList />} />
+            <Route path="*" element={<PageNotFound />} />
           </Route>
-          <Route
-            path="/categories"
-            element={
-              <Layout>
-                <CategoryList />
-              </Layout>
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <Layout>
-                <PageNotFound />
-              </Layout>
-            }
-          />
         </Route>
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
+        <Route path="login" element={<Login />} />
+      </>
+    )
   );
+  return <RouterProvider router={router} />;
 };
 
 export default Main;

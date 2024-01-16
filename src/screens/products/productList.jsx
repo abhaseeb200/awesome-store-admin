@@ -1,18 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { CSVLink } from "react-csv";
-import { IoPrintOutline } from "react-icons/io5";
-import { PiNewspaperLight } from "react-icons/pi";
-import { HiOutlineNewspaper } from "react-icons/hi2";
-import { GoDownload } from "react-icons/go";
 import { GrAdd } from "react-icons/gr";
 import { LuEye, LuLoader2 } from "react-icons/lu";
-import { MdMoreVert } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
 import { TbEdit } from "react-icons/tb";
 import InputCustom from "../../components/inputs";
-import Dropdown from "../../components/dropdown";
 import SelectCustom from "../../components/select";
 import Pagination from "../../components/pagination";
 import Button from "../../components/button";
@@ -36,19 +29,15 @@ const ProductList = () => {
   const [searchLoader, setSearchLoader] = useState(false);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("");
-  // const [categoryFilterValue, setCategoryFilterValue] = useState("");
   const [currentProduct, setCurrentProduct] = useState({});
   const [productData, setProductData] = useState([]);
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [skip, setSkip] = useState(0);
-  // const [skipSearch, setSkipSearch] = useState(0);
   const [total, setTotal] = useState(0);
   const [postPerPage, setPostPerPage] = useState(10); //work as a limit
   const [search, setSearch] = useState("");
   const [searchButtton, setSearchButtton] = useState("");
   const [exportTableData, setExportTableData] = useState([]);
-  const [isSearch, setIsSearch] = useState(false);
-  const [isOnLoaded, setIsOnLoaded] = useState(true);
 
   const location = useLocation();
   const currentParams = new URLSearchParams(location.search);
@@ -110,15 +99,12 @@ const ProductList = () => {
   };
 
   const fetchCategoryProducts = async (category) => {
-    // console.log({ category, categoryParam, currentCategory });
-    // setCardInnerLoader(true);
     if (category === "0") {
       fetchProductData();
     } else {
       try {
         setSearch("");
         let response = await getCategoryData(category);
-        // console.log(response);
         setProductData(response.data.products);
         setTotal(response.data.total);
         setSkip(0);
@@ -151,7 +137,6 @@ const ProductList = () => {
         setProductData(response.data.products);
         setTotal(response.data.total);
         setSkip(response.data.skip);
-        setIsSearch(true);
         if (response.data.skip === 0) {
           setCurrentPaginationNum(1);
         }
@@ -182,7 +167,7 @@ const ProductList = () => {
     currentPostPerPage = postPerPage,
     currentSkip = skip
   ) => {
-    console.log("--------------", { currentSkip }, { currentPostPerPage });
+    // console.log("--------------", { currentSkip }, { currentPostPerPage });
     try {
       let option = { limit: currentPostPerPage, skip: currentSkip };
       let response = await getProducts(option);
@@ -211,7 +196,6 @@ const ProductList = () => {
       currentParams.delete("postPerPage");
     }
 
-    // console.log({ currentPaginationNum, postPerPage, skip }, "+++==");
     if (skip >= postPerPage) {
       currentParams.set("offset", skip);
     } else {
@@ -332,7 +316,6 @@ const ProductList = () => {
                 <span
                   className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight dark:bg-dark-600 dark:text-gray-300 hover:text-white hover:bg-primaryDark transition "
                   onClick={() => {
-                    // let isSearch = true;
                     handleSearch(postPerPage, 0);
                     setSearchButtton(search);
                   }}
@@ -358,14 +341,16 @@ const ProductList = () => {
                     <option value="30">30</option>
                   </SelectCustom>
                 )}
-                {productData?.length > 0 && (
-                  <ExportDropDown
-                    title="Product List"
-                    filename="product_list_data"
-                    exportData={exportTableData}
-                  />
-                )}
-                <Link to="/products/create" className="lg:w-auto w-full">
+                <span className="lg:w-auto w-1/2">
+                  {productData?.length > 0 && (
+                    <ExportDropDown
+                      title="Product List"
+                      filename="product_list_data"
+                      exportData={exportTableData}
+                    />
+                  )}
+                </span>
+                <Link to="create" className="lg:w-auto w-full">
                   <Button
                     name="Add Product"
                     icon={<GrAdd size="1rem" />}
@@ -429,7 +414,7 @@ const ProductList = () => {
                             <td className="py-4 px-3">{product.stock}</td>
                             <td className="py-4 pr-5">
                               <span className="flex gap-1.5 justify-center text-gray-500 dark:text-gray-300">
-                                <Link to={`/productEditor/${product?.id}`}>
+                                <Link to={`${product?.id}/update`}>
                                   <span className="hover:text-primaryDark cursor-pointer">
                                     <TbEdit size="1.3rem" />
                                   </span>
@@ -484,11 +469,11 @@ const ProductList = () => {
         customWidth="w-full max-w-4xl"
       >
         <div className="flex item-center sm:flex-row flex-col gap-5 items-center">
-          <div className="sm:w-1/2 w-full  aspect-square bg-gray-200">
+          <div className="sm:w-1/2 w-full  aspect-square bg-gray-200 dark:bg-dark-600">
             <ThumbnailSlider currentProductData={currentProduct} />
           </div>
-          <div className="sm:w-1/2 w-full text-gray-600">
-            <p className="bg-gray-800 text-white px-3 py-1 uppercase text-sm inline">
+          <div className="sm:w-1/2 w-full text-gray-600 dark:text-gray-200">
+            <p className="bg-gray-800 dark:bg-dark-600 text-white px-3 py-1 uppercase text-sm inline">
               {currentProduct?.brand}
             </p>
             <h3 className="text-2xl font-semibold pt-2 pb-4">
@@ -507,11 +492,6 @@ const ProductList = () => {
                   currentProduct?.price,
                   currentProduct?.discountPercentage
                 )}
-                {/* {(
-                  currentProduct?.price -
-                  (currentProduct?.discountPercentage / 100) *
-                    currentProduct?.price
-                ).toFixed(2)} */}
               </span>
             </p>
             <p className="text-sm pb-3">{currentProduct?.description}</p>

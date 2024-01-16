@@ -10,11 +10,12 @@ import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
 import NavbarLink from "../navbarLink";
 import { authLogout } from "../../config/services/firebase/auth";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
   return (
     <>
-      {screenWidth < 768 ? (
+      {screenWidth < 1024 ? (
         <OffCanvas showSidebar={showSidebar} handleSidebar={handleSidebar}>
           <aside className="w-64 bg-white dark:bg-dark-200  drop-shadow h-full absolute top-0 left-0 z-30">
             <SidebarContent handleSidebar={handleSidebar} />
@@ -22,7 +23,7 @@ const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
         </OffCanvas>
       ) : (
         <aside className="w-64 bg-white dark:bg-dark-200 drop-shadow h-full">
-          <SidebarContent handleSidebar={handleSidebar} />
+          <SidebarContent />
         </aside>
       )}
     </>
@@ -63,7 +64,7 @@ const OffCanvas = ({ showSidebar, handleSidebar, children }) => {
   );
 };
 
-const SidebarContent = ({ screenWidth, handleSidebar }) => {
+const SidebarContent = ({ handleSidebar }) => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -79,49 +80,46 @@ const SidebarContent = ({ screenWidth, handleSidebar }) => {
   return (
     <>
       <div className="flex items-center h-16 border-b border-gray-600 px-4">
-        <span className="font-bold text-2xl text-gray-700 dark:text-gray-200">Awesome</span>
+        <Link to="/" onClick={handleSidebar}>
+          <span className="font-bold text-2xl text-gray-700 dark:text-gray-200">
+            Awesome
+          </span>
+        </Link>
       </div>
-      <nav className="mt-4 px-4" onClick={() => handleSidebar()}>
+      <nav className="mt-4 px-4">
         <NavbarLink
           to="/"
           title="Dashboard"
           icon={<IoHomeOutline size="1.1rem" />}
+          handleSidebar={handleSidebar}
         />
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           Order
         </div>
         <NavbarLink
           to="/orders"
-          title="Order List"
+          title="Orders"
           icon={<GoChecklist size="1.1rem" />}
+          handleSidebar={handleSidebar}
         />
-        {/* <NavbarLink
-          to="/orderdetails"
-          title="Order Details"
-          icon={<LiaFileInvoiceSolid size="1.1rem" />}
-        /> */}
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           product
         </div>
         <NavbarLink
           to="/products"
-          title="Product List"
+          title="Products"
           icon={<CiBoxList size="1.1rem" />}
+          handleSidebar={handleSidebar}
         />
-        {/* <NavbarLink
-          to="/product-editor"
-          title="Product Editor"
-          icon={<IoBagAddOutline size="1.1rem" />}
-        /> */}
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           category
         </div>
         <NavbarLink
           to="/categories"
-          title="Category List"
+          title="Categories"
           icon={<TbCategoryPlus size="1.1rem" />}
+          handleSidebar={handleSidebar}
         />
-
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           auth
         </div>

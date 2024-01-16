@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { TbLoader2 } from "react-icons/tb";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
+import { Card } from "../../components/card";
 
 const Login = ({ user }) => {
   const [loader, setLoader] = useState(false);
@@ -153,66 +154,71 @@ const Login = ({ user }) => {
   }, []);
 
   return (
-    <div className="bg-gray-200">
+    <div className="bg-gray-200 dark:bg-dark-100">
       <div className="flex flex-col items-center justify-center md:w-96 w-5/6 mx-auto h-screen">
-        <div className="bg-white drop-shadow-lg rounded-md sm:p-9 p-6">
-          <h2 className="text-center text-2xl font-bold pb-5 text-gray-700">
-            Awesome
-          </h2>
-          <form className="">
-            <h4 className="text-xl font-medium text-gray-800 pb-1">
-              Welcome to Awesome! 👋
-            </h4>
-            <p className="text-gray-600 pb-5">
-              Please sign-in to your account and start the adventure
-            </p>
-            <div>
-              <label id="email" className="text-sm leading-none text-gray-600">
-                Email
-              </label>
-              <InputCustom
-                type="email"
-                placeholder="Enter your email"
-                value={email.value}
-                isError={email.isError}
-                messageError={email.messageError}
-                onChange={handleEmail}
-              />
-            </div>
-            <div className="mt-4  w-full">
-              <label
-                htmlFor="pass"
-                className="text-sm leading-none text-gray-600"
-              >
-                Password
-              </label>
-              <InputCustom
-                type="password"
-                placeholder="············"
-                value={password.value}
-                isError={password.isError}
-                messageError={password.messageError}
-                onChange={handlePassword}
-                autoComplete="off"
-              />
-            </div>
-            <div className="mt-7 pb-1">
-              {loader ? (
-                <Button
-                  className="w-full justify-center"
-                  disabled="disabled"
-                  name={<TbLoader2 size="1.3rem" className="animate-spin" />}
+        <Card>
+          <div className="sm:p-9 p-6">
+            <h2 className="text-center text-2xl font-bold pb-5 text-gray-700 dark:text-gray-200">
+              Awesome
+            </h2>
+            <form className="">
+              <h4 className="text-xl font-medium text-gray-800 dark:text-gray-200 pb-1">
+                Welcome to Awesome! 👋
+              </h4>
+              <p className="text-gray-600 dark:text-gray-300 pb-5">
+                Please sign-in to your account and start the adventure
+              </p>
+              <div>
+                <label
+                  id="email"
+                  className="text-sm leading-none text-gray-600 dark:text-gray-300"
+                >
+                  Email
+                </label>
+                <InputCustom
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email.value}
+                  isError={email.isError}
+                  messageError={email.messageError}
+                  onChange={handleEmail}
                 />
-              ) : (
-                <Button
-                  name="Sign in"
-                  className="w-full justify-center"
-                  onClick={signInHandler}
+              </div>
+              <div className="mt-4  w-full">
+                <label
+                  htmlFor="pass"
+                  className="text-sm leading-none text-gray-600 dark:text-gray-300"
+                >
+                  Password
+                </label>
+                <InputCustom
+                  type="password"
+                  placeholder="············"
+                  value={password.value}
+                  isError={password.isError}
+                  messageError={password.messageError}
+                  onChange={handlePassword}
+                  autoComplete="off"
                 />
-              )}
-            </div>
-          </form>
-        </div>
+              </div>
+              <div className="mt-7 pb-1">
+                {loader ? (
+                  <Button
+                    className="w-full justify-center"
+                    disabled="disabled"
+                    name={<TbLoader2 size="1.3rem" className="animate-spin" />}
+                  />
+                ) : (
+                  <Button
+                    name="Sign in"
+                    className="w-full justify-center"
+                    onClick={signInHandler}
+                  />
+                )}
+              </div>
+            </form>
+          </div>
+        </Card>
       </div>
     </div>
   );

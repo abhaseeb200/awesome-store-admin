@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import { Outlet } from "react-router";
 import Sidebar from "../sidebar";
 import Header from "../header";
-import { Outlet } from "react-router";
 
 const Layout = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -33,7 +33,9 @@ const Layout = ({ children }) => {
           <div className="flex-1 overflow-hidden overflow-y-auto">
             <div className="container custom-width-90 mx-auto">
               <Header handleSidebar={handleSidebar} screenWidth={screenWidth} />
-              <main>{children}</main>
+              <main>
+                <Outlet />
+              </main>
             </div>
           </div>
         </div>

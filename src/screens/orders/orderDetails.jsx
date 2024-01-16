@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { FiUser } from "react-icons/fi";
 import { FiShoppingCart } from "react-icons/fi";
@@ -24,12 +24,12 @@ const OrderDetails = () => {
   const [updateStatusLoader, setUpdateStatusLoader] = useState(false);
   const [mainLoader, setMainLoader] = useState(true);
 
-  const { paramsDocID } = useParams();
-  // console.log(paramsDocID);
+  const { id } = useParams();
+  // console.log(id);
 
   const handleFetchOrder = async () => {
     try {
-      let response = await getOrderDetails(paramsDocID);
+      let response = await getOrderDetails(id);
       console.log(response.data(), "------");
       setProducts(response.data()?.products);
       setStatus(response.data()?.status);
@@ -89,7 +89,7 @@ const OrderDetails = () => {
     // console.log(status);
     try {
       setUpdateStatusLoader(true);
-      let response = await setOrderDetails(paramsDocID, status);
+      let response = await setOrderDetails(id, status);
       console.log(response);
       setStatusBackUP(status);
       toast.success("Update successful!", {
@@ -110,11 +110,10 @@ const OrderDetails = () => {
   }, []);
   return (
     <>
-      <PageHeading title="Order Details" />
       <div className="pb-6">
         <span className="flex items-center">
           <h3 className="text-lg text-gray-600 font-medium mr-2 pb-1 dark:text-gray-300">
-            Order #{paramsDocID}
+            Order #{id}
           </h3>
           <span className="bg-primaryLight text-primaryDark font-medium py-0.5 px-5 rounded text-md capitalize">
             {statusBackUP}
@@ -133,10 +132,14 @@ const OrderDetails = () => {
                 <table className="table-auto w-full">
                   <thead>
                     <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
-                      <th className="text-left py-4 font-medium pl-5">Products</th>
+                      <th className="text-left py-4 font-medium pl-5">
+                        Products
+                      </th>
                       <th className="text-left py-4 px-3 font-medium">Price</th>
                       <th className="text-left py-4 px-3 font-medium">QTY</th>
-                      <th className="text-left py-4 px-3 font-medium pr-5">Total</th>
+                      <th className="text-left py-4 px-3 font-medium pr-5">
+                        Total
+                      </th>
                     </tr>
                   </thead>
                   <tbody>

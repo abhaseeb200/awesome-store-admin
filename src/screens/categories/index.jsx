@@ -16,7 +16,7 @@ import { getCategoryAction } from "../../redux/actions/categoryAction";
 const CategoryList = () => {
   // const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [mainLoader, setMainLoader] = useState(true);
+  const [mainLoader, setMainLoader] = useState(false);
   const [cardInnerLoader, setCardInnerLoader] = useState(false); //it work only if pagination, search or post per page functionality
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([]);
@@ -60,8 +60,8 @@ const CategoryList = () => {
   const fetchCategories = async () => {
     try {
       let response = await getCategories();
-      setCategories(response.data);
-      setCategoriesBackUP(response.data);
+      // setCategories(response.data);
+      // setCategoriesBackUP(response.data);
       dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
@@ -78,14 +78,21 @@ const CategoryList = () => {
   };
 
   useEffect(() => {
-    if (categoryList?.length !== 0) {
-      setMainLoader(false);
+    if (categoryList?.length) {
       console.log({ categoryList }, "CATEGORY");
       setCategories(categoryList);
       setCategoriesBackUP(categoryList);
+      fetchCategories();
+    } else {
+      setMainLoader(true);
+      fetchCategories();
     }
-    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    setCategories(categoryList);
+    setCategoriesBackUP(categoryList);
+  }, [categoryList]);
 
   return (
     <div>

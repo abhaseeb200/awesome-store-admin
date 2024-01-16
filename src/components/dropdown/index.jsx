@@ -11,7 +11,7 @@ const Dropdown = ({
   currentDocID
 }) => {
   return (
-    <div className="relative lg:w-auto w-1/2">
+    <div className="relative">
       <Menu>
         <Menu.Button className={titleClass}>
           {icon} {title}
@@ -27,12 +27,12 @@ const Dropdown = ({
           className="z-30"
         >
           <Menu.Items
-            className={`text-sm flex flex-col bg-white drop-shadow-lg rounded-md px-1.5 py-2  ${menuItemsClass}`}
+            className={`text-sm flex flex-col bg-white dark:bg-dark-100 drop-shadow-lg rounded-md px-1.5 py-2  ${menuItemsClass}`}
           >
             {items?.map((item, index) => (
               <Menu.Item key={index}>
                 <div
-                  className="flex items-center hover:bg-primaryLight hover:text-primaryDark rounded-md cursor-pointer py-1 px-2 my-0.5 text-gray-600"
+                  className="flex items-center dark:text-gray-300 dark:hover:bg-dark-600 dark:hover:text-gray-300 hover:bg-primaryLight hover:text-primaryDark rounded-md cursor-pointer py-1 px-2 my-0.5 text-gray-600"
                   onClick={() => handleOnClick(item?.action, currentDocID)}
                 >
                   {item.icon && <span className="mr-2">{item.icon}</span>}

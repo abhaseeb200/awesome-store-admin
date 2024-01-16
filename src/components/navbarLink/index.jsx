@@ -1,9 +1,10 @@
 import { NavLink } from "react-router-dom";
-const NavbarLink = ({ to, title, icon }) => {
+const NavbarLink = ({ to, title, icon, handleSidebar }) => {
   return (
     <NavLink
       to={to}
       className="block py-2 px-3 mt-1 rounded-md text-gray-600 dark:text-gray-200 dark:hover:bg-dark-600 hover:bg-gray-200 hover:text-gray-700 dark:hover:text-gray-200 flex items-center gap-2"
+      onClick={handleSidebar}
     >
       <span>{icon}</span>
       <span>{title}</span>

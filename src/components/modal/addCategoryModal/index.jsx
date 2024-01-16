@@ -48,10 +48,10 @@ const AddCategoryModal = ({
       setIsOpenModal={setIsOpenModal}
       customWidth="w-full max-w-lg"
     >
-      <h3 className="text-lg text-gray-600 font-medium">Add New Category</h3>
+      <h3 className="text-lg text-gray-600 font-medium dark:text-gray-200">Add New Category</h3>
       <form action="">
         <div className="my-5">
-          <label className="text-sm text-gray-500">Category Name</label>
+          <label className="text-sm text-gray-500 dark:text-gray-300">Category Name</label>
           <InputCustom
             placeholder="Mens-Shoes"
             value={currentCategory.value}

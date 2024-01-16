@@ -5,7 +5,7 @@ import { useState } from "react";
 const Header = ({ handleSidebar, screenWidth }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const handleMood = () => {
+  const handleMode = () => {
     setIsDarkMode((isDarkMode) => !isDarkMode);
     document.documentElement.classList.toggle("dark");
   };
@@ -14,15 +14,15 @@ const Header = ({ handleSidebar, screenWidth }) => {
     <header className="bg-white dark:bg-dark-200 border-b border-gray-200 dark:border-dark-200 rounded drop-shadow-sm mt-4">
       <div className="flex items-center p-4">
         <div className="flex items-center">
-          {screenWidth < 768 && (
-            <span className="cursor-pointer" onClick={() => handleSidebar()}>
+          {screenWidth < 1024 && (
+            <span className="cursor-pointer dark:text-gray-200" onClick={() => handleSidebar()}>
               <HiOutlineMenu size="1.5rem" />
             </span>
           )}
         </div>
         <div className="flex items-center justify-between w-full ml-2 dark:text-gray-200">
           <p>Welcome admin!</p>
-          <div onClick={handleMood} className="cursor-pointer">
+          <div onClick={handleMode} className="cursor-pointer">
             {isDarkMode ? <CiDark size="1.5rem" /> : <CiLight size="1.5rem" />}
           </div>
         </div>

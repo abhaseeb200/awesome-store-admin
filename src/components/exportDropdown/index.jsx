@@ -83,7 +83,7 @@ const ExportDropDown = ({ exportData, title, filename }) => {
         title="Export"
         items={exportDropdownItems}
         icon={<GoDownload size="1rem" className="mr-2" />}
-        titleClass="text-sm relative w-full justify-center bg-gray-300 flex items-center py-2 px-6 rounded-md text-gray-600"
+        titleClass="text-sm relative w-full justify-center bg-gray-300 dark:bg-dark-600 dark:text-gray-200 flex items-center py-2 px-6 rounded-md text-gray-600"
         menuItemsClass="absolute left-0 w-full"
         handleOnClick={handleDropdownExport}
       />

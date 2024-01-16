@@ -60,8 +60,7 @@ const ProductEditor = () => {
     messageError: "",
   });
 
-  const { productID } = useParams();
-  // console.log(productID, ":________");
+  const { id } = useParams();
 
   const fetchCategoriesName = async () => {
     try {
@@ -74,8 +73,7 @@ const ProductEditor = () => {
 
   const fetchCurrentProduct = async () => {
     try {
-      let response = await getSingleProduct(productID);
-      // console.log(response, "_________-");
+      let response = await getSingleProduct(id);
       const {
         title,
         stock,
@@ -246,7 +244,7 @@ const ProductEditor = () => {
   };
 
   useEffect(() => {
-    if (productID) {
+    if (id) {
       setIsUpdate(true);
       fetchCurrentProduct();
     } else {
@@ -254,7 +252,7 @@ const ProductEditor = () => {
       setIsProductFound(false);
       handleEmptyFields();
     }
-  }, [productID]);
+  }, [id]);
 
   useEffect(() => {
     fetchCategoriesName();
@@ -298,13 +296,15 @@ const ProductEditor = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 flex-col sm:flex-row py-6">
-            <div className="sm:w-3/5 w-full">
+          <div className="flex gap-3 flex-col lg:flex-row py-6">
+            <div className="lg:w-3/5 w-full">
               {/* product information */}
               <Card>
                 <CardHeading title="Product information" />
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500 dark:text-gray-300">Name</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
+                    Name
+                  </label>
                   <InputCustom
                     placeholder="Product title"
                     type="text"
@@ -328,7 +328,9 @@ const ProductEditor = () => {
                   />
                 </div>
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500 dark:text-gray-300">Description</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
+                    Description
+                  </label>
                   <TextareaCustom
                     placeholder="Product description"
                     rows="10"
@@ -343,7 +345,9 @@ const ProductEditor = () => {
               <Card>
                 <CardHeading title="Media" />
                 <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500 dark:text-gray-300">Thumbnail</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
+                    Thumbnail
+                  </label>
                   <label
                     className={`w-full flex flex-col items-center rounded-md border border-2 border-dashed tracking-wide cursor-pointer py-14 ${
                       thumbnail.isError ? "border-red-400" : "border-gray-400"
@@ -434,12 +438,14 @@ const ProductEditor = () => {
             </Card> */}
             </div>
 
-            <div className="sm:w-2/5 w-full">
+            <div className="lg:w-2/5 w-full">
               {/* Pricing */}
               <Card>
                 <CardHeading title="Pricing" />
                 <div className="pb-4 px-5">
-                  <label className="text-sm text-gray-500 dark:text-gray-300">Base Price</label>
+                  <label className="text-sm text-gray-500 dark:text-gray-300">
+                    Base Price
+                  </label>
                   <InputCustom
                     placeholder="Price"
                     type="number"
