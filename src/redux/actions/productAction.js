@@ -1,9 +1,11 @@
 import { GETPRODUCT } from "../types/productType";
 
-const getProductAction = (data) => {
+const getProductAction = (data, currentPage, postPerPage) => {
   return {
     type: GETPRODUCT,
     data: data,
+    currentPage: currentPage,
+    postPerPage: postPerPage,
   };
 };
 

@@ -21,10 +21,13 @@ import {
   searchProduct,
 } from "../../api/api";
 import ExportDropDown from "../../components/exportDropdown";
+import { useDispatch, useSelector } from "react-redux";
+import { getProductAction } from "../../redux/actions/productAction";
+import { getCategoryAction } from "../../redux/actions/categoryAction";
 
 const ProductList = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [mainLoader, setMainLoader] = useState(true);
+  const [mainLoader, setMainLoader] = useState(false);
   const [cardInnerLoader, setCardInnerLoader] = useState(false);
   const [searchLoader, setSearchLoader] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -45,6 +48,12 @@ const ProductList = () => {
   const postPerPageParam = currentParams.get("postPerPage");
   const skipParam = currentParams.get("offset");
   const categoryParam = currentParams.get("category");
+
+  const { productsList } = useSelector((state) => state.product);
+  const { categoryList } = useSelector((state) => state.category);
+  const dispatch = useDispatch();
+
+  // console.log({ productsList }, "STORE");
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
@@ -93,6 +102,7 @@ const ProductList = () => {
     try {
       let response = await getCategories();
       setCategories(response.data);
+      dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
     }
@@ -174,6 +184,10 @@ const ProductList = () => {
       setProductData(response.data.products);
       setSkip(response.data.skip);
       setTotal(response.data.total);
+      let pageNumber = Math.ceil(currentSkip / currentPostPerPage + 1);
+      dispatch(
+        getProductAction(response.data.products, pageNumber, currentPostPerPage)
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -267,6 +281,24 @@ const ProductList = () => {
     }));
     setExportTableData(newData);
   }, [productData]);
+
+  useEffect(() => {
+    setCategories(categoryList);
+  }, [categoryList]);
+
+  useEffect(() => {
+    if (productsList?.length) {
+      console.log({ productsList }, "_______");
+      const filter = productsList.filter(
+        (item) => item.currentPage === currentPaginationNum
+      );
+      // console.log({ filter });
+      setProductData(productsList);
+    } else {
+      // setMainLoader(true);
+      // fetchProductData(postPerPageTEMP, skipTemp);
+    }
+  }, [productsList]);
 
   return (
     <>

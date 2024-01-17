@@ -9,10 +9,10 @@ const PageNotFound = () => {
     <div className="mt-6 text-center">
       <Card>
         <div className="py-6">
-          <div className="text-3xl text-gray-600 pb-2 font-medium">
+          <div className="text-3xl text-gray-600 pb-2 font-medium dark:text-gray-200">
             404 - Not Found
           </div>
-          <p className="text-gray-500 pb-4">
+          <p className="text-gray-500 dark:text-gray-300 pb-4">
             Sorry, the page you are looking for does not exist.
           </p>
           <Link to="/">
