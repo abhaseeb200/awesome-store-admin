@@ -22,13 +22,16 @@ import {
 } from "../../api/api";
 import ExportDropDown from "../../components/exportDropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { getProductAction } from "../../redux/actions/productAction";
+import {
+  deleteProductAction,
+  getProductAction,
+} from "../../redux/actions/productAction";
 import { getCategoryAction } from "../../redux/actions/categoryAction";
 
 const ProductList = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [mainLoader, setMainLoader] = useState(false);
-  const [cardInnerLoader, setCardInnerLoader] = useState(false);
+  const [cardInnerLoader, setCardInnerLoader] = useState(true);
   const [searchLoader, setSearchLoader] = useState(false);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("");
@@ -53,27 +56,38 @@ const ProductList = () => {
   const { categoryList } = useSelector((state) => state.category);
   const dispatch = useDispatch();
 
-  // console.log({ productsList }, "STORE");
+  console.log(productsList, " <<<<  PRODUCT FROM STORRRE");
 
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
     let skipTEMP = (pageNumber - 1) * postPerPage;
     setSkip(skipTEMP);
-    setCardInnerLoader(true);
     if (search.trim() !== "") {
       handleSearch(postPerPage, skipTEMP);
     } else {
-      fetchProductData(postPerPage, skipTEMP);
+      const targetObject = productsList.find(
+        (item) => item.pageCount === pageNumber
+      );
+      if (targetObject) {
+        let products = targetObject.data;
+        console.log({ products });
+        setProductData(products);
+      } else {
+        setCardInnerLoader(true);
+        fetchProductData(postPerPage, skipTEMP);
+        console.log(`Object with pageCount: ${pageNumber} not found`);
+      }
     }
   };
 
   const handlePostPerPage = (e) => {
     let val = e.target.value;
+    console.log(val);
     setPostPerPage(val);
     setSkip(0);
     setCurrentPaginationNum(1); //May be its useless
-    setCardInnerLoader(true);
     if (search.trim() !== "") {
+      setCardInnerLoader(true);
       handleSearch(val, 0);
     } else {
       fetchProductData(val, 0);
@@ -86,6 +100,12 @@ const ProductList = () => {
     setCurrentProduct(product);
   };
 
+  const handleDeleteProduct = (product) => {
+    const { id } = product;
+    dispatch(deleteProductAction(id));
+    // setProductData(productsList);
+  };
+
   const discountPrice = (price, discountPercentage) => {
     let priceAfterDiscount = price - (discountPercentage / 100) * price;
     return priceAfterDiscount.toFixed(2);
@@ -94,7 +114,18 @@ const ProductList = () => {
   const handleCategoryFilter = (e) => {
     let val = e.target.value;
     setCurrentCategory(val);
-    setCardInnerLoader(true);
+    //what if when redux the emptry and select category...
+    if (productsList?.length) {
+      const filterProducts = productsList.filter(
+        (item) => item.category === val
+      );
+      console.log({ filterProducts });
+      if (!filterProducts?.length) {
+        console.log("new category products");
+        setCardInnerLoader(true);
+      }
+      setProductData(filterProducts);
+    }
     fetchCategoryProducts(val);
   };
 
@@ -181,13 +212,17 @@ const ProductList = () => {
     try {
       let option = { limit: currentPostPerPage, skip: currentSkip };
       let response = await getProducts(option);
-      setProductData(response.data.products);
-      setSkip(response.data.skip);
-      setTotal(response.data.total);
+      const { products, skip, total } = response.data;
+      setProductData(products);
+      setSkip(skip);
+      setTotal(total);
       let pageNumber = Math.ceil(currentSkip / currentPostPerPage + 1);
-      dispatch(
-        getProductAction(response.data.products, pageNumber, currentPostPerPage)
+      let isExistPageNumber = productsList.find(
+        (item) => item.pageCount === pageNumber
       );
+      if (!isExistPageNumber) {
+        dispatch(getProductAction(products, pageNumber, currentPostPerPage));
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -217,7 +252,6 @@ const ProductList = () => {
     }
 
     if (currentCategory !== "0" && currentCategory) {
-      console.log({ currentCategory }, "+++++++");
       currentParams.forEach((value, key) => {
         if (key !== "category") {
           currentParams.delete(key);
@@ -239,6 +273,7 @@ const ProductList = () => {
     fetchCategories();
     let postPerPageTEMP = postPerPage;
     let skipTemp = skip;
+    let pageNumber = 1;
     if (postPerPageParam) {
       postPerPageTEMP = parseInt(postPerPageParam);
       setPostPerPage(parseInt(postPerPageParam)); //May be its useless
@@ -246,7 +281,7 @@ const ProductList = () => {
     if (skipParam) {
       setSkip(parseInt(skipParam)); //May be its useless
       skipTemp = parseInt(skipParam);
-      let pageNumber = Math.ceil(parseInt(skipParam) / postPerPageTEMP + 1);
+      pageNumber = Math.ceil(parseInt(skipParam) / postPerPageTEMP + 1);
       setCurrentPaginationNum(pageNumber);
     }
 
@@ -286,19 +321,9 @@ const ProductList = () => {
     setCategories(categoryList);
   }, [categoryList]);
 
-  useEffect(() => {
-    if (productsList?.length) {
-      console.log({ productsList }, "_______");
-      const filter = productsList.filter(
-        (item) => item.currentPage === currentPaginationNum
-      );
-      // console.log({ filter });
-      setProductData(productsList);
-    } else {
-      // setMainLoader(true);
-      // fetchProductData(postPerPageTEMP, skipTemp);
-    }
-  }, [productsList]);
+  // useEffect(() => {
+  //   console.log("--------------------");
+  // }, [productsList]);
 
   return (
     <>
@@ -415,7 +440,7 @@ const ProductList = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {productData.length > 0 ? (
+                    {productData?.length > 0 ? (
                       productData.map((product, index) => {
                         return (
                           <tr
@@ -433,7 +458,7 @@ const ProductList = () => {
                               <span className="flex flex-col">
                                 <h5>{product.title}</h5>
                                 <p className="text-gray-400">
-                                  {product.description.length >= 26
+                                  {product?.description?.length >= 26
                                     ? product.description.slice(0, 26) + "..."
                                     : product.description}
                                 </p>
@@ -451,7 +476,10 @@ const ProductList = () => {
                                     <TbEdit size="1.3rem" />
                                   </span>
                                 </Link>
-                                <span className="hover:text-primaryDark cursor-pointer">
+                                <span
+                                  className="hover:text-primaryDark cursor-pointer"
+                                  onClick={() => handleDeleteProduct(product)}
+                                >
                                   <MdOutlineDeleteOutline size="1.3rem" />
                                 </span>
                                 <span

@@ -1,12 +1,17 @@
-import { GETPRODUCT } from "../types/productType";
+import { DELETERODUCT, GETPRODUCT } from "../types/productType";
 
-const getProductAction = (data, currentPage, postPerPage) => {
+const getProductAction = (data, pageCount, currentLimit) => {
   return {
     type: GETPRODUCT,
-    data: data,
-    currentPage: currentPage,
-    postPerPage: postPerPage,
+    payload: { data, pageCount, currentLimit }
   };
 };
 
-export { getProductAction };
+const deleteProductAction = (id) => {
+  return {
+    type: DELETERODUCT,
+    id: id
+  }
+}
+
+export { getProductAction, deleteProductAction };

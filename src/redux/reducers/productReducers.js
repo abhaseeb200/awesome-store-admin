@@ -1,4 +1,4 @@
-import { GETPRODUCT } from "../types/productType"
+import { DELETERODUCT, GETPRODUCT, UPDATEPRODUCT } from "../types/productType"
 
 const initialState = {
     productsList: [],
@@ -7,14 +7,22 @@ const initialState = {
 const productReducers = (state = initialState, action) => {
     switch (action.type) {
         case GETPRODUCT:
-            //add new key 'currentPage:1', for help in filter data if does't hit API
-            const updatedData = action.data.map(item => ({ ...item, currentPage: action.currentPage }));
-            // const removeSameIDData = action.data.filter(i => !action.data.map(j => j.id).includes(i.id))
-            // const removeSameIDData = action.data.filter(i => )
-            console.log({ removeSameIDData }, "______");
-            // console.log({ updatedData }, "++++++++++++++++");
+            const { data, pageCount, currentLimit } = action.payload
+            const store = {
+                data: data,
+                pageCount: pageCount,
+                currentLimit: currentLimit
+            }
             return {
-                productsList: [...state.productsList, ...updatedData],
+                ...state,
+                productsList: [store, ...state.productsList]
+            };
+        case DELETERODUCT:
+            const deleteProduct = state.productsList.filter(item => item.id !== action.id)
+            console.log({ deleteProduct }, "DELETE PRODUCT");
+            return {
+                ...state,
+                ...deleteProduct
             }
         default:
             return state
