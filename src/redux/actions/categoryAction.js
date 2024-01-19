@@ -1,10 +1,25 @@
-import { GETCATEGORY } from "../types/categoryType";
+import { DELETECATEGORY, GETCATEGORY, UPADATECATEGORY } from "../types/categoryType";
 
 const getCategoryAction = (data) => {
   return {
     type: GETCATEGORY,
-    data: data,
+    payload: data,
   };
 };
 
-export { getCategoryAction };
+const deleteCategoryAction = (currentCategory) => {
+  return {
+    type: DELETECATEGORY,
+    payload: currentCategory,
+  };
+};
+
+const updateCategoryAction = (currentCategory) => {
+  return {
+    type: UPADATECATEGORY,
+    payload: currentCategory,
+  };
+};
+
+
+export { getCategoryAction, deleteCategoryAction, updateCategoryAction };

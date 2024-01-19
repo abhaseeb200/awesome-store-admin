@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
 import { useParams } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
 import SelectCustom from "../../components/select";
@@ -61,6 +62,8 @@ const ProductEditor = () => {
   });
 
   const { id } = useParams();
+  const { categoryList } = useSelector((state) => state.category);
+  const dispatch = useDispatch();
 
   const fetchCategoriesName = async () => {
     try {
@@ -255,8 +258,17 @@ const ProductEditor = () => {
   }, [id]);
 
   useEffect(() => {
-    fetchCategoriesName();
+    if (categoryList?.length) {
+      setCategoriesName(categoryList);
+    } else {
+      fetchCategoriesName();
+    }
   }, []);
+
+  //beacause is page pe mujy realtime kerna hai
+  useEffect(() => {
+    setCategoriesName(categoryList);
+  }, [categoryList]);
 
   return (
     <>

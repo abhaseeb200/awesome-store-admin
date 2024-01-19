@@ -11,12 +11,15 @@ import Pagination from "../../components/pagination";
 import Button from "../../components/button";
 import { getCategories } from "../../api/api";
 import AddCategoryModal from "../../components/modal/addCategoryModal";
-import { getCategoryAction } from "../../redux/actions/categoryAction";
+import {
+  deleteCategoryAction,
+  getCategoryAction,
+} from "../../redux/actions/categoryAction";
 
 const CategoryList = () => {
   // const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [mainLoader, setMainLoader] = useState(false);
+  const [mainLoader, setMainLoader] = useState(true);
   const [cardInnerLoader, setCardInnerLoader] = useState(false); //it work only if pagination, search or post per page functionality
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState([]);
@@ -60,8 +63,8 @@ const CategoryList = () => {
   const fetchCategories = async () => {
     try {
       let response = await getCategories();
-      // setCategories(response.data);
-      // setCategoriesBackUP(response.data);
+      setCategories(response.data);
+      setCategoriesBackUP(response.data);
       dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
@@ -71,20 +74,23 @@ const CategoryList = () => {
   };
 
   const handleEdit = (category) => {
-    console.log(category, "---------");
     setIsOpenModal(true);
     setCurrentCategory({ value: category });
     setIsUpdate(true);
   };
 
+  const handleDelete = (category) => {
+    dispatch(deleteCategoryAction(category));
+  };
+
   useEffect(() => {
+    console.log("___________________");
     if (categoryList?.length) {
+      setMainLoader(false);
       console.log({ categoryList }, "CATEGORY");
       setCategories(categoryList);
       setCategoriesBackUP(categoryList);
-      fetchCategories();
     } else {
-      setMainLoader(true);
       fetchCategories();
     }
   }, []);
@@ -162,7 +168,10 @@ const CategoryList = () => {
                                     onClick={() => handleEdit(category)}
                                   />
                                 </span>
-                                <span className="hover:text-primaryDark cursor-pointer">
+                                <span
+                                  className="hover:text-primaryDark cursor-pointer"
+                                  onClick={() => handleDelete(category)}
+                                >
                                   <MdOutlineDeleteOutline size="1.3rem" />
                                 </span>
                               </span>

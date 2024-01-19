@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { TbLoader2 } from "react-icons/tb";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
 import { Card } from "../../components/card";
+import userAction from "../../redux/actions/userAction";
 
 const Login = ({ user }) => {
   const [loader, setLoader] = useState(false);
@@ -19,7 +21,9 @@ const Login = ({ user }) => {
     messageError: "",
   });
 
+  const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleEmail = (e) => {
     let emailVal = e.target.value.trim();
@@ -98,7 +102,8 @@ const Login = ({ user }) => {
 
   const signInHandler = async (e) => {
     e.preventDefault();
-    localStorage.setItem("currentUser", "111111111111");
+    let currentUser = "xyz";
+    dispatch(userAction(currentUser));
     navigate("/", { replace: true });
     if (email.value === "") {
       setEmail({
@@ -141,10 +146,7 @@ const Login = ({ user }) => {
   };
 
   const handleCheckUser = () => {
-    let user = localStorage.getItem("currentUser");
-
-    if (user) {
-      console.log(user, "-------");
+    if (currentUser) {
       navigate("/", { replace: true });
     }
   };

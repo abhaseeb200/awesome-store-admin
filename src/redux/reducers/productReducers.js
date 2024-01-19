@@ -7,15 +7,16 @@ const initialState = {
 const productReducers = (state = initialState, action) => {
     switch (action.type) {
         case GETPRODUCT:
-            const { data, pageCount, currentLimit } = action.payload
+            const { data, pageCount, currentLimit, currentOffset } = action.payload
             const store = {
                 data: data,
                 pageCount: pageCount,
-                currentLimit: currentLimit
+                currentLimit: currentLimit,
+                currentOffset: currentOffset
             }
             return {
                 ...state,
-                productsList: [store, ...state.productsList]
+                productsList: [...state.productsList, store]
             };
         case DELETERODUCT:
             const deleteProduct = state.productsList.filter(item => item.id !== action.id)

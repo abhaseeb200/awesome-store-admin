@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { GrAdd } from "react-icons/gr";
 import { LuEye, LuLoader2 } from "react-icons/lu";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoMdTennisball } from "react-icons/io";
 import { TbEdit } from "react-icons/tb";
 import InputCustom from "../../components/inputs";
 import SelectCustom from "../../components/select";
@@ -53,6 +53,7 @@ const ProductList = () => {
   const categoryParam = currentParams.get("category");
 
   const { productsList } = useSelector((state) => state.product);
+  const { currentOffset } = productsList;
   const { categoryList } = useSelector((state) => state.category);
   const dispatch = useDispatch();
 
@@ -65,34 +66,70 @@ const ProductList = () => {
     if (search.trim() !== "") {
       handleSearch(postPerPage, skipTEMP);
     } else {
-      const targetObject = productsList.find(
-        (item) => item.pageCount === pageNumber
-      );
-      if (targetObject) {
-        let products = targetObject.data;
-        console.log({ products });
-        setProductData(products);
+      //check if the PPP is 20, 30 then.
+      if (postPerPage <= 10) {
+        const targetObject = productsList.find(
+          (item) => item.pageCount === pageNumber
+        );
+        if (targetObject) {
+          let products = targetObject.data;
+          console.log({ products });
+          setProductData(products);
+        } else {
+          setCardInnerLoader(true);
+          fetchProductData(postPerPage, skipTEMP);
+          console.log(`Object with pageCount: ${pageNumber} not found`);
+        }
+        console.log("LIMIT..... 10 / OFFSET...");
+      } else if (postPerPage > 10 && postPerPage <= 20) {
+        let offsetObjs = productsList.filter(
+          (item) =>
+            item.currentOffset >= skipTEMP &&
+            item.currentOffset <= skipTEMP + 10
+        );
+        console.log("LIMIT...... 20 / OFFSET....", offsetObjs);
+        let mergedArray = [].concat(...offsetObjs.map((item) => item.data));
+        console.log(mergedArray);
+        setProductData(mergedArray);
       } else {
-        setCardInnerLoader(true);
-        fetchProductData(postPerPage, skipTEMP);
-        console.log(`Object with pageCount: ${pageNumber} not found`);
+        console.log("LIMIT..... 30 / OFFSET...");
       }
     }
   };
 
-  const handlePostPerPage = (e) => {
-    let val = e.target.value;
-    console.log(val);
-    setPostPerPage(val);
-    setSkip(0);
-    setCurrentPaginationNum(1); //May be its useless
-    if (search.trim() !== "") {
-      setCardInnerLoader(true);
-      handleSearch(val, 0);
-    } else {
-      fetchProductData(val, 0);
-    }
-  };
+  // const handlePostPerPage = (e) => {
+  //   let val = e.target.value;
+  //   // console.log(val);
+  //   setPostPerPage(val);
+  //   setSkip(0);
+  //   setCurrentPaginationNum(1); //May be its useless
+  //   if (search.trim() !== "") {
+  //     setCardInnerLoader(true);
+  //     handleSearch(val, 0);
+  //   } else {
+  //     // fetchProductData(val, 0);
+  //     if (val <= 10) {
+  //       let offsetObjs = productsList.find((item) => item.currentOffset === 0);
+  //       console.log("LIMIT: 10", { offsetObjs });
+  //       setProductData(offsetObjs.data);
+  //     } else if (val > 10 && val <= 20) {
+  //       let offsetObjs = productsList.filter(
+  //         (item) => item.currentOffset <= 10
+  //       );
+  //       let mergedArray = [].concat(...offsetObjs.map((item) => item.data));
+  //       console.log("LIMIT: 20", { offsetObjs });
+  //       console.log(mergedArray);
+  //       setProductData(mergedArray);
+  //     } else {
+  //       let offsetObjs = productsList.filter(
+  //         (item) => item.currentOffset <= 20
+  //       );
+  //       let mergedArray = [].concat(...offsetObjs.map((item) => item.data));
+  //       console.log("LIMIT: 30", { offsetObjs });
+  //       setProductData(mergedArray);
+  //     }
+  //   }
+  // };
 
   const handleView = (product) => {
     console.log({ product }, "VIEW");
@@ -103,7 +140,6 @@ const ProductList = () => {
   const handleDeleteProduct = (product) => {
     const { id } = product;
     dispatch(deleteProductAction(id));
-    // setProductData(productsList);
   };
 
   const discountPrice = (price, discountPercentage) => {
@@ -114,7 +150,6 @@ const ProductList = () => {
   const handleCategoryFilter = (e) => {
     let val = e.target.value;
     setCurrentCategory(val);
-    //what if when redux the emptry and select category...
     if (productsList?.length) {
       const filterProducts = productsList.filter(
         (item) => item.category === val
@@ -208,7 +243,6 @@ const ProductList = () => {
     currentPostPerPage = postPerPage,
     currentSkip = skip
   ) => {
-    // console.log("--------------", { currentSkip }, { currentPostPerPage });
     try {
       let option = { limit: currentPostPerPage, skip: currentSkip };
       let response = await getProducts(option);
@@ -221,7 +255,14 @@ const ProductList = () => {
         (item) => item.pageCount === pageNumber
       );
       if (!isExistPageNumber) {
-        dispatch(getProductAction(products, pageNumber, currentPostPerPage));
+        dispatch(
+          getProductAction(
+            products,
+            pageNumber,
+            currentPostPerPage,
+            currentSkip
+          )
+        );
       }
     } catch (error) {
       console.log(error);
@@ -270,7 +311,11 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    fetchCategories();
+    if (categoryList?.length) {
+      setCategories(categoryList);
+    } else {
+      fetchCategories();
+    }
     let postPerPageTEMP = postPerPage;
     let skipTemp = skip;
     let pageNumber = 1;
@@ -317,9 +362,10 @@ const ProductList = () => {
     setExportTableData(newData);
   }, [productData]);
 
-  useEffect(() => {
-    setCategories(categoryList);
-  }, [categoryList]);
+  // useEffect(() => {
+  //   //agir koi crud huga to directly real time operate hojaiye ga 
+  //   setCategories(categoryList);
+  // }, [categoryList]);
 
   // useEffect(() => {
   //   console.log("--------------------");
@@ -385,7 +431,7 @@ const ProductList = () => {
                 </span>
               </span>
               <span className="flex flex-wrap gap-2 items-center">
-                {total > 10 && (
+                {/* {total > 10 && (
                   <SelectCustom
                     customClass="py-2 lg:w-auto w-1/2 flex-1"
                     onChange={handlePostPerPage}
@@ -397,7 +443,7 @@ const ProductList = () => {
                     <option value="20">20</option>
                     <option value="30">30</option>
                   </SelectCustom>
-                )}
+                )} */}
                 <span className="lg:w-auto w-1/2">
                   {productData?.length > 0 && (
                     <ExportDropDown

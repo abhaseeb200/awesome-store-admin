@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectRoute = () => {
-  let user = localStorage.getItem("currentUser");
-  // console.log(user, "User");
-  if (!user) {
+  const { currentUser } = useSelector((state) => state.user);
+  if (!currentUser) {
     return <Navigate to="/login" replace />;
   } else {
     return <Outlet />;

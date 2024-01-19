@@ -1,6 +1,8 @@
+import { useDispatch } from "react-redux";
 import Modal from "..";
 import Button from "../../button";
 import InputCustom from "../../inputs";
+import { updateCategoryAction } from "../../../redux/actions/categoryAction";
 
 const AddCategoryModal = ({
   isOpenModal,
@@ -9,6 +11,8 @@ const AddCategoryModal = ({
   setCurrentCategory,
   isUpdate,
 }) => {
+  const dispatch = useDispatch();
+
   const handleAdd = (e) => {
     e.preventDefault();
     //Validation Process
@@ -30,6 +34,7 @@ const AddCategoryModal = ({
   };
 
   const handleUpdate = () => {
+    dispatch(updateCategoryAction(currentCategory.value.trim().toLowerCase()));
     console.log(currentCategory.value.trim(), " UPDATE SUCESSFULLY!");
   };
 
@@ -48,10 +53,14 @@ const AddCategoryModal = ({
       setIsOpenModal={setIsOpenModal}
       customWidth="w-full max-w-lg"
     >
-      <h3 className="text-lg text-gray-600 font-medium dark:text-gray-200">Add New Category</h3>
+      <h3 className="text-lg text-gray-600 font-medium dark:text-gray-200">
+        Add New Category
+      </h3>
       <form action="">
         <div className="my-5">
-          <label className="text-sm text-gray-500 dark:text-gray-300">Category Name</label>
+          <label className="text-sm text-gray-500 dark:text-gray-300">
+            Category Name
+          </label>
           <InputCustom
             placeholder="Mens-Shoes"
             value={currentCategory.value}

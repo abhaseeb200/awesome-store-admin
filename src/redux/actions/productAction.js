@@ -1,9 +1,9 @@
 import { DELETERODUCT, GETPRODUCT } from "../types/productType";
 
-const getProductAction = (data, pageCount, currentLimit) => {
+const getProductAction = (data, pageCount, currentLimit, currentOffset) => {
   return {
     type: GETPRODUCT,
-    payload: { data, pageCount, currentLimit }
+    payload: { data, pageCount, currentLimit, currentOffset }
   };
 };
 

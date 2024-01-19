@@ -11,6 +11,8 @@ import { FiLogOut } from "react-icons/fi";
 import NavbarLink from "../navbarLink";
 import { authLogout } from "../../config/services/firebase/auth";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import userAction from "../../redux/actions/userAction";
 
 const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
   return (
@@ -65,13 +67,14 @@ const OffCanvas = ({ showSidebar, handleSidebar, children }) => {
 };
 
 const SidebarContent = ({ handleSidebar }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await authLogout();
       navigate("/login", { replace: true });
-      localStorage.removeItem("currentUser");
+      dispatch(userAction(""));
     } catch (error) {
       console.log(error);
     }
