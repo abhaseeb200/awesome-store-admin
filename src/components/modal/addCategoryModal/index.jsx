@@ -1,22 +1,28 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Modal from "..";
 import Button from "../../button";
 import InputCustom from "../../inputs";
-import { updateCategoryAction } from "../../../redux/actions/categoryAction";
+import {
+  createCategoryAction,
+  updateCategoryAction,
+} from "../../../redux/actions/categoryAction";
 
 const AddCategoryModal = ({
   isOpenModal,
   setIsOpenModal,
   currentCategory,
   setCurrentCategory,
+  currentID,
   isUpdate,
 }) => {
   const dispatch = useDispatch();
+  const { categoryList } = useSelector((state) => state.category);
 
   const handleAdd = (e) => {
     e.preventDefault();
-    //Validation Process
-    if (currentCategory.value.trim() === "") {
+    let val = currentCategory.value.trim().toLowerCase();
+    //Empty Validation
+    if (val === "") {
       setCurrentCategory({
         value: "",
         isError: true,
@@ -24,6 +30,17 @@ const AddCategoryModal = ({
       });
       return;
     }
+    //Already Existed Validation
+    let isAlready = categoryList.some((item) => item.category === val);
+    if (isAlready) {
+      setCurrentCategory({
+        value: val,
+        isError: true,
+        messageError: "Category name already existed",
+      });
+      return
+    }
+    console.log("------------")
     if (isUpdate) {
       //Update category
       handleUpdate();
@@ -34,12 +51,19 @@ const AddCategoryModal = ({
   };
 
   const handleUpdate = () => {
-    dispatch(updateCategoryAction(currentCategory.value.trim().toLowerCase()));
-    console.log(currentCategory.value.trim(), " UPDATE SUCESSFULLY!");
+    let val = currentCategory.value.trim().toLowerCase();
+    let isAlready = categoryList.some((item) => item.category === val);
+    if (isAlready) {
+      console.log("Category already existed");
+    } else {
+      dispatch(updateCategoryAction(val, currentID));
+      console.log("Category Succesffully UPDATEDs");
+    }
   };
 
   const handleAddNew = () => {
-    console.log(currentCategory.value.trim(), " ADD SUCESSFULLY!");
+    dispatch(createCategoryAction(currentCategory.value.trim().toLowerCase()));
+    // console.log(currentCategory.value.trim(), " ADD SUCESSFULLY!");
   };
 
   const handleCancel = (e) => {

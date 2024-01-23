@@ -1,4 +1,9 @@
-import { DELETECATEGORY, GETCATEGORY, UPADATECATEGORY } from "../types/categoryType";
+import {
+  CREATEECATEGORY,
+  DELETECATEGORY,
+  GETCATEGORY,
+  UPADATECATEGORY,
+} from "../types/categoryType";
 
 const getCategoryAction = (data) => {
   return {
@@ -7,19 +12,26 @@ const getCategoryAction = (data) => {
   };
 };
 
-const deleteCategoryAction = (currentCategory) => {
+const deleteCategoryAction = (id) => {
   return {
     type: DELETECATEGORY,
-    payload: currentCategory,
+    id: id,
   };
 };
 
-const updateCategoryAction = (currentCategory) => {
+const updateCategoryAction = (category, id) => {
   return {
     type: UPADATECATEGORY,
-    payload: currentCategory,
+    category: category,
+    id: id,
   };
 };
 
+const createCategoryAction = (category) => {
+  return {
+    type: CREATEECATEGORY,
+    category: category,
+  };
+};
 
-export { getCategoryAction, deleteCategoryAction, updateCategoryAction };
+export { getCategoryAction, deleteCategoryAction, updateCategoryAction,createCategoryAction };

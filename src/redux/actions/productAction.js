@@ -1,17 +1,41 @@
-import { DELETERODUCT, GETPRODUCT } from "../types/productType";
+import {
+  CREATEPRODUCT,
+  DELETERODUCT,
+  GETPRODUCT,
+  UPDATEPRODUCT,
+} from "../types/productType";
 
 const getProductAction = (data, pageCount, currentLimit, currentOffset) => {
   return {
     type: GETPRODUCT,
-    payload: { data, pageCount, currentLimit, currentOffset }
+    payload: { data, pageCount, currentLimit, currentOffset },
   };
 };
 
-const deleteProductAction = (id) => {
+const deleteProductAction = (pageCountDelete, idDelete) => {
   return {
     type: DELETERODUCT,
-    id: id
-  }
-}
+    payload: { idDelete, pageCountDelete },
+  };
+};
 
-export { getProductAction, deleteProductAction };
+const updateProductAction = (data) => {
+  return {
+    type: UPDATEPRODUCT,
+    payload: data,
+  };
+};
+
+const createProductAction = (data) => {
+  return {
+    type: CREATEPRODUCT,
+    payload: data,
+  };
+};
+
+export {
+  getProductAction,
+  deleteProductAction,
+  updateProductAction,
+  createProductAction,
+};

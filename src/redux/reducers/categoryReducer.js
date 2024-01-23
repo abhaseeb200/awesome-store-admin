@@ -1,4 +1,9 @@
-import { DELETECATEGORY, GETCATEGORY, UPADATECATEGORY } from "../types/categoryType";
+import {
+  CREATEECATEGORY,
+  DELETECATEGORY,
+  GETCATEGORY,
+  UPADATECATEGORY,
+} from "../types/categoryType";
 
 const initialState = {
   categoryList: [],
@@ -7,20 +12,37 @@ const initialState = {
 const categoryReducers = (state = initialState, action) => {
   switch (action.type) {
     case GETCATEGORY:
+      let addIDCateogories = [];
+      action.payload.map((item) =>
+        addIDCateogories.push({
+          id: Math.floor(Math.random() * 999999999),
+          category: item,
+        })
+      );
+      console.log(addIDCateogories);
       return {
-        categoryList: [...action.payload]
-      }
+        categoryList: [...addIDCateogories],
+      };
     case DELETECATEGORY:
       return {
-        categoryList: state.categoryList.filter(item => item !== action.payload)
-      }
+        categoryList: state.categoryList.filter(
+          (item) => item.id !== action.id
+        ),
+      };
     case UPADATECATEGORY:
-      // let currentVal = action.payload
-      let findInd = state.categoryList.findIndex(item => item === currentVal)
-      // state.categoryList[findInd] = 
+      const { id, category } = action;
+      let findInd = state.categoryList.findIndex((item) => item.id === id);
+      state.categoryList[findInd].category = category;
+      return state;
+    case CREATEECATEGORY:
+      let newCategory = {
+        id: Math.floor(Math.random() * 999999999),
+        category: action.category,
+      };
+      // console.log([newCategory, ...addIDCateogories]);
       return {
-        ...state
-      }
+        categoryList: [newCategory, ...state.categoryList],
+      };
     default:
       return state;
   }

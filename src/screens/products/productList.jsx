@@ -66,34 +66,33 @@ const ProductList = () => {
     if (search.trim() !== "") {
       handleSearch(postPerPage, skipTEMP);
     } else {
-      //check if the PPP is 20, 30 then.
-      if (postPerPage <= 10) {
-        const targetObject = productsList.find(
-          (item) => item.pageCount === pageNumber
-        );
-        if (targetObject) {
-          let products = targetObject.data;
-          console.log({ products });
-          setProductData(products);
-        } else {
-          setCardInnerLoader(true);
-          fetchProductData(postPerPage, skipTEMP);
-          console.log(`Object with pageCount: ${pageNumber} not found`);
-        }
-        console.log("LIMIT..... 10 / OFFSET...");
-      } else if (postPerPage > 10 && postPerPage <= 20) {
-        let offsetObjs = productsList.filter(
-          (item) =>
-            item.currentOffset >= skipTEMP &&
-            item.currentOffset <= skipTEMP + 10
-        );
-        console.log("LIMIT...... 20 / OFFSET....", offsetObjs);
-        let mergedArray = [].concat(...offsetObjs.map((item) => item.data));
-        console.log(mergedArray);
-        setProductData(mergedArray);
+      //if condition same rahi gi bus else remove huga our bhar fetchProductData ajaiye ga
+      const targetObject = productsList.find(
+        (item) => item.pageCount === pageNumber
+      );
+      if (targetObject) {
+        let products = targetObject.data;
+        setProductData(products);
       } else {
-        console.log("LIMIT..... 30 / OFFSET...");
+        setCardInnerLoader(true);
+        fetchProductData(postPerPage, skipTEMP); //isko sahi kerna hai jb API milyn gi
+        console.log(`Object with pageCount: ${pageNumber} not found`);
       }
+      // if (postPerPage <= 10) {
+      //   console.log("LIMIT..... 10 / OFFSET...");
+      // } else if (postPerPage > 10 && postPerPage <= 20) {
+      //   let offsetObjs = productsList.filter(
+      //     (item) =>
+      //       item.currentOffset >= skipTEMP &&
+      //       item.currentOffset <= skipTEMP + 10
+      //   );
+      //   console.log("LIMIT...... 20 / OFFSET....", offsetObjs);
+      //   let mergedArray = [].concat(...offsetObjs.map((item) => item.data));
+      //   console.log(mergedArray);
+      //   setProductData(mergedArray);
+      // } else {
+      //   console.log("LIMIT..... 30 / OFFSET...");
+      // }
     }
   };
 
@@ -139,7 +138,7 @@ const ProductList = () => {
 
   const handleDeleteProduct = (product) => {
     const { id } = product;
-    dispatch(deleteProductAction(id));
+    dispatch(deleteProductAction(currentPaginationNum, id));
   };
 
   const discountPrice = (price, discountPercentage) => {
@@ -167,7 +166,7 @@ const ProductList = () => {
   const fetchCategories = async () => {
     try {
       let response = await getCategories();
-      setCategories(response.data);
+      // setCategories(response.data);
       dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
@@ -176,7 +175,15 @@ const ProductList = () => {
 
   const fetchCategoryProducts = async (category) => {
     if (category === "0") {
-      fetchProductData();
+      if (productsList?.length) {
+        setCardInnerLoader(false);
+        let findObj = productsList.find(
+          (item) => item.pageCount === 1
+        );
+        setProductData(findObj.data);
+      } else {
+        fetchProductData(); //api milny k bad yah bi theek hoga
+      }
     } else {
       try {
         setSearch("");
@@ -255,6 +262,7 @@ const ProductList = () => {
         (item) => item.pageCount === pageNumber
       );
       if (!isExistPageNumber) {
+        console.log("++++++++++++++++");
         dispatch(
           getProductAction(
             products,
@@ -311,6 +319,7 @@ const ProductList = () => {
   };
 
   useEffect(() => {
+    console.log("___________________")
     if (categoryList?.length) {
       setCategories(categoryList);
     } else {
@@ -338,7 +347,17 @@ const ProductList = () => {
       setCurrentCategory(categoryParam); //May be its useless
       fetchCategoryProducts(categoryParam);
     } else {
-      fetchProductData(postPerPageTEMP, skipTemp);
+      // condition same rahi gi bus else remove ho ker fetchProductData bhai ajaiye ga
+      if (productsList?.length) {
+        setCardInnerLoader(false);
+        let findObj = productsList.find(
+          (item) => item.pageCount === pageNumber
+        );
+        setProductData(findObj.data);
+        setTotal(100); //yah khud hi dynamically set hojaiye ga
+      } else {
+        fetchProductData(postPerPageTEMP, skipTemp); //is cheez ko sahi kerna hai jb new api milyn
+      }
     }
   }, []);
 
@@ -362,14 +381,23 @@ const ProductList = () => {
     setExportTableData(newData);
   }, [productData]);
 
-  // useEffect(() => {
-  //   //agir koi crud huga to directly real time operate hojaiye ga 
-  //   setCategories(categoryList);
-  // }, [categoryList]);
+  useEffect(() => {
+    setCategories(categoryList);
+  }, [categoryList]);
 
-  // useEffect(() => {
-  //   console.log("--------------------");
-  // }, [productsList]);
+  useEffect(()=>{
+    let pageNumber = 1;
+    if (skipParam) {
+      pageNumber = Math.ceil(parseInt(skipParam) / 10 + 1);
+    }
+    if (productsList?.length) {
+      setCardInnerLoader(false);
+      let findObj = productsList.find(
+        (item) => item.pageCount === pageNumber
+      );
+      setProductData(findObj.data);
+    }
+  },[productsList])
 
   return (
     <>
@@ -396,8 +424,8 @@ const ProductList = () => {
                     </option>
                     {categories.map((item, index) => {
                       return (
-                        <option value={item} key={index}>
-                          {item}
+                        <option value={item.category} key={index}>
+                          {item.category}
                         </option>
                       );
                     })}
@@ -430,7 +458,7 @@ const ProductList = () => {
                   )}
                 </span>
               </span>
-              <span className="flex flex-wrap gap-2 items-center">
+              <span className="flex gap-2 items-center">
                 {/* {total > 10 && (
                   <SelectCustom
                     customClass="py-2 lg:w-auto w-1/2 flex-1"
@@ -453,7 +481,7 @@ const ProductList = () => {
                     />
                   )}
                 </span>
-                <Link to="create" className="lg:w-auto w-full">
+                <Link to="create" className="lg:w-auto w-1/2">
                   <Button
                     name="Add Product"
                     icon={<GrAdd size="1rem" />}

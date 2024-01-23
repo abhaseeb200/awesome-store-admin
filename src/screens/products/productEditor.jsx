@@ -11,36 +11,40 @@ import PageHeading from "../../components/pageTitle";
 import { Card, CardHeading } from "../../components/card";
 import AddCategoryModal from "../../components/modal/addCategoryModal";
 import { addProduct, getCategories, getSingleProduct } from "../../api/api";
+import {
+  createProductAction,
+  updateProductAction,
+} from "../../redux/actions/productAction";
 
 const ProductEditor = () => {
   const [title, setTitle] = useState({
-    value: "",
+    value: "condom",
     isError: false,
     messageError: "",
   });
   const [quantity, setQuantity] = useState({
-    value: "",
+    value: 50,
     isError: false,
     messageError: "",
   });
   const [description, setDescription] = useState({
-    value: "",
+    value: "protected from every thing...",
     isError: false,
     messageError: "",
   });
   const [price, setPrice] = useState({
-    value: "",
+    value: 20,
     isError: false,
     messageError: "",
   });
   const [brand, setBrand] = useState({
-    value: "",
+    value: "durex",
     isError: false,
     messageError: "",
   });
   const [discountPercentage, setDiscountPercentage] = useState("");
   const [category, setCategory] = useState({
-    value: "",
+    value: "aaa",
     isError: false,
     messageError: "",
   });
@@ -63,6 +67,7 @@ const ProductEditor = () => {
 
   const { id } = useParams();
   const { categoryList } = useSelector((state) => state.category);
+  const { productsList } = useSelector((state) => state.product);
   const dispatch = useDispatch();
 
   const fetchCategoriesName = async () => {
@@ -196,16 +201,17 @@ const ProductEditor = () => {
       price.value > 0 &&
       brand.value.trim() !== "" &&
       category.value !== "" &&
-      category.value !== "0" &&
-      thumbnail.url !== ""
+      category.value !== "0"
+      // thumbnail.url !== ""
+      // && thumbnail.url !== undefined
     ) {
-      console.log(
-        title.value,
-        quantity.value,
-        price.value,
-        category.value,
-        thumbnail.url
-      );
+      // console.log(
+      //   title.value,
+      //   quantity.value,
+      //   price.value,
+      //   category.value,
+      //   thumbnail.url
+      // );
       if (isUpdate) {
         handleUpdateProduct();
       } else {
@@ -215,23 +221,40 @@ const ProductEditor = () => {
   };
 
   const handleUpdateProduct = () => {
+    let data = {
+      id: id,
+      title: title.value,
+      stock: quantity.value,
+      discountPercentage: discountPercentage,
+      description: description.value,
+      price: price.value,
+      brand: brand.value,
+      category: category.value,
+      thumbnail: thumbnail.url,
+    };
+    dispatch(updateProductAction(data));
     console.log("UPDATE PRODUCT...");
   };
 
   const handleCreateProduct = async () => {
-    let body = {
+    let data = {
+      id: Date.now(),
       title: title.value,
-      quantity: quantity.value,
+      stock: quantity.value,
+      discountPercentage: discountPercentage,
+      description: description.value,
       price: price.value,
-      // category: category.value,
-      thumbnail: thumbnail.value,
+      brand: brand.value,
+      category: category.value,
+      thumbnail: thumbnail.url,
     };
-    try {
-      let response = await addProduct(body);
-      console.log(response, "RESPONSE....");
-    } catch (error) {
-      console.log(error);
-    }
+    dispatch(createProductAction(data));
+    // try {
+    //   let response = await addProduct(body);
+    //   console.log(response, "RESPONSE....");
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const handleEmptyFields = () => {
@@ -250,10 +273,43 @@ const ProductEditor = () => {
     if (id) {
       setIsUpdate(true);
       fetchCurrentProduct();
+
+      // let productObj = productsList.find((page) =>
+      //   page.data.some((product) => product.id == id)
+      // );
+
+      // if (productObj) {
+      //   let currentProduct = productObj.data.find(
+      //     (product) => product.id == id
+      //   );
+      //   console.log(currentProduct);
+      //   //iska function bana de... q.k yah do jaga use howa hai
+      //   const {
+      //     title,
+      //     stock,
+      //     description,
+      //     price,
+      //     discountPercentage,
+      //     brand,
+      //     category,
+      //     thumbnail,
+      //     images,
+      //   } = currentProduct;
+      //   setTitle({ value: title });
+      //   setQuantity({ value: stock });
+      //   setDescription({ value: description });
+      //   setPrice({ value: price });
+      //   setDiscountPercentage(discountPercentage);
+      //   setBrand({ value: brand });
+      //   setCategory({ value: category });
+      //   setThumbnail({ url: thumbnail });
+      //   setGallaryData(images);
+      // } else {
+      // }
     } else {
       setIsUpdate(false);
       setIsProductFound(false);
-      handleEmptyFields();
+      // handleEmptyFields();
     }
   }, [id]);
 
@@ -276,7 +332,7 @@ const ProductEditor = () => {
         <div className="mt-6 text-center">
           <Card>
             <div className="py-6">
-              <div className="text-3xl text-gray-600 pb-2 font-medium">
+              <div className="text-3xl text-gray-600 pb-2 font-medium dark:text-gray-300">
                 404 - Product Not Found
               </div>
               <p className="text-gray-500 dark:text-gray-300 pb-4">
@@ -514,10 +570,10 @@ const ProductEditor = () => {
                     <option value="0" select="select">
                       Select Category
                     </option>
-                    {categoriesName.map((category, index) => {
+                    {categoriesName.map((item, index) => {
                       return (
-                        <option value={category} key={index}>
-                          {category}
+                        <option value={item.category} key={index}>
+                          {item.category}
                         </option>
                       );
                     })}

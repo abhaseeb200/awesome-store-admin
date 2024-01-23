@@ -30,6 +30,7 @@ const CategoryList = () => {
     isError: false,
     messageError: "",
   });
+  const [currentID, setCurrentID] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
 
   const { categoryList } = useSelector((state) => state.category);
@@ -63,8 +64,6 @@ const CategoryList = () => {
   const fetchCategories = async () => {
     try {
       let response = await getCategories();
-      setCategories(response.data);
-      setCategoriesBackUP(response.data);
       dispatch(getCategoryAction(response.data));
     } catch (error) {
       console.log(error);
@@ -73,14 +72,16 @@ const CategoryList = () => {
     }
   };
 
-  const handleEdit = (category) => {
-    setIsOpenModal(true);
+  const handleEdit = (categoryData) => {
+    const {id, category} = categoryData
     setCurrentCategory({ value: category });
+    setCurrentID(id)
     setIsUpdate(true);
+    setIsOpenModal(true);
   };
 
-  const handleDelete = (category) => {
-    dispatch(deleteCategoryAction(category));
+  const handleDelete = (id) => {
+    dispatch(deleteCategoryAction(id));
   };
 
   useEffect(() => {
@@ -153,24 +154,26 @@ const CategoryList = () => {
                   </thead>
                   <tbody>
                     {categoriesBackUP.length > 0 ? (
-                      categoriesBackUP.map((category, index) => {
+                      categoriesBackUP.map((item, index) => {
                         return (
                           <tr
                             className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
                             key={index}
                           >
-                            <td className="py-4 pl-5 capitalize">{category}</td>
+                            <td className="py-4 pl-5 capitalize">
+                              {item?.category}
+                            </td>
                             <td className="py-4 pr-5">
                               <span className="flex gap-1.5 justify-end text-gray-500 dark:text-gray-300">
                                 <span className="hover:text-primaryDark cursor-pointer">
                                   <TbEdit
                                     size="1.3rem"
-                                    onClick={() => handleEdit(category)}
+                                    onClick={() => handleEdit(item)}
                                   />
                                 </span>
                                 <span
                                   className="hover:text-primaryDark cursor-pointer"
-                                  onClick={() => handleDelete(category)}
+                                  onClick={() => handleDelete(item?.id)}
                                 >
                                   <MdOutlineDeleteOutline size="1.3rem" />
                                 </span>
@@ -220,6 +223,7 @@ const CategoryList = () => {
         setIsOpenModal={setIsOpenModal}
         currentCategory={currentCategory}
         setCurrentCategory={setCurrentCategory}
+        currentID={currentID}
         isUpdate={isUpdate}
       />
     </div>
