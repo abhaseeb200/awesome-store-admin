@@ -16,6 +16,7 @@ import ProductList from "../../screens/products/productList.jsx";
 import ProductEditor from "../../screens/products/productEditor.jsx";
 import Orders from "../../screens/orders/index.jsx";
 import Products from "../../screens/products/index.jsx";
+import Error from "../../screens/error/index.jsx";
 
 const Main = () => {
   // const router = createBrowserRouter([
@@ -57,12 +58,12 @@ const Main = () => {
   //   {
   //     path: "login",
   //     element: <Login />,
-  //   },
+  //   },w
   // ]);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
-        <Route path="/" element={<Layout />} errorElement={<PageNotFound />}>
+        <Route path="/" element={<Layout />} errorElement={<Error />}>
           <Route element={<ProtectRoute />}>
             <Route index element={<Dashboard />} />
             <Route path="orders" element={<Orders />}>

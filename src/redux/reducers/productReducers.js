@@ -26,7 +26,7 @@ const productReducers = (state = initialState, action) => {
       };
     case DELETERODUCT:
       const { pageCountDelete, idDelete } = action.payload;
-      
+
       const productDeleted = state.productsList.map((item) => {
         if (item.pageCount === pageCountDelete) {
           const updatedData = item.data.filter(
@@ -40,7 +40,7 @@ const productReducers = (state = initialState, action) => {
         return item;
       });
 
-      console.log("____________________" ,{productDeleted})
+      console.log("____________________", { productDeleted });
 
       // for (let i = 0; i <= productDeleted.length; i++) {
       //   if (productDeleted[i]?.data?.length !== 10) {
@@ -74,37 +74,39 @@ const productReducers = (state = initialState, action) => {
       const {
         id,
         title,
-        quantity,
+        stock,
         description,
         price,
         brand,
         category,
         thumbnail,
+        images,
       } = action.payload;
       let findObj = state.productsList.find((page) =>
         page.data.some((product) => product.id == id)
       );
       let currentProduct = findObj.data.find((item) => item.id == id);
       (currentProduct.title = title),
-        (currentProduct.stock = quantity),
+        (currentProduct.stock = stock),
         (currentProduct.description = description),
         (currentProduct.price = price),
         (currentProduct.brand = brand),
         (currentProduct.category = category),
         (currentProduct.thumbnail = thumbnail),
-        console.log(currentProduct, "UPADTAAAE");
+        (currentProduct.images = images),
+        console.log(currentProduct, "+++++++++++++ UPADTAAAE");
       return {
         ...state,
         productsList: [...state.productsList],
       };
     case CREATEPRODUCT:
-      //create an random ID -> issue yaha pe yah asekta hai orginal Database ki id our yah id  
+      //create an random ID -> issue yaha pe yah asekta hai orginal Database ki id our yah id
       let findFirstPage = state.productsList.find(
         (item) => item.pageCount === 1
       );
       findFirstPage.data.unshift(action.payload);
-      findFirstPage.data.pop()
-      console.log(action.payload)
+      findFirstPage.data.pop();
+      console.log(action.payload);
       return {
         ...state,
         productsList: [...state.productsList],

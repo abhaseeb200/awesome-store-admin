@@ -1,6 +1,9 @@
 import { Transition } from "@headlessui/react";
-import { useNavigate } from "react-router";
 import { Fragment } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
 import { GoChecklist } from "react-icons/go";
 import { CiBoxList } from "react-icons/ci";
@@ -9,10 +12,8 @@ import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
 import NavbarLink from "../navbarLink";
-import { authLogout } from "../../config/services/firebase/auth";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import userAction from "../../redux/actions/userAction";
+import { authLogout } from "../../config/services/firebase/auth";
 
 const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
   return (
@@ -74,6 +75,9 @@ const SidebarContent = ({ handleSidebar }) => {
     try {
       await authLogout();
       navigate("/login", { replace: true });
+      toast.success("Logout successfully!", {
+        autoClose: 1500,
+      });
       dispatch(userAction(""));
     } catch (error) {
       console.log(error);

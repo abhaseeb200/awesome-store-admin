@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import Modal from "..";
 import Button from "../../button";
 import InputCustom from "../../inputs";
@@ -20,7 +21,7 @@ const AddCategoryModal = ({
 
   const handleAdd = (e) => {
     e.preventDefault();
-    let val = currentCategory.value.trim().toLowerCase();
+    let val = currentCategory.value.trim();
     //Empty Validation
     if (val === "") {
       setCurrentCategory({
@@ -31,16 +32,17 @@ const AddCategoryModal = ({
       return;
     }
     //Already Existed Validation
-    let isAlready = categoryList.some((item) => item.category === val);
+    let isAlready = categoryList.some(
+      (item) => item.category.toLowerCase() === val.toLowerCase()
+    );
     if (isAlready) {
       setCurrentCategory({
         value: val,
         isError: true,
         messageError: "Category name already existed",
       });
-      return
+      return;
     }
-    console.log("------------")
     if (isUpdate) {
       //Update category
       handleUpdate();
@@ -52,18 +54,19 @@ const AddCategoryModal = ({
 
   const handleUpdate = () => {
     let val = currentCategory.value.trim().toLowerCase();
-    let isAlready = categoryList.some((item) => item.category === val);
-    if (isAlready) {
-      console.log("Category already existed");
-    } else {
-      dispatch(updateCategoryAction(val, currentID));
-      console.log("Category Succesffully UPDATEDs");
-    }
+    dispatch(updateCategoryAction(val, currentID));
+    setIsOpenModal(false);
+    toast.success("Category Updated Succesffully!", {
+      autoClose: 1500,
+    });
   };
 
   const handleAddNew = () => {
     dispatch(createCategoryAction(currentCategory.value.trim().toLowerCase()));
-    // console.log(currentCategory.value.trim(), " ADD SUCESSFULLY!");
+    setIsOpenModal(false);
+    toast.success("Category Added Succesffully!", {
+      autoClose: 1500,
+    });
   };
 
   const handleCancel = (e) => {

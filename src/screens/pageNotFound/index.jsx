@@ -1,10 +1,8 @@
-import { Link, useRouteError } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../../components/button";
 import { Card } from "../../components/card";
 
 const PageNotFound = () => {
-  const error = useRouteError();
-  console.log({ error });
   return (
     <div className="mt-6 text-center">
       <Card>

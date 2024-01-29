@@ -57,8 +57,7 @@ const ProductList = () => {
   const { categoryList } = useSelector((state) => state.category);
   const dispatch = useDispatch();
 
-  console.log(productsList, " <<<<  PRODUCT FROM STORRRE");
-
+  
   const handlePageChange = (pageNumber) => {
     setCurrentPaginationNum(pageNumber);
     let skipTEMP = (pageNumber - 1) * postPerPage;
@@ -139,6 +138,7 @@ const ProductList = () => {
   const handleDeleteProduct = (product) => {
     const { id } = product;
     dispatch(deleteProductAction(currentPaginationNum, id));
+    // console.log(productsList, " <<<<  PRODUCT FROM STORRRE");
   };
 
   const discountPrice = (price, discountPercentage) => {
@@ -177,9 +177,7 @@ const ProductList = () => {
     if (category === "0") {
       if (productsList?.length) {
         setCardInnerLoader(false);
-        let findObj = productsList.find(
-          (item) => item.pageCount === 1
-        );
+        let findObj = productsList.find((item) => item.pageCount === 1);
         setProductData(findObj.data);
       } else {
         fetchProductData(); //api milny k bad yah bi theek hoga
@@ -319,7 +317,7 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    console.log("___________________")
+    console.log("___________________");
     if (categoryList?.length) {
       setCategories(categoryList);
     } else {
@@ -385,19 +383,22 @@ const ProductList = () => {
     setCategories(categoryList);
   }, [categoryList]);
 
-  useEffect(()=>{
+  useEffect(() => {
+    console.log("++++++")
     let pageNumber = 1;
-    if (skipParam) {
-      pageNumber = Math.ceil(parseInt(skipParam) / 10 + 1);
+    console.log(skipParam,"_______", skip, postPerPage)
+    if (skip) {
+      pageNumber = Math.ceil(parseInt(skip) / 10 + 1);
+    }
+    if (currentCategory) {
+      
     }
     if (productsList?.length) {
       setCardInnerLoader(false);
-      let findObj = productsList.find(
-        (item) => item.pageCount === pageNumber
-      );
+      let findObj = productsList.find((item) => item.pageCount === pageNumber);
       setProductData(findObj.data);
     }
-  },[productsList])
+  }, [productsList]);
 
   return (
     <>
@@ -524,7 +525,11 @@ const ProductList = () => {
                             <td className="py-4 flex gap-2 pl-5">
                               <span>
                                 <img
-                                  src={product.thumbnail}
+                                  src={product?.thumbnail}
+                                  onError={(e) => {
+                                    e.target.src =
+                                      "https://cdn.dummyjson.com/product-images/placeholder.jpg";
+                                  }}
                                   width="40"
                                   className="object-cover h-10"
                                 />

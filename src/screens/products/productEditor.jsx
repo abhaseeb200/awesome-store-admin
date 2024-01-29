@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiUpload } from "react-icons/fi";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/button";
 import InputCustom from "../../components/inputs";
@@ -18,33 +19,33 @@ import {
 
 const ProductEditor = () => {
   const [title, setTitle] = useState({
-    value: "condom",
+    value: "",
     isError: false,
     messageError: "",
   });
   const [quantity, setQuantity] = useState({
-    value: 50,
+    value: "",
     isError: false,
     messageError: "",
   });
   const [description, setDescription] = useState({
-    value: "protected from every thing...",
+    value: "",
     isError: false,
     messageError: "",
   });
   const [price, setPrice] = useState({
-    value: 20,
+    value: "",
     isError: false,
     messageError: "",
   });
   const [brand, setBrand] = useState({
-    value: "durex",
+    value: "",
     isError: false,
     messageError: "",
   });
   const [discountPercentage, setDiscountPercentage] = useState("");
   const [category, setCategory] = useState({
-    value: "aaa",
+    value: "",
     isError: false,
     messageError: "",
   });
@@ -64,6 +65,8 @@ const ProductEditor = () => {
     isError: false,
     messageError: "",
   });
+
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const { categoryList } = useSelector((state) => state.category);
@@ -121,7 +124,7 @@ const ProductEditor = () => {
 
   const handleGallary = (e) => {
     if (e.target.files) {
-      let newImages = Array.from(e.target.files).map((file) =>
+      let newImages = Array.from(e.target.files)?.map((file) =>
         URL.createObjectURL(file)
       );
       setGallaryData([...newImages, ...gallaryData]);
@@ -201,9 +204,9 @@ const ProductEditor = () => {
       price.value > 0 &&
       brand.value.trim() !== "" &&
       category.value !== "" &&
-      category.value !== "0"
-      // thumbnail.url !== ""
-      // && thumbnail.url !== undefined
+      category.value !== "0" &&
+      thumbnail.url !== "" &&
+      thumbnail.url !== undefined
     ) {
       // console.log(
       //   title.value,
@@ -231,9 +234,14 @@ const ProductEditor = () => {
       brand: brand.value,
       category: category.value,
       thumbnail: thumbnail.url,
+      images:[...gallaryData]
     };
+    // console.log(data,"______")
     dispatch(updateProductAction(data));
-    console.log("UPDATE PRODUCT...");
+    navigate("/products", { replace: true });
+    toast.success("Product Updated Succesffully!", {
+      autoClose: 1500,
+    });
   };
 
   const handleCreateProduct = async () => {
@@ -247,14 +255,13 @@ const ProductEditor = () => {
       brand: brand.value,
       category: category.value,
       thumbnail: thumbnail.url,
+      images: [thumbnail.url, ...gallaryData]
     };
     dispatch(createProductAction(data));
-    // try {
-    //   let response = await addProduct(body);
-    //   console.log(response, "RESPONSE....");
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    navigate("/products", { replace: true });
+    toast.success("Product Added Succesffully!", {
+      autoClose: 1500,
+    });
   };
 
   const handleEmptyFields = () => {
@@ -272,40 +279,40 @@ const ProductEditor = () => {
   useEffect(() => {
     if (id) {
       setIsUpdate(true);
-      fetchCurrentProduct();
+      // fetchCurrentProduct();
 
-      // let productObj = productsList.find((page) =>
-      //   page.data.some((product) => product.id == id)
-      // );
+      let productObj = productsList.find((page) =>
+        page.data.some((product) => product.id == id)
+      );
 
-      // if (productObj) {
-      //   let currentProduct = productObj.data.find(
-      //     (product) => product.id == id
-      //   );
-      //   console.log(currentProduct);
-      //   //iska function bana de... q.k yah do jaga use howa hai
-      //   const {
-      //     title,
-      //     stock,
-      //     description,
-      //     price,
-      //     discountPercentage,
-      //     brand,
-      //     category,
-      //     thumbnail,
-      //     images,
-      //   } = currentProduct;
-      //   setTitle({ value: title });
-      //   setQuantity({ value: stock });
-      //   setDescription({ value: description });
-      //   setPrice({ value: price });
-      //   setDiscountPercentage(discountPercentage);
-      //   setBrand({ value: brand });
-      //   setCategory({ value: category });
-      //   setThumbnail({ url: thumbnail });
-      //   setGallaryData(images);
-      // } else {
-      // }
+      if (productObj) {
+        let currentProduct = productObj.data.find(
+          (product) => product.id == id
+        );
+        console.log(currentProduct);
+        //iska function bana de... q.k yah do jaga use howa hai
+        const {
+          title,
+          stock,
+          description,
+          price,
+          discountPercentage,
+          brand,
+          category,
+          thumbnail,
+          images,
+        } = currentProduct;
+        setTitle({ value: title });
+        setQuantity({ value: stock });
+        setDescription({ value: description });
+        setPrice({ value: price });
+        setDiscountPercentage(discountPercentage);
+        setBrand({ value: brand });
+        setCategory({ value: category });
+        setThumbnail({ url: thumbnail });
+        setGallaryData(images);
+      } else {
+      }
     } else {
       setIsUpdate(false);
       setIsProductFound(false);
@@ -454,7 +461,7 @@ const ProductEditor = () => {
                     Gallary(Optional)
                   </label>
                   <div className="flex flex-wrap gap-1">
-                    {gallaryData.map((gallary, index) => {
+                    {gallaryData?.map((gallary, index) => {
                       return (
                         <img
                           src={gallary}
@@ -570,7 +577,7 @@ const ProductEditor = () => {
                     <option value="0" select="select">
                       Select Category
                     </option>
-                    {categoriesName.map((item, index) => {
+                    {categoriesName?.map((item, index) => {
                       return (
                         <option value={item.category} key={index}>
                           {item.category}

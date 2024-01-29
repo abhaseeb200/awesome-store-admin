@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
@@ -82,6 +83,9 @@ const CategoryList = () => {
 
   const handleDelete = (id) => {
     dispatch(deleteCategoryAction(id));
+    toast.success("Category Deleted Succesffully!", {
+      autoClose: 1500,
+    });
   };
 
   useEffect(() => {

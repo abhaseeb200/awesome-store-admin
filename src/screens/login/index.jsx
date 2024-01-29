@@ -105,6 +105,9 @@ const Login = ({ user }) => {
     let currentUser = "xyz";
     dispatch(userAction(currentUser));
     navigate("/", { replace: true });
+    toast.success("Login successfully!", {
+      autoClose: 1500,
+    });
     if (email.value === "") {
       setEmail({
         value: email.value,
