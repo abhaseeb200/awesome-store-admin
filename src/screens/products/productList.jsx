@@ -425,8 +425,8 @@ const ProductList = () => {
                     </option>
                     {categories.map((item, index) => {
                       return (
-                        <option value={item.category} key={index}>
-                          {item.category}
+                        <option value={item?.category?.slug} key={index}>
+                          {item?.category?.name}
                         </option>
                       );
                     })}
@@ -535,19 +535,19 @@ const ProductList = () => {
                                 />
                               </span>
                               <span className="flex flex-col">
-                                <h5>{product.title}</h5>
+                                <h5>{product?.title}</h5>
                                 <p className="text-gray-400">
                                   {product?.description?.length >= 26
-                                    ? product.description.slice(0, 26) + "..."
-                                    : product.description}
+                                    ? product?.description.slice(0, 26) + "..."
+                                    : product?.description}
                                 </p>
                               </span>
                             </td>
                             <td className="py-4 px-3 capitalize">
-                              {product.category}
+                              {product?.category}
                             </td>
-                            <td className="py-4 px-3">${product.price}</td>
-                            <td className="py-4 px-3">{product.stock}</td>
+                            <td className="py-4 px-3">${product?.price}</td>
+                            <td className="py-4 px-3">{product?.stock}</td>
                             <td className="py-4 pr-5">
                               <span className="flex gap-1.5 justify-center text-gray-500 dark:text-gray-300">
                                 <Link to={`${product?.id}/update`}>

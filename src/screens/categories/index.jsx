@@ -74,8 +74,8 @@ const CategoryList = () => {
   };
 
   const handleEdit = (categoryData) => {
-    const {id, category} = categoryData
-    setCurrentCategory({ value: category });
+    const {id, name, slug} = categoryData
+    setCurrentCategory({ value: name });
     setCurrentID(id)
     setIsUpdate(true);
     setIsOpenModal(true);
@@ -165,14 +165,14 @@ const CategoryList = () => {
                             key={index}
                           >
                             <td className="py-4 pl-5 capitalize">
-                              {item?.category}
+                              {item?.category.name}
                             </td>
                             <td className="py-4 pr-5">
                               <span className="flex gap-1.5 justify-end text-gray-500 dark:text-gray-300">
                                 <span className="hover:text-primaryDark cursor-pointer">
                                   <TbEdit
                                     size="1.3rem"
-                                    onClick={() => handleEdit(item)}
+                                    onClick={() => handleEdit(item?.category)}
                                   />
                                 </span>
                                 <span
