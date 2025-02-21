@@ -1,19 +1,32 @@
-import { Provider } from "react-redux";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { ToastContainer } from "react-toastify";
-import { PersistGate } from "redux-persist/integration/react";
 import Main from "./config/router";
-import { persistor, store } from "./redux/store";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      },
+    },
+  });
+
+  const persister = createSyncStoragePersister({
+    storage: window.localStorage,
+  });
+
   return (
     <>
       <ToastContainer />
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <Main />
-        </PersistGate>
-      </Provider>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+      >
+        <Main />
+      </PersistQueryClientProvider>
     </>
   );
 }

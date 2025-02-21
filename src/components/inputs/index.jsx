@@ -1,6 +1,9 @@
-const InputCustom = ({ isError, messageError, ...props }) => {
+const Input = ({ isError, messageError, ...props }) => {
   return (
     <>
+      <label className="text-sm leading-none text-gray-600 dark:text-gray-300">
+        {props?.label}
+      </label>
       <input
         {...props}
         className={`${
@@ -14,4 +17,4 @@ const InputCustom = ({ isError, messageError, ...props }) => {
   );
 };
 
-export default InputCustom;
+export default Input;

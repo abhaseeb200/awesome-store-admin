@@ -19,47 +19,7 @@ import Products from "../../screens/products/index.jsx";
 import Error from "../../screens/error/index.jsx";
 
 const Main = () => {
-  // const router = createBrowserRouter([
-  //   {
-  //     path: "/",
-  //     element: <Layout />,
-  //     errorElement: <PageNotFound />,
-  //     children: [
-  //       {
-  //         path: "/",
-  //         element: <Dashboard />,
-  //       },
-  //       {
-  //         path: "orders",
-  //         element: <OrderList />,
-  //       },
-  //       {
-  //         path: "orders/:paramsDocID",
-  //         element: <OrderDetails />,
-  //       },
-  //       {
-  //         path: "products",
-  //         element: <ProductList />,
-  //       },
-  //       {
-  //         path: "products/create",
-  //         element: <ProductEditor />,
-  //       },
-  //       {
-  //         path: "products/:productID/edit",
-  //         element: <ProductEditor />,
-  //       },
-  //       {
-  //         path: "categories",
-  //         element: <CategoryList />,
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     path: "login",
-  //     element: <Login />,
-  //   },w
-  // ]);
+  
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>

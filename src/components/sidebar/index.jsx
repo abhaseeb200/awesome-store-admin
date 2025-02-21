@@ -68,20 +68,20 @@ const OffCanvas = ({ showSidebar, handleSidebar, children }) => {
 };
 
 const SidebarContent = ({ handleSidebar }) => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await authLogout();
-      navigate("/login", { replace: true });
-      toast.success("Logout successfully!", {
-        autoClose: 1500,
-      });
-      dispatch(userAction(""));
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   await authLogout();
+    //   navigate("/login", { replace: true });
+    //   toast.success("Logout successfully!", {
+    //     autoClose: 1500,
+    //   });
+    //   dispatch(userAction(""));
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
