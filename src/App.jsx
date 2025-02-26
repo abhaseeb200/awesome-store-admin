@@ -1,9 +1,13 @@
 import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import {
+  PersistQueryClientProvider,
+  persistQueryClientRestore,
+} from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { ToastContainer } from "react-toastify";
 import Main from "./config/router";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
 
 function App() {
   const queryClient = new QueryClient({
@@ -17,6 +21,19 @@ function App() {
   const persister = createSyncStoragePersister({
     storage: window.localStorage,
   });
+
+  persistQueryClientRestore({
+    queryClient,
+    persister,
+  });
+
+  useEffect(() => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      queryClient.setQueryData("auth", JSON.parse(auth));
+    }
+  }, []);
+  
 
   return (
     <>
