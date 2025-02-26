@@ -5,10 +5,14 @@ import { TbUsers } from "react-icons/tb";
 import { Card, CardHeading } from "../../components/card";
 import { getProducts } from "../../api/api";
 import { getAllUsers } from "../../config/services/firebase/user";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Dashboard = () => {
   let [customerSize, setCustomerSize] = useState(0);
   let [productSize, setProductSize] = useState(0);
+
+  const queryClient = useQueryClient();
+  const cachedUser = queryClient.getQueryData('user');
 
   const fetchCustomerSize = async () => {
     try {
