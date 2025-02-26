@@ -1,12 +1,13 @@
 import { z } from "zod";
+import { useEffect } from "react";
+import axios from "axios";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import Button from "../../components/button";
 import Input from "../../components/inputs";
 import { Card } from "../../components/card";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "@tanstack/react-form";
-import axios from "axios";
 
 // Minimum 6 characters,
 // At least one uppercase letter,
@@ -23,26 +24,23 @@ const userSchema = z.object({
   }),
 });
 
-const Login = ({ user }) => {
+const Login = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-
-  const queryDataUser = queryClient.getQueryData("user")
-  console.log({queryDataUser});
-  
   const mutation = useMutation({
     mutationFn: (data) => {
-      return axios.post('http://127.0.0.1:3000/signin/user', data)
+      return axios.post("http://127.0.0.1:3000/signin/admin", data);
     },
     onSuccess: (response) => {
-      toast.success("Login Successfully")
-      console.log(response?.data,"+++++");
-      queryClient.setQueryData('user', response?.data);
+      toast.success("Login Successfully");
+      queryClient.setQueryData("auth", response?.data);
+      localStorage.setItem("auth", JSON.stringify(response?.data));
+      navigate("/dashboard");
     },
     onError: (error) => {
-      toast.error(error?.message || "Something went wrong")
-    }
+      toast.error(error?.message || "Something went wrong");
+    },
   });
 
   const form = useForm({
@@ -54,7 +52,7 @@ const Login = ({ user }) => {
       onChange: userSchema,
     },
     onSubmit: async ({ value }) => {
-      mutation.mutate(value)
+      mutation.mutate(value);
     },
   });
 
@@ -64,7 +62,7 @@ const Login = ({ user }) => {
         <Card>
           <div className="sm:p-9 p-6">
             {/* ==================== HEADING - CONTENT ==================== */}
-            {/* <h2 className="text-center text-2xl font-bold pb-5 text-gray-700 dark:text-gray-200">
+            <h2 className="text-center text-2xl font-bold pb-5 text-gray-700 dark:text-gray-200">
               Awesome
             </h2>
             <h4 className="text-xl font-medium text-gray-800 dark:text-gray-200 pb-1">
@@ -72,7 +70,7 @@ const Login = ({ user }) => {
             </h4>
             <p className="text-gray-600 dark:text-gray-300 pb-5">
               Please sign-in to your account and start the adventure
-            </p> */}
+            </p>
 
             {/* ==================== FORM WRAPPER ==================== */}
             <form
