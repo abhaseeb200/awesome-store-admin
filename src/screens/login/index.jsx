@@ -1,13 +1,12 @@
 import { z } from "zod";
-import { useEffect } from "react";
 import axios from "axios";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import Button from "../../components/button";
-import Input from "../../components/inputs";
-import { Card } from "../../components/card";
+import Button from "@/components/button";
+import Input from "@/components/inputs";
+import { Card } from "@/components/card";
 
 // Minimum 6 characters,
 // At least one uppercase letter,
