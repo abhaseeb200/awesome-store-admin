@@ -1,19 +1,14 @@
 import { Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
 import { GoChecklist } from "react-icons/go";
 import { CiBoxList } from "react-icons/ci";
 import { TbCategoryPlus } from "react-icons/tb";
-import { LiaFileInvoiceSolid } from "react-icons/lia";
-import { IoBagAddOutline } from "react-icons/io5";
 import { FiLogOut } from "react-icons/fi";
-import NavbarLink from "../navbarLink";
-import userAction from "../../redux/actions/userAction";
-import { authLogout } from "../../config/services/firebase/auth";
+import { QueryClient } from "@tanstack/react-query";
+import NavbarLink from "@/components/navbarLink";
 
 const Sidebar = ({ showSidebar, handleSidebar, screenWidth }) => {
   return (
@@ -68,20 +63,14 @@ const OffCanvas = ({ showSidebar, handleSidebar, children }) => {
 };
 
 const SidebarContent = ({ handleSidebar }) => {
-  // const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = new QueryClient();
 
   const handleLogout = async () => {
-    // try {
-    //   await authLogout();
-    //   navigate("/login", { replace: true });
-    //   toast.success("Logout successfully!", {
-    //     autoClose: 1500,
-    //   });
-    //   dispatch(userAction(""));
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    queryClient.setQueryData('auth', null);
+    localStorage.removeItem('auth');
+    toast.success("Logout successfully!");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -93,6 +82,7 @@ const SidebarContent = ({ handleSidebar }) => {
           </span>
         </Link>
       </div>
+
       <nav className="mt-4 px-4">
         <NavbarLink
           to="/"
@@ -100,6 +90,7 @@ const SidebarContent = ({ handleSidebar }) => {
           icon={<IoHomeOutline size="1.1rem" />}
           handleSidebar={handleSidebar}
         />
+
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           Order
         </div>
@@ -109,6 +100,7 @@ const SidebarContent = ({ handleSidebar }) => {
           icon={<GoChecklist size="1.1rem" />}
           handleSidebar={handleSidebar}
         />
+
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           product
         </div>
@@ -118,6 +110,7 @@ const SidebarContent = ({ handleSidebar }) => {
           icon={<CiBoxList size="1.1rem" />}
           handleSidebar={handleSidebar}
         />
+
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           category
         </div>
@@ -127,6 +120,7 @@ const SidebarContent = ({ handleSidebar }) => {
           icon={<TbCategoryPlus size="1.1rem" />}
           handleSidebar={handleSidebar}
         />
+
         <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
           auth
         </div>
