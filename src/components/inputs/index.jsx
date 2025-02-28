@@ -1,7 +1,7 @@
 const Input = ({ isError, messageError, ...props }) => {
   return (
-    <>
-      <label className="text-sm leading-none text-gray-600 dark:text-gray-300">
+    <div>
+      <label className="capitalize text-sm leading-none text-gray-600 dark:text-gray-300">
         {props?.label}
       </label>
       <input
@@ -13,7 +13,7 @@ const Input = ({ isError, messageError, ...props }) => {
       {messageError !== "" && (
         <small className="text-red-500 block">{messageError}</small>
       )}
-    </>
+    </div>
   );
 };
 
