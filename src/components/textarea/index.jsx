@@ -1,6 +1,9 @@
-const TextareaCustom = ({ isError, messageError, name, ...props }) => {
+const Textarea = ({ isError, messageError, name, ...props }) => {
   return (
     <>
+      <label className="text-sm text-gray-500 dark:text-gray-300">
+        {props?.label}
+      </label>
       <textarea
         {...props}
         className={`${
@@ -16,4 +19,4 @@ const TextareaCustom = ({ isError, messageError, name, ...props }) => {
   );
 };
 
-export default TextareaCustom;
+export default Textarea;
