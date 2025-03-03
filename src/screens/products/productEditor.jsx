@@ -18,6 +18,8 @@ import { addProduct, getCategories, getSingleProduct } from "../../api/api";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+import UploadModal from "@/components/modal/uploadModal";
+import UploadField from "@/components/uploadField";
 
 const categories = [
   { id: 1, name: "Category 1" },
@@ -346,6 +348,11 @@ const ProductEditor = () => {
   // }, [categoryList]);
 
   // =============== NEW CODE =============== //
+  const [showUploadModal, setShowUploadModal] = useState({
+    type: "",
+    isOpen: false,
+  }); //gallery or thumbnail
+
   const productSchema = z.object({
     title: z.string().min(1, { message: "Title is required" }),
     description: z.string().min(1, { message: "Description is required" }),
@@ -380,8 +387,8 @@ const ProductEditor = () => {
       price: 100,
       discountPercentage: 10,
       stock: 22,
-      gallery: "https://placehold.co/600x400",
-      thumbnail: "https://placehold.co/600x400",
+      // gallery: "https://placehold.co/600x400",
+      // thumbnail: "https://placehold.co/600x400",
     },
     validators: {
       onChange: productSchema,
@@ -391,18 +398,13 @@ const ProductEditor = () => {
     },
   });
 
-  const handleFileChange = (event) => {
-    const file = event.target.files?.[0] || null;
-    form.setFieldValue("file", file);
-
-    if (file) {
-      setFileName(file.name);
-
-      // Preview for images
-      const reader = new FileReader();
-      reader.onloadend = () => setThumbnail({ url: reader?.result });
-      reader.readAsDataURL(file);
+  const handleOnChangeUpload = (url, type) => {
+    if (type === "gallery") {
+      form.pushFieldValue("gallery", url);
+    } else {
+      form.setFieldValue(type, url);
     }
+    setShowUploadModal({ type: "", isOpen: false });
   };
 
   return (
@@ -507,108 +509,55 @@ const ProductEditor = () => {
                 <CardHeading title="Media" />
 
                 {/* ================== THUMBNAIL ================== */}
-                <Input
-                  label="thumbnail"
-                  type="file"
-                  accept="image/*"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                <div
-                  className={`w-full flex flex-col items-center rounded-md border-2 border-dashed tracking-wide cursor-pointer py-14 ${
-                    thumbnail.isError ? "border-red-400" : "border-gray-400"
-                  }`}
-                >
-                  <span className="bg-gray-200 py-3 px-3 rounded-md mb-5">
-                    {thumbnail.url ? (
-                      <img
-                        src={thumbnail.url}
-                        className="w-40 h-40 object-cover"
+                <form.Field
+                  name="thumbnail"
+                  children={(field) => {
+                    return (
+                      <UploadField
+                        title="Browse a image"
+                        label={field?.name}
+                        value={field?.state.value}
+                        isError={field?.state?.meta?.errors?.length}
+                        onClick={() => {
+                          setShowUploadModal({
+                            type: "thumbnail",
+                            isOpen: true,
+                          });
+                        }}
                       />
-                    ) : (
-                      <FiUpload size="1.5rem" />
-                    )}
-                  </span>
-
-                  <span className="mt-2 text-base leading-normal bg-primaryLight text-primaryDark py-1.5 px-4 rounded-md">
-                    Browse image
-                  </span>
-                </div>
-
-                {/* {field?.state?.meta?.errors?.length && (
-                  <small className="text-red-500 block">
-                    Please upload media
-                  </small>
-                )} */}
-
-                {/* <div className="pb-6 px-5">
-                  <label className="text-sm text-gray-500 dark:text-gray-300">
-                    Thumbnail
-                  </label>
-                  <label
-                    className={`w-full flex flex-col items-center rounded-md border-2 border-dashed tracking-wide cursor-pointer py-14 ${
-                      thumbnail.isError ? "border-red-400" : "border-gray-400"
-                    }`}
-                  >
-                    <span className="bg-gray-200 py-3 px-3 rounded-md mb-5">
-                      {thumbnail.url ? (
-                        <img
-                          src={thumbnail.url}
-                          className="w-40 h-40 object-cover"
-                        />
-                      ) : (
-                        <FiUpload size="1.5rem" />
-                      )}
-                    </span>
-                    <span className="mt-2 text-base leading-normal bg-primaryLight text-primaryDark py-1.5 px-4 rounded-md">
-                      Browse image
-                    </span>
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={handleThumbnail}
-                    />
-                  </label>
-                  <div>
-                    {thumbnail.isError && (
-                      <small className="text-red-500 block">
-                        Please upload media
-                      </small>
-                    )}
-                  </div>
-                </div> */}
+                    );
+                  }}
+                />
 
                 {/* ================== GALLERY ================== */}
-                <div>
-                  <label className="text-sm text-gray-500 dark:text-gray-300">
-                    Gallery (Optional)
-                  </label>
-                  <div className="flex flex-wrap gap-1">
-                    {gallaryData?.map((gallary, index) => {
+                <div className="flex flex-wrap gap-2">
+                  <form.Field name="gallery" mode="array">
+                    {(field) => {
                       return (
-                        <img
-                          src={gallary}
-                          key={index}
-                          className="w-20 h-20 object-cover border-2 border-dashed border-gray-400 rounded-md p-1"
-                        />
+                        <>
+                          <UploadField
+                            label={"Gallery (Optional)"}
+                            value={field?.state?.value}
+                            className="max-w-20 h-20 overflow-hidden"
+                            onClick={() =>
+                              setShowUploadModal({
+                                type: "gallery",
+                                isOpen: true,
+                              })
+                            }
+                          />
+
+                          {field?.state?.value?.map((url, index) => (
+                            <img
+                              src={url}
+                              key={index}
+                              className="w-20 h-20 object-cover border-2 border-dashed border-gray-400 rounded-md p-1"
+                            />
+                          ))}
+                        </>
                       );
-                    })}
-                    <label className="flex">
-                      <div className="flex items-center justify-center rounded-md border border-2 border-dashed border-gray-400 cursor-pointer w-20 h-20">
-                        <span className="bg-gray-200 py-3 px-3 rounded-md">
-                          <FiUpload size="1.0rem" />
-                        </span>
-                        <input
-                          type="file"
-                          className="hidden"
-                          multiple
-                          value={gallary}
-                          onChange={handleGallary}
-                        />
-                      </div>
-                    </label>
-                  </div>
+                    }}
+                  </form.Field>
                 </div>
               </Card>
             </div>
@@ -735,7 +684,7 @@ const ProductEditor = () => {
                       <label className="text-sm text-gray-500 dark:text-gray-300 block">
                         Options
                       </label>
-                      <SelectDropdown customClass="py-2 w-full">
+                      <SelectDropdown className="py-2 w-full">
                         <option value="0">Select Option</option>
                         <option value="0">Size</option>
                         <option value="0">Color</option>
@@ -761,6 +710,12 @@ const ProductEditor = () => {
         currentCategory={currentCategory}
         setCurrentCategory={setCurrentCategory}
       /> */}
+      <UploadModal
+        setIsOpen={setShowUploadModal}
+        isOpen={showUploadModal?.isOpen}
+        type={showUploadModal?.type}
+        handleOnChangeUpload={handleOnChangeUpload}
+      />
     </>
   );
 };
