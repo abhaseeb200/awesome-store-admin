@@ -63,11 +63,11 @@ const ProductEditor = () => {
     isError: false,
     messageError: "",
   });
-  const [thumbnail, setThumbnail] = useState({
-    value: "",
-    isError: false,
-    url: "",
-  });
+  // const [thumbnail, setThumbnail] = useState({
+  //   value: "",
+  //   isError: false,
+  //   url: "",
+  // });
   const [gallary, setGallary] = useState();
   const [gallaryData, setGallaryData] = useState([]);
   const [categoriesName, setCategoriesName] = useState([]);
@@ -117,7 +117,7 @@ const ProductEditor = () => {
       // setDiscountPercentage(discountPercentage);
       // setBrand({ value: brand });
       // setCategory({ value: category });
-      setThumbnail({ url: thumbnail });
+      // setThumbnail({ url: thumbnail });
       setGallaryData(images);
     } catch (error) {
       console.log(error);
@@ -129,10 +129,10 @@ const ProductEditor = () => {
     if (e.target.files) {
       let tempImgURL = URL.createObjectURL(e.target.files[0]);
       console.log(e.target.files, e.target.value);
-      setThumbnail({
-        value: e.target.files,
-        url: tempImgURL,
-      });
+      // setThumbnail({
+      //   value: e.target.files,
+      //   url: tempImgURL,
+      // });
     }
   };
 
@@ -201,12 +201,12 @@ const ProductEditor = () => {
       });
     }
     //MEDIA
-    if (thumbnail.value === "" || thumbnail.url === "") {
-      setThumbnail({
-        value: thumbnail.value,
-        isError: true,
-      });
-    }
+    // if (thumbnail.value === "" || thumbnail.url === "") {
+    //   setThumbnail({
+    //     value: thumbnail.value,
+    //     isError: true,
+    //   });
+    // }
 
     //Validation
     if (
@@ -286,7 +286,7 @@ const ProductEditor = () => {
     setDiscountPercentage("");
     setBrand({ value: "" });
     setCategory({ value: "" });
-    setThumbnail({ url: "" });
+    // setThumbnail({ url: "" });
     setGallaryData([]);
   };
 
@@ -387,8 +387,8 @@ const ProductEditor = () => {
       price: 100,
       discountPercentage: 10,
       stock: 22,
-      // gallery: "https://placehold.co/600x400",
-      // thumbnail: "https://placehold.co/600x400",
+      thumbnail: "",
+      // gallery: [],
     },
     validators: {
       onChange: productSchema,
@@ -400,11 +400,12 @@ const ProductEditor = () => {
 
   const handleOnChangeUpload = (url, type) => {
     if (type === "gallery") {
-      form.pushFieldValue("gallery", url);
+      form.setFieldValue("gallery", (oldItems) => [...(oldItems || []), url]);
     } else {
       form.setFieldValue(type, url);
     }
     setShowUploadModal({ type: "", isOpen: false });
+    // form.validate();
   };
 
   return (
@@ -512,52 +513,77 @@ const ProductEditor = () => {
                 <form.Field
                   name="thumbnail"
                   children={(field) => {
+                    console.log(field?.state?.meta?.errors[0], "THUMBNAIL");
+
                     return (
-                      <UploadField
-                        title="Browse a image"
-                        label={field?.name}
-                        value={field?.state.value}
-                        isError={field?.state?.meta?.errors?.length}
-                        onClick={() => {
-                          setShowUploadModal({
-                            type: "thumbnail",
-                            isOpen: true,
-                          });
-                        }}
-                      />
+                      <div>
+                        <UploadField
+                          className="h-80 justify-center"
+                          title="Browse a image"
+                          label={field?.name}
+                          value={field?.state.value}
+                          isError={field?.state?.meta?.errors?.length}
+                          onChange={(e) => {
+                            field?.handleChange(e?.target?.value);
+                            // form.setFieldMeta(field.name, { touched: true, errors: [] }); 
+                          }}
+                          id={field?.name}
+                          onClick={() => {
+                            setShowUploadModal({
+                              type: "thumbnail",
+                              isOpen: true,
+                            });
+                          }}
+                        />
+                        {/* <Input
+                          id={field?.name}
+                          type="text"
+                          placeholder="Enter your product title"
+                          label={field?.name}
+                          name={field?.name}
+                          value={field?.state.value}
+                          onChange={(e) => field?.handleChange(field?.state.value)}
+                          isError={field?.state?.meta?.errors?.length}
+                          messageError={field?.state?.meta?.errors}
+                          autoComplete={field?.name}
+                        /> */}
+                      </div>
                     );
                   }}
                 />
 
                 {/* ================== GALLERY ================== */}
-                <div className="flex flex-wrap gap-2">
-                  <form.Field name="gallery" mode="array">
-                    {(field) => {
-                      return (
-                        <>
-                          <UploadField
-                            label={"Gallery (Optional)"}
-                            value={field?.state?.value}
-                            className="max-w-20 h-20 overflow-hidden"
-                            onClick={() =>
-                              setShowUploadModal({
-                                type: "gallery",
-                                isOpen: true,
-                              })
-                            }
-                          />
-
-                          {field?.state?.value?.map((url, index) => (
-                            <img
-                              src={url}
-                              key={index}
-                              className="w-20 h-20 object-cover border-2 border-dashed border-gray-400 rounded-md p-1"
+                <div>
+                  <label className="capitalize text-sm leading-none text-gray-600 dark:text-gray-300">
+                    Gallery (Optional)
+                  </label>
+                  <div className="flex flex-wrap gap-2 items-end">
+                    <form.Field name="gallery" mode="array">
+                      {(field) => {
+                        return (
+                          <>
+                            <UploadField
+                              className="flex justify-center w-24 h-24"
+                              onClick={() =>
+                                setShowUploadModal({
+                                  type: "gallery",
+                                  isOpen: true,
+                                })
+                              }
                             />
-                          ))}
-                        </>
-                      );
-                    }}
-                  </form.Field>
+
+                            {field?.state?.value?.map((url, index) => (
+                              <img
+                                src={url}
+                                key={index}
+                                className="size-24 object-cover border-2 border-dashed border-gray-400 rounded-md p-1"
+                              />
+                            ))}
+                          </>
+                        );
+                      }}
+                    </form.Field>
+                  </div>
                 </div>
               </Card>
             </div>
