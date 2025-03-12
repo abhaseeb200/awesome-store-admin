@@ -1,25 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { FiUpload } from "react-icons/fi";
-import { useNavigate, useParams } from "react-router";
+import { z } from "zod";
 import { toast } from "react-toastify";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/button";
 import Input from "@/components/inputs";
 import Textarea from "@/components/textarea";
 import SelectDropdown from "@/components/select";
-import PageHeading from "@/components/pageTitle";
 import { Card, CardHeading } from "@/components/card";
 import AddCategoryModal from "@/components/modal/addCategoryModal";
-import { addProduct, getCategories, getSingleProduct } from "../../api/api";
-// import {
-//   createProductAction,
-//   updateProductAction,
-// } from "../../redux/actions/productAction";
-import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
 import UploadModal from "@/components/modal/uploadModal";
 import UploadField from "@/components/uploadField";
+import NotFound from "@/components/card/notFound";
+import API from "@/config/api";
+import axios from "axios";
 
 const categories = [
   { id: 1, name: "Category 1" },
@@ -30,335 +25,21 @@ const categories = [
 ];
 
 const ProductEditor = () => {
-  const fileInputRef = useRef(null);
-
-  const [title, setTitle] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  const [quantity, setQuantity] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  const [description, setDescription] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  const [price, setPrice] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  const [brand, setBrand] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  const [discountPercentage, setDiscountPercentage] = useState("");
-  const [category, setCategory] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-  // const [thumbnail, setThumbnail] = useState({
-  //   value: "",
-  //   isError: false,
-  //   url: "",
-  // });
-  const [gallary, setGallary] = useState();
-  const [gallaryData, setGallaryData] = useState([]);
-  const [categoriesName, setCategoriesName] = useState([]);
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [isProductFound, setIsProductFound] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState({
-    value: "",
-    isError: false,
-    messageError: "",
-  });
-
-  const navigate = useNavigate();
-
-  const { id } = useParams();
-  // const { categoryList } = useSelector((state) => state.category);
-  // const { productsList } = useSelector((state) => state.product);
-  // const dispatch = useDispatch();
-
-  const fetchCategoriesName = async () => {
-    try {
-      let response = await getCategories();
-      setCategoriesName(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchCurrentProduct = async () => {
-    try {
-      let response = await getSingleProduct(id);
-      const {
-        title,
-        stock,
-        description,
-        price,
-        discountPercentage,
-        brand,
-        category,
-        thumbnail,
-        images,
-      } = response.data;
-      // setTitle({ value: title });
-      // setQuantity({ value: stock });
-      // setDescription({ value: description });
-      // setPrice({ value: price });
-      // setDiscountPercentage(discountPercentage);
-      // setBrand({ value: brand });
-      // setCategory({ value: category });
-      // setThumbnail({ url: thumbnail });
-      setGallaryData(images);
-    } catch (error) {
-      console.log(error);
-      setIsProductFound(true);
-    }
-  };
-
-  const handleThumbnail = (e) => {
-    if (e.target.files) {
-      let tempImgURL = URL.createObjectURL(e.target.files[0]);
-      console.log(e.target.files, e.target.value);
-      // setThumbnail({
-      //   value: e.target.files,
-      //   url: tempImgURL,
-      // });
-    }
-  };
-
-  const handleGallary = (e) => {
-    if (e.target.files) {
-      let newImages = Array.from(e.target.files)?.map((file) =>
-        URL.createObjectURL(file)
-      );
-      setGallaryData([...newImages, ...gallaryData]);
-    }
-  };
-
-  const handleAddNewCategory = () => {
-    console.log("----");
-    setIsOpenModal(true);
-    setCurrentCategory({ value: "" });
-  };
-
-  const handlePusblishProduct = () => {
-    //TITLE
-    if (title.value.trim() === "") {
-      setTitle({
-        value: title.value,
-        isError: true,
-        messageError: "Title should not be empty",
-      });
-    }
-    //QUANTITY
-    if (quantity.value <= 0 || quantity.value === "") {
-      setQuantity({
-        value: quantity.value,
-        isError: true,
-        messageError: "Quantiy should be valid",
-      });
-    }
-    //DESCRIPTION
-    if (description.value.trim() === "") {
-      setDescription({
-        value: description.value,
-        isError: true,
-        messageError: "Description should not be empty",
-      });
-    }
-    //PRICE
-    if (price.value <= 0 || price.value === "") {
-      setPrice({
-        value: price.value,
-        isError: true,
-        messageError: "Price should be valid",
-      });
-    }
-    //BRAND
-    if (brand.value.trim() === "") {
-      setBrand({
-        value: brand.value,
-        isError: true,
-        messageError: "Brand should not be empty",
-      });
-    }
-    //CATEGORY
-    if (category.value === "" || category.value === "0") {
-      setCategory({
-        value: category.value,
-        isError: true,
-        messageError: "Please select category",
-      });
-    }
-    //MEDIA
-    // if (thumbnail.value === "" || thumbnail.url === "") {
-    //   setThumbnail({
-    //     value: thumbnail.value,
-    //     isError: true,
-    //   });
-    // }
-
-    //Validation
-    if (
-      title.value.trim() !== "" &&
-      quantity.value !== "" &&
-      quantity.value > 0 &&
-      description.value.trim() !== "" &&
-      price.value !== "" &&
-      price.value > 0 &&
-      brand.value.trim() !== "" &&
-      category.value !== "" &&
-      category.value !== "0" &&
-      thumbnail.url !== "" &&
-      thumbnail.url !== undefined
-    ) {
-      // console.log(
-      //   title.value,
-      //   quantity.value,
-      //   price.value,
-      //   category.value,
-      //   thumbnail.url
-      // );
-      if (isUpdate) {
-        handleUpdateProduct();
-      } else {
-        handleCreateProduct();
-      }
-    }
-  };
-
-  const handleUpdateProduct = () => {
-    let data = {
-      id: id,
-      title: title.value,
-      stock: quantity.value,
-      discountPercentage: discountPercentage,
-      description: description.value,
-      price: price.value,
-      brand: brand.value,
-      category: category.value,
-      thumbnail: thumbnail.url,
-      images: [...gallaryData],
-    };
-    // console.log(data,"______")
-    // dispatch(updateProductAction(data));
-    navigate("/products", { replace: true });
-    toast.success("Product Updated Succesffully!", {
-      autoClose: 1500,
-    });
-  };
-
-  const handleCreateProduct = async () => {
-    let data = {
-      id: Date.now(),
-      title: title.value,
-      stock: quantity.value,
-      discountPercentage: discountPercentage,
-      description: description.value,
-      price: price.value,
-      brand: brand.value,
-      category: category.value,
-      thumbnail: thumbnail.url,
-      images: [thumbnail.url, ...gallaryData],
-    };
-    // dispatch(createProductAction(data));
-    navigate("/products", { replace: true });
-    toast.success("Product Added Succesffully!", {
-      autoClose: 1500,
-    });
-  };
-
-  const handleEmptyFields = () => {
-    setTitle({ value: "" });
-    setQuantity({ value: "" });
-    setDescription({ value: "" });
-    setPrice({ value: "" });
-    setDiscountPercentage("");
-    setBrand({ value: "" });
-    setCategory({ value: "" });
-    // setThumbnail({ url: "" });
-    setGallaryData([]);
-  };
-
-  useEffect(() => {
-    if (id) {
-      setIsUpdate(true);
-      // fetchCurrentProduct();
-
-      // let productObj = productsList.find((page) =>
-      //   page.data.some((product) => product.id == id)
-      // );
-
-      // if (productObj) {
-      //   let currentProduct = productObj.data.find(
-      //     (product) => product.id == id
-      //   );
-      //   console.log(currentProduct);
-      //   //iska function bana de... q.k yah do jaga use howa hai
-      //   const {
-      //     title,
-      //     stock,
-      //     description,
-      //     price,
-      //     discountPercentage,
-      //     brand,
-      //     category,
-      //     thumbnail,
-      //     images,
-      //   } = currentProduct;
-      //   setTitle({ value: title });
-      //   setQuantity({ value: stock });
-      //   setDescription({ value: description });
-      //   setPrice({ value: price });
-      //   setDiscountPercentage(discountPercentage);
-      //   setBrand({ value: brand });
-      //   setCategory({ value: category });
-      //   setThumbnail({ url: thumbnail });
-      //   setGallaryData(images);
-      // } else {
-      // }
-    } else {
-      setIsUpdate(false);
-      setIsProductFound(false);
-      // handleEmptyFields();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    // if (categoryList?.length) {
-    //   setCategoriesName(categoryList);
-    // } else {
-    //   fetchCategoriesName();
-    // }
-  }, []);
-
-  //beacause is page pe mujy realtime kerna hai
-  // useEffect(() => {
-  //   setCategoriesName(categoryList);
-  // }, [categoryList]);
-
-  // =============== NEW CODE =============== //
   const [showUploadModal, setShowUploadModal] = useState({
     type: "",
     isOpen: false,
-  }); //gallery or thumbnail
+  }); //type: gallery or thumbnail
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isProductFound = false;
 
   const productSchema = z.object({
     title: z.string().min(1, { message: "Title is required" }),
     description: z.string().min(1, { message: "Description is required" }),
     category: z.string().min(1, { message: "Category is required" }),
     brand: z.string().min(1, { message: "Brand is required" }),
-    thumbnail: z.string().min(1, { message: "Thumbnail is required" }),
     price: z.coerce.number().min(1, "Price is required"),
     stock: z.coerce.number().min(1, "Stock is required"),
   });
@@ -366,12 +47,10 @@ const ProductEditor = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (data) => {
-      return console.log(data, "SUBMIT DATA");
-      // return axios.post("http://127.0.0.1:3000/", data);
+      return API.post("/products/add", data);
     },
     onSuccess: (response) => {
       toast.success("Product added successfully");
-      // queryClient.setQueryData("product", response?.data);
     },
     onError: (error) => {
       toast.error(error?.message || "Something went wrong");
@@ -387,11 +66,17 @@ const ProductEditor = () => {
       price: 100,
       discountPercentage: 10,
       stock: 22,
-      thumbnail: "",
-      // gallery: [],
+      thumbnail: "www",
     },
     validators: {
       onChange: productSchema,
+      onSubmit: ({ value }) => {
+        return {
+          fields: {
+            thumbnail: value?.thumbnail ? null : "Please upload media",
+          },
+        };
+      },
     },
     onSubmit: async ({ value }) => {
       mutation.mutate(value);
@@ -405,13 +90,12 @@ const ProductEditor = () => {
       form.setFieldValue(type, url);
     }
     setShowUploadModal({ type: "", isOpen: false });
-    // form.validate();
   };
 
   return (
     <>
       {isProductFound ? (
-        <NotFound />
+        <NotFound title="Product" url="/products" />
       ) : (
         <form
           onSubmit={(e) => {
@@ -431,9 +115,16 @@ const ProductEditor = () => {
               </span>
             </div>
             <div>
-              <Button
-                type="submit"
-                name={`${isUpdate ? "Update" : "Publish"} Product`}
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit}
+                    isLoading={isSubmitting}
+                    name={`${isUpdate ? "Update" : "Publish"} Product`}
+                  />
+                )}
               />
             </div>
           </div>
@@ -462,8 +153,7 @@ const ProductEditor = () => {
                     );
                   }}
                 />
-
-                {/* ================== STOCK ================== */}
+                *{/* ================== STOCK ================== */}
                 <form.Field
                   name="stock"
                   children={(field) => {
@@ -483,7 +173,6 @@ const ProductEditor = () => {
                     );
                   }}
                 />
-
                 {/* ================== DESCRIPTION ================== */}
                 <form.Field
                   name="description"
@@ -513,8 +202,6 @@ const ProductEditor = () => {
                 <form.Field
                   name="thumbnail"
                   children={(field) => {
-                    console.log(field?.state?.meta?.errors[0], "THUMBNAIL");
-
                     return (
                       <div>
                         <UploadField
@@ -523,11 +210,7 @@ const ProductEditor = () => {
                           label={field?.name}
                           value={field?.state.value}
                           isError={field?.state?.meta?.errors?.length}
-                          onChange={(e) => {
-                            field?.handleChange(e?.target?.value);
-                            // form.setFieldMeta(field.name, { touched: true, errors: [] }); 
-                          }}
-                          id={field?.name}
+                          messageError={field?.state?.meta?.errors}
                           onClick={() => {
                             setShowUploadModal({
                               type: "thumbnail",
@@ -535,18 +218,6 @@ const ProductEditor = () => {
                             });
                           }}
                         />
-                        {/* <Input
-                          id={field?.name}
-                          type="text"
-                          placeholder="Enter your product title"
-                          label={field?.name}
-                          name={field?.name}
-                          value={field?.state.value}
-                          onChange={(e) => field?.handleChange(field?.state.value)}
-                          isError={field?.state?.meta?.errors?.length}
-                          messageError={field?.state?.meta?.errors}
-                          autoComplete={field?.name}
-                        /> */}
                       </div>
                     );
                   }}
@@ -563,7 +234,7 @@ const ProductEditor = () => {
                         return (
                           <>
                             <UploadField
-                              className="flex justify-center w-24 h-24"
+                              className="flex justify-center size-24"
                               onClick={() =>
                                 setShowUploadModal({
                                   type: "gallery",
@@ -665,7 +336,7 @@ const ProductEditor = () => {
                     <span>Category</span>
                     <span
                       className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition dark:text-primaryLight"
-                      onClick={handleAddNewCategory}
+                      // onClick={handleAddNewCategory}
                     >
                       Add New Category
                     </span>
@@ -729,13 +400,16 @@ const ProductEditor = () => {
           </div>
         </form>
       )}
-      {/* =================== FOR ADD NEW CATEGORY =================== */}
+
+      {/* =================== USE CASE: ADD CATEGORY IF DOES'T EXISTS =================== */}
       {/* <AddCategoryModal
         isOpenModal={isOpenModal}
         setIsOpenModal={setIsOpenModal}
         currentCategory={currentCategory}
         setCurrentCategory={setCurrentCategory}
       /> */}
+
+      {/* =================== USE CASE: SELECT PICTURE FROM MODAL  =================== */}
       <UploadModal
         setIsOpen={setShowUploadModal}
         isOpen={showUploadModal?.isOpen}
@@ -746,21 +420,3 @@ const ProductEditor = () => {
   );
 };
 export default ProductEditor;
-
-const NotFound = () => {
-  return (
-    <div className="mt-6 text-center">
-      <Card className="py-6">
-        <div className="text-3xl text-gray-600 pb-2 font-medium dark:text-gray-300">
-          404 - Product Not Found
-        </div>
-        <p className="text-gray-500 dark:text-gray-300 pb-4">
-          Sorry, the product you are looking for does not exist.
-        </p>
-        <Link to="/products">
-          <Button name="Add Product" className="mx-auto" />
-        </Link>
-      </Card>
-    </div>
-  );
-};
