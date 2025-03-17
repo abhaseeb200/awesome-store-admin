@@ -1,7 +1,7 @@
 const Textarea = ({ isError, messageError, name, ...props }) => {
   return (
-    <>
-      <label className="text-sm text-gray-500 dark:text-gray-300">
+    <div>
+      <label className="capitalize text-sm text-gray-500 dark:text-gray-300">
         {props?.label}
       </label>
       <textarea
@@ -15,7 +15,7 @@ const Textarea = ({ isError, messageError, name, ...props }) => {
       {messageError !== "" && (
         <small className="text-red-500 block">{messageError}</small>
       )}
-    </>
+    </div>
   );
 };
 

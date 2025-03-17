@@ -153,7 +153,7 @@ const ProductEditor = () => {
                     );
                   }}
                 />
-                *{/* ================== STOCK ================== */}
+                {/* ================== STOCK ================== */}
                 <form.Field
                   name="stock"
                   children={(field) => {
@@ -173,6 +173,7 @@ const ProductEditor = () => {
                     );
                   }}
                 />
+
                 {/* ================== DESCRIPTION ================== */}
                 <form.Field
                   name="description"

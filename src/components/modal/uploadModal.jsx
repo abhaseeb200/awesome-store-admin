@@ -20,11 +20,13 @@ const UploadModal = ({ setIsOpen, isOpen, handleOnChangeUpload, type }) => {
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-700"
             }`}
+            type="button"
             onClick={() => setActiveTab("upload")}
           >
             Upload File
           </button>
           <button
+            type="button"
             className={`flex-1 py-3 px-4 text-center ${
               activeTab === "media"
                 ? "bg-blue-500 text-white"
@@ -85,7 +87,9 @@ const Media = ({ handleOnChangeUpload, type }) => {
         <div
           key={index}
           className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
-          onClick={() => handleImageClick(index, `https://placehold.co/300x30${index + 10}`)}
+          onClick={() =>
+            handleImageClick(index, `https://placehold.co/300x30${index + 10}`)
+          }
         >
           <img
             src={`https://placehold.co/300x30${index + 10}`}

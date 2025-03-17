@@ -137,7 +137,7 @@ const OrderList = () => {
                 />
               </span>
               <span className="flex items-center gap-2">
-                {orderDataBackUP.length > 10 && (
+                {/* {orderDataBackUP.length > 10 && (
                   <SelectCustom customClass="py-2">
                     <option value="10" select="select">
                       10
@@ -145,7 +145,7 @@ const OrderList = () => {
                     <option value="20">20</option>
                     <option value="30">30</option>
                   </SelectCustom>
-                )}
+                )} */}
                 {orderDataBackUP.length > 0 && (
                   <ExportDropDown
                     exportData={exportTableData}

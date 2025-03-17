@@ -2,7 +2,7 @@ import { FiUpload } from "react-icons/fi";
 
 const UploadField = ({ isError, messageError, ...props }) => {
   return (
-    <div>
+    <>
       {props?.label && (
         <label className="capitalize text-sm leading-none text-gray-600 dark:text-gray-300">
           {props?.label}
@@ -37,13 +37,11 @@ const UploadField = ({ isError, messageError, ...props }) => {
       </div>
 
       {isError ? (
-        <small className="text-red-500 block">Please upload media</small>
+        <small className="text-red-500 block capitalize">{messageError}</small>
       ) : (
         ""
       )}
-
-      {/* <input type="text" {...props} /> */}
-    </div>
+    </>
   );
 };
 

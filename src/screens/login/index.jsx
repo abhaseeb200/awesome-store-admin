@@ -127,7 +127,8 @@ const Login = () => {
                     type="submit"
                     className="w-full justify-center"
                     disabled={!canSubmit}
-                    name={isSubmitting ? "..." : "Submit"}
+                    isLoading={isSubmitting}
+                    name="Submit"
                   />
                 )}
               />

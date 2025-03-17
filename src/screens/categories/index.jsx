@@ -1,32 +1,66 @@
 import { useEffect, useState } from "react";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { toast } from "react-toastify";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
-import { useDispatch, useSelector } from "react-redux";
-import { Card } from "../../components/card";
-import CardSkeleton from "../../components/card/skeleton";
-import InputCustom from "../../components/inputs";
-import PageHeading from "../../components/pageTitle";
-import SelectCustom from "../../components/select";
-import Pagination from "../../components/pagination";
-import Button from "../../components/button";
-import { getCategories } from "../../api/api";
-import AddCategoryModal from "../../components/modal/addCategoryModal";
-import {
-  deleteCategoryAction,
-  getCategoryAction,
-} from "../../redux/actions/categoryAction";
+import { Card } from "@/components/card";
+import CardSkeleton from "@/components/card/skeleton";
+import Input from "@/components/inputs";
+import PageHeading from "@/components/pageTitle";
+import SelectDropdown from "@/components/select";
+import Pagination from "@/components/pagination";
+import Button from "@/components/button";
+import AddCategoryModal from "@/components/modal/addCategoryModal";
+import { Link } from "react-router-dom";
+import { LuEye } from "react-icons/lu";
+import Table from "@/components/table";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import API from "@/config/api";
+import { z } from "zod";
+
+const defaultData = [
+  {
+    firstName: "tanner",
+    lastName: "linsley",
+    age: 24,
+    visits: 100,
+    status: "In Relationship",
+    progress: 50,
+  },
+  {
+    firstName: "tandy",
+    lastName: "miller",
+    age: 40,
+    visits: 40,
+    status: "Single",
+    progress: 80,
+  },
+  {
+    firstName: "joe",
+    lastName: "dirte",
+    age: 45,
+    visits: 20,
+    status: "Complicated",
+    progress: 10,
+  },
+];
 
 const CategoryList = () => {
-  // const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
+  const [data, _setData] = useState(() => [...defaultData]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [mainLoader, setMainLoader] = useState(true);
+
+  const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
+  const [mainLoader, setMainLoader] = useState(false);
   const [cardInnerLoader, setCardInnerLoader] = useState(false); //it work only if pagination, search or post per page functionality
   const [search, setSearch] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(["ss"]);
   const [categoriesBackUP, setCategoriesBackUP] = useState([]);
   const [currentCategory, setCurrentCategory] = useState({
-    //cateogory value for both ADD and UPDATE
     value: "",
     isError: false,
     messageError: "",
@@ -34,8 +68,8 @@ const CategoryList = () => {
   const [currentID, setCurrentID] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
 
-  const { categoryList } = useSelector((state) => state.category);
-  const dispatch = useDispatch();
+  // const { categoryList } = useSelector((state) => state.category);
+  // const dispatch = useDispatch();
 
   const handlePageChange = (pageNumber) => {
     // setCurrentPaginationNum(pageNumber);
@@ -43,67 +77,123 @@ const CategoryList = () => {
   };
 
   const handleSearch = (e) => {
-    let val = e.target.value;
-    setSearch(val);
-    if (val.trim() !== "") {
-      let filter = categories.filter((category) =>
-        category.toLowerCase().includes(val.trim().toLowerCase())
-      );
-      // console.log(filter);
-      setCategoriesBackUP(filter);
-    } else {
-      setCategoriesBackUP(categories);
-    }
+    // let val = e.target.value;
+    // setSearch(val);
+    // if (val.trim() !== "") {
+    //   let filter = categories.filter((category) =>
+    //     category.toLowerCase().includes(val.trim().toLowerCase())
+    //   );
+    //   // console.log(filter);
+    //   setCategoriesBackUP(filter);
+    // } else {
+    //   setCategoriesBackUP(categories);
+    // }
   };
 
   const handleAddCategory = (e) => {
     setIsOpenModal(true);
     setIsUpdate(false);
-    setCurrentCategory({ value: "" });
+    // setCurrentCategory({ value: "" });
   };
 
   const fetchCategories = async () => {
-    try {
-      let response = await getCategories();
-      dispatch(getCategoryAction(response.data));
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setMainLoader(false);
-    }
+    // try {
+    //   let response = await getCategories();
+    //   dispatch(getCategoryAction(response.data));
+    // } catch (error) {
+    //   console.log(error);
+    // } finally {
+    //   setMainLoader(false);
+    // }
   };
 
   const handleEdit = (categoryData) => {
-    const {id, name, slug} = categoryData
-    setCurrentCategory({ value: name });
-    setCurrentID(id)
-    setIsUpdate(true);
-    setIsOpenModal(true);
+    // const {id, name, slug} = categoryData
+    // setCurrentCategory({ value: name });
+    // setCurrentID(id)
+    // setIsUpdate(true);
+    // setIsOpenModal(true);
   };
 
   const handleDelete = (id) => {
-    dispatch(deleteCategoryAction(id));
-    toast.success("Category Deleted Succesffully!", {
-      autoClose: 1500,
-    });
+    // dispatch(deleteCategoryAction(id));
+    // toast.success("Category Deleted Succesffully!", {
+    //   autoClose: 1500,
+    // });
   };
 
   useEffect(() => {
-    console.log("___________________");
-    if (categoryList?.length) {
-      setMainLoader(false);
-      console.log({ categoryList }, "CATEGORY");
-      setCategories(categoryList);
-      setCategoriesBackUP(categoryList);
-    } else {
-      fetchCategories();
-    }
+    // console.log("___________________");
+    // if (categoryList?.length) {
+    //   setMainLoader(false);
+    //   console.log({ categoryList }, "CATEGORY");
+    //   setCategories(categoryList);
+    //   setCategoriesBackUP(categoryList);
+    // } else {
+    //   fetchCategories();
+    // }
   }, []);
 
-  useEffect(() => {
-    setCategories(categoryList);
-    setCategoriesBackUP(categoryList);
-  }, [categoryList]);
+  // useEffect(() => {
+  //   setCategories(categoryList);
+  //   setCategoriesBackUP(categoryList);
+  // }, [categoryList]);
+
+  //----------------- NEW CODE-----------------
+
+  const columns = [
+    { accessorKey: "firstName", cell: (info) => info.getValue() },
+    {
+      accessorFn: (row) => row.lastName,
+      id: "lastName",
+      cell: (info) => <i>{info.getValue()}</i>,
+      header: () => <span>Last Name</span>,
+    },
+    {
+      accessorKey: "age",
+      header: () => "Age",
+    },
+    {
+      accessorKey: "visits",
+      header: () => <span>Visits</span>,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+    },
+    {
+      accessorKey: "progress",
+      header: "Profile Progress",
+    },
+    {
+      id: "actions",
+      header: "Action",
+      cell: (info) => (
+        <span className="flex gap-1.5 justify-center text-gray-500 dark:text-gray-300 actions">
+          {/* =========== UPDATE - USE-CASE:  =========== */}
+          <Link to={`update`}>
+            <span className="hover:text-primaryDark cursor-pointer">
+              <TbEdit size="1.3rem" />
+            </span>
+          </Link>
+
+          {/* =========== DELETE - USE-CASE: DELETE CATEGORY WITH THEIR ID =========== */}
+          <span
+            className="hover:text-primaryDark cursor-pointer"
+            onClick={() => console.log("delete", info?.row?.original)}
+          >
+            <MdOutlineDeleteOutline size="1.3rem" />
+          </span>
+        </span>
+      ),
+    },
+  ];
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <div>
@@ -111,92 +201,34 @@ const CategoryList = () => {
         <PageHeading title="Category List" />
         {mainLoader ? (
           <CardSkeleton />
-        ) : categories?.length > 0 ? (
+        ) : (
           <Card>
             {/* head - search & filter */}
             <div className="py-6 flex sm:flex-row flex-col gap-4 justify-between px-5">
               <span className="sm:w-48 w-full block">
-                <InputCustom
+                {/* <Input
                   type="text"
                   placeholder="Search Category"
                   onChange={handleSearch}
                   value={search}
-                />
+                /> */}
               </span>
               <span className="flex items-center gap-2">
                 {/* {categoriesBackUP.length > 10 && (
-                  <SelectCustom customClass="py-2">
+                  <SelectDropdown customClass="py-2">
                     <option value="10" select="select">
                       10
                     </option>
                     <option value="20">20</option>
                     <option value="30">30</option>
-                  </SelectCustom>
+                  </SelectDropdown>
                 )} */}
                 <Button name="Add Category" onClick={handleAddCategory} />
               </span>
             </div>
-            {/* body - table */}
-            <div className="overflow-auto">
-              {cardInnerLoader ? (
-                <div className="animate-pulse px-5">
-                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
-                  <div className="p-4 my-2 bg-gray-300 dark:bg-dark-600"></div>
-                  <div className="p-4 bg-gray-300 dark:bg-dark-600"></div>
-                </div>
-              ) : (
-                <table className="table-auto w-full">
-                  <thead>
-                    <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm">
-                      <th className="text-left py-4 font-medium pl-5">
-                        Category
-                      </th>
-                      <th className="py-4 font-medium pr-5 text-end">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {categoriesBackUP.length > 0 ? (
-                      categoriesBackUP.map((item, index) => {
-                        return (
-                          <tr
-                            className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
-                            key={index}
-                          >
-                            <td className="py-4 pl-5 capitalize">
-                              {item?.category.name}
-                            </td>
-                            <td className="py-4 pr-5">
-                              <span className="flex gap-1.5 justify-end text-gray-500 dark:text-gray-300">
-                                <span className="hover:text-primaryDark cursor-pointer">
-                                  <TbEdit
-                                    size="1.3rem"
-                                    onClick={() => handleEdit(item?.category)}
-                                  />
-                                </span>
-                                <span
-                                  className="hover:text-primaryDark cursor-pointer"
-                                  onClick={() => handleDelete(item?.id)}
-                                >
-                                  <MdOutlineDeleteOutline size="1.3rem" />
-                                </span>
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm">
-                        <td className="py-4 text-center" colSpan="5">
-                          No matching records found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              )}
-            </div>
+
+            <Table table={table} />
+
             {/* footer - pagination */}
             <div className="py-6 px-5 flex sm:flex-row flex-col gap-3 justify-between items-center">
               {categoriesBackUP?.length > 10 && (
@@ -212,12 +244,6 @@ const CategoryList = () => {
                 </>
               )}
             </div>
-          </Card>
-        ) : (
-          <Card>
-            <p className="sm:text-xl text-gray-500 h-80 flex items-center justify-center">
-              No category is found
-            </p>
           </Card>
         )}
       </div>
