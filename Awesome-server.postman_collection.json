@@ -1,0 +1,651 @@
+{
+	"info": {
+		"_postman_id": "2fc58082-ca80-404c-8d11-567b40a151f5",
+		"name": "Awesome-server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38588819"
+	},
+	"item": [
+		{
+			"name": "user-login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@admin.com\",\r\n    \"fullName\" :\"Admin One\",\r\n    \"password\":\"Admin123!\",\r\n    \"role\":\"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/signin/user",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"signin",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admin-login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@admin.com\",\r\n    \"password\":\"Admin123!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/signin/admin",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"signin",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "categories - add",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyODB9.AIo8mw2COCMN8Hu7nZGI1ULZ1xHBi3iRtsjV2HPSNMU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\" :\"Men Fashion\",\r\n    \"thumbnail\":\"this is dummy url...\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/categories/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"categories",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "products - add",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"brand\": \"Zero\",\r\n    \"title\": \"Revoltt Smart Watch\",\r\n    \"category\": \"67371de7acd3f55496158957\",\r\n    \"description\": \"this is description...\",\r\n    \"stock\": 22,\r\n    \"rating\": 4,\r\n    \"discountPercentage\": 50,\r\n    \"thumbnail\": \"thumbnail url...\"\r\n    // \"images\": [\r\n    //     \"ImageURLFirst\"\r\n    // ]\r\n    // \"attributes\": {\r\n    //     \"sizes\": [\r\n    //         {\r\n    //             \"size\": \"Small\",\r\n    //             \"price\": 25.99\r\n    //         },\r\n    //         {\r\n    //             \"size\": \"Medium\",\r\n    //             \"price\": 29.99\r\n    //         },\r\n    //         {\r\n    //             \"size\": \"Large\",\r\n    //             \"price\": 34.99\r\n    //         }\r\n    //     ],\r\n    //     \"colors\": [\r\n    //         {\r\n    //             \"color\": \"Red\",\r\n    //             \"image\": \"https://example.com/images/red1.jpg\"\r\n    //         },\r\n    //         {\r\n    //             \"color\": \"Blue\",\r\n    //             \"image\": \"https://example.com/images/blue1.jpg\"\r\n    //         }\r\n    //     ]\r\n    // }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/products/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"products",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "products - get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/products",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product - delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/products/delete/67359be53a8f1eb18d1641a5",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"products",
+						"delete",
+						"67359be53a8f1eb18d1641a5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "categories - get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/categories",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "products - search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/products/search?q=Iphone 16",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"products",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Iphone 16"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Image",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/Muskan/Desktop/Shehryar's data/3 palestine student .jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/uploads/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"uploads",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Images",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/uploads",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"uploads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Image - delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/uploads/delete/6737362b076ad2d102723616",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"uploads",
+						"delete",
+						"6737362b076ad2d102723616"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "products - update",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"price\":400\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/products/update/67371c761346c8d3ad22d59e",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"products",
+						"update",
+						"67371c761346c8d3ad22d59e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Order - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"67359b7e3a8f1eb18d16419e\",\r\n            \"quantity\": 1,\r\n            \"price\": 220\r\n        },\r\n        {\r\n            \"productId\": \"67359e4b738a83a004ac4758\",\r\n            \"quantity\": 6,\r\n            \"price\": 500\r\n        }\r\n    ],\r\n    \"userId\": \"673d9a65d95d3180f8c5be66\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/orders/add",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"orders",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - userId",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzIwODk5NTZ9.MRuHXrmkd30-V1CsGDd52Xnar9PP2xZbunMamtw0JbM",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/orders/customer/673d9a65d95d3180f8c5be66",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"orders",
+						"customer",
+						"673d9a65d95d3180f8c5be66"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - update",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzIwODk5NTZ9.MRuHXrmkd30-V1CsGDd52Xnar9PP2xZbunMamtw0JbM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"delivered\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/orders/update/673d9ba1d95d3180f8c5be6c",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"orders",
+						"update",
+						"673d9ba1d95d3180f8c5be6c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Orders - admin",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/orders/admin/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"orders",
+						"admin",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users - list",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzE0ODAyOTB9.LS799uvpbUDCzTQ6KxqHJgO_kNLt6FSBTjY9yi60HRA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "wishlist",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlhdCI6MTczMjUyMTg4MX0.mnnkEPIC-JUd22Eoc1Jy--Y3azZRx6ziRE9ixXcICjI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"673d9a65d95d3180f8c5be66\",\r\n    \"productId\" : \"67371df0acd3f55496158959\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/wishlist/addAndRemove",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"wishlist",
+						"addAndRemove"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wishlist - get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlhdCI6MTczMjU0MDUwM30.Lf3OEEfs_0SMM2L5UYd5cwJxTcG48z74soGBSlVwfVI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/wishlist/673d9a65d95d3180f8c5be69l",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"wishlist",
+						"673d9a65d95d3180f8c5be69l"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Wishlist - Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlhdCI6MTczMjU0MDUwM30.Lf3OEEfs_0SMM2L5UYd5cwJxTcG48z74soGBSlVwfVI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:3000/wishlist/clear/6745a341a271884543af8fcc",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"wishlist",
+						"clear",
+						"6745a341a271884543af8fcc"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
