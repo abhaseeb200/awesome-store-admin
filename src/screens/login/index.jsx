@@ -56,7 +56,7 @@ const Login = () => {
   });
 
   return (
-    <div className="opacity-0 bg-gray-200 dark:bg-dark-100">
+    <div className="bg-gray-200 dark:bg-dark-100">
       <div className="flex flex-col items-center justify-center md:w-96 w-5/6 mx-auto h-screen">
         <Card>
           <div className="sm:p-9 p-6">
@@ -73,6 +73,7 @@ const Login = () => {
 
             {/* ==================== FORM WRAPPER ==================== */}
             <form
+              className="flex flex-col gap-4"
               onSubmit={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -120,17 +121,12 @@ const Login = () => {
               />
 
               {/* =================== SUBMIT BUTTON =================== */}
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button
-                    type="submit"
-                    className="w-full justify-center"
-                    disabled={!canSubmit}
-                    isLoading={isSubmitting}
-                    name="Submit"
-                  />
-                )}
+              <Button
+                type="submit"
+                className="w-full justify-center"
+                disabled={mutation?.isPending}
+                isLoading={mutation?.isPending}
+                name="Submit"
               />
             </form>
           </div>
