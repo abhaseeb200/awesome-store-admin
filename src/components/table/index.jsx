@@ -64,6 +64,14 @@ const Table = ({ table }) => {
               ))}
             </tr>
           ))}
+
+          {table.getRowModel().rows?.length <= 0 && (
+            <tr className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm">
+              <td colSpan="99" className="py-4 px-3 uppercase text-center font-semibold">
+                Data is not found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
