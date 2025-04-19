@@ -1,4 +1,0 @@
-export const GETCATEGORY = "GETCATEGORY" //replace name to read category
-export const CREATEECATEGORY = "CREATEECATEGORY"
-export const UPADATECATEGORY = "UPADATECATEGORY"
-export const DELETECATEGORY = "DELETECATEGORY"
