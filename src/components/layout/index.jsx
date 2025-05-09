@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
   }, []);
   return (
     <>
-      <div className="flex h-screen bg-gray-100 dark:bg-dark-100">
+      <div className="flex h-screen bg-gray-100 dark:bg-dark-100 overflow-hidden">
         <Sidebar
           showSidebar={showSidebar}
           handleSidebar={handleSidebar}
