@@ -1,11 +1,8 @@
 import { HiOutlineMenu } from "react-icons/hi";
 import { CiDark, CiLight } from "react-icons/ci";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import isDarkModeAction from "../../redux/actions/themeModeAction";
 
 const Header = ({ handleSidebar, screenWidth }) => {
-  // const { isDarkMode } = useSelector((state) => state.theme);
   // const dispatch = useDispatch();
 
   const handleMode = () => {

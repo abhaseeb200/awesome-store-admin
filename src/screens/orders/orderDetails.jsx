@@ -8,11 +8,6 @@ import { Card, CardHeading } from "../../components/card";
 import PageHeading from "../../components/pageTitle";
 import SelectCustom from "../../components/select";
 import Button from "../../components/button";
-import {
-  getOrderDetails,
-  setOrderDetails,
-} from "../../config/services/firebase/order";
-import { getUserData } from "../../config/services/firebase/user";
 import CardSkeleton from "../../components/card/skeleton";
 
 const OrderDetails = () => {
@@ -28,38 +23,38 @@ const OrderDetails = () => {
   // console.log(id);
 
   const handleFetchOrder = async () => {
-    try {
-      let response = await getOrderDetails(id);
-      console.log(response.data(), "------");
-      setProducts(response.data()?.products);
-      setStatus(response.data()?.status);
-      setStatusBackUP(response.data()?.status);
-      setCurrentDate(response.data()?.dateAndTime);
-      handleUserData(response.data()?.userId);
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "An error occurred", {
-        autoClose: 1500,
-      });
-      setMainLoader(false);
-    }
+    // try {
+    //   let response = await getOrderDetails(id);
+    //   console.log(response.data(), "------");
+    //   setProducts(response.data()?.products);
+    //   setStatus(response.data()?.status);
+    //   setStatusBackUP(response.data()?.status);
+    //   setCurrentDate(response.data()?.dateAndTime);
+    //   handleUserData(response.data()?.userId);
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error(error.message || "An error occurred", {
+    //     autoClose: 1500,
+    //   });
+    //   setMainLoader(false);
+    // }
   };
 
   const handleUserData = async (userID) => {
-    try {
-      let response = await getUserData(userID);
-      response.forEach((doc) => {
-        console.log(doc.data());
-        setUserData(doc.data());
-      });
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "An error occurred", {
-        autoClose: 1500,
-      });
-    } finally {
-      setMainLoader(false);
-    }
+    // try {
+    //   let response = await getUserData(userID);
+    //   response.forEach((doc) => {
+    //     console.log(doc.data());
+    //     setUserData(doc.data());
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error(error.message || "An error occurred", {
+    //     autoClose: 1500,
+    //   });
+    // } finally {
+    //   setMainLoader(false);
+    // }
   };
 
   const handleSubTotal = () => {
@@ -87,22 +82,22 @@ const OrderDetails = () => {
 
   const handleUpdateStatus = async () => {
     // console.log(status);
-    try {
-      setUpdateStatusLoader(true);
-      let response = await setOrderDetails(id, status);
-      console.log(response);
-      setStatusBackUP(status);
-      toast.success("Update successful!", {
-        autoClose: 1500,
-      });
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "An error occurred", {
-        autoClose: 1500,
-      });
-    } finally {
-      setUpdateStatusLoader(false);
-    }
+    // try {
+    //   setUpdateStatusLoader(true);
+    //   let response = await setOrderDetails(id, status);
+    //   console.log(response);
+    //   setStatusBackUP(status);
+    //   toast.success("Update successful!", {
+    //     autoClose: 1500,
+    //   });
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error(error.message || "An error occurred", {
+    //     autoClose: 1500,
+    //   });
+    // } finally {
+    //   setUpdateStatusLoader(false);
+    // }
   };
 
   useEffect(() => {

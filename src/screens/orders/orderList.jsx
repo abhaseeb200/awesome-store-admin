@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
-import "jspdf-autotable";
 import { LuEye } from "react-icons/lu";
 import { MdMoreVert } from "react-icons/md";
 import { MdOutlineDeleteOutline } from "react-icons/md";
@@ -12,9 +10,7 @@ import Pagination from "../../components/pagination";
 import PageHeading from "../../components/pageTitle";
 import { Card } from "../../components/card";
 import CardSkeleton from "../../components/card/skeleton";
-import { getOrders } from "../../config/services/firebase/order";
 import ExportDropDown from "../../components/exportDropdown";
-import { getOrderAction } from "../../redux/actions/orderAction";
 
 const OrderList = () => {
   const [currentPaginationNum, setCurrentPaginationNum] = useState(1);
@@ -23,9 +19,6 @@ const OrderList = () => {
   const [orderDataBackUP, setOrderDataBackUP] = useState([]);
   const [exportTableData, setExportTableData] = useState([]);
   const [search, setSearch] = useState("");
-
-  const { orderList } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
 
   // console.log(orders);
   // const actionDropdownItems = [
@@ -54,24 +47,24 @@ const OrderList = () => {
 
   const handleGetOrders = async () => {
     // setMainLoader(true);
-    try {
-      let response = await getOrders();
-      let temp = [];
-      response.forEach((product) => {
-        temp.push({ ...product.data(), docID: product.id });
-      });
-      // console.log(temp, "TEMPPPP");
-      // setOrderData(temp);
-      // setOrderDataBackUP(temp);
-      dispatch(getOrderAction(temp));
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message || "An error occurred", {
-        autoClose: 1500,
-      });
-    } finally {
-      setMainLoader(false);
-    }
+    // try {
+    //   let response = await getOrders();
+    //   let temp = [];
+    //   response.forEach((product) => {
+    //     temp.push({ ...product.data(), docID: product.id });
+    //   });
+    //   // console.log(temp, "TEMPPPP");
+    //   // setOrderData(temp);
+    //   // setOrderDataBackUP(temp);
+    //   dispatch(getOrderAction(temp));
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error(error.message || "An error occurred", {
+    //     autoClose: 1500,
+    //   });
+    // } finally {
+    //   setMainLoader(false);
+    // }
   };
 
   const handleSearch = (e) => {
@@ -91,17 +84,17 @@ const OrderList = () => {
   };
 
   useEffect(() => {
-    if (orderList?.length) {
-      console.log("-----");
-      console.log(orderList, "REDUCERS");
-      setOrderDataBackUP(orderList);
-      setOrderData(orderList);
-      // setMainLoader(false);
-      handleGetOrders();
-    } else {
-      setMainLoader(true);
-      handleGetOrders();
-    }
+    // if (orderList?.length) {
+    //   console.log("-----");
+    //   console.log(orderList, "REDUCERS");
+    //   setOrderDataBackUP(orderList);
+    //   setOrderData(orderList);
+    //   // setMainLoader(false);
+    //   handleGetOrders();
+    // } else {
+    //   setMainLoader(true);
+    //   handleGetOrders();
+    // }
   }, []);
 
   useEffect(() => {
@@ -114,10 +107,10 @@ const OrderList = () => {
     setExportTableData(newData);
   }, [orderDataBackUP]);
 
-  useEffect(() => {
-    setOrderData(orderList);
-    setOrderDataBackUP(orderList);
-  }, [orderList]);
+  // useEffect(() => {
+  //   setOrderData(orderList);
+  //   setOrderDataBackUP(orderList);
+  // }, [orderList]);
   return (
     <>
       <div>

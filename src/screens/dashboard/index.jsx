@@ -4,7 +4,6 @@ import { BsCart3 } from "react-icons/bs";
 import { TbUsers } from "react-icons/tb";
 import { Card, CardHeading } from "../../components/card";
 import { getProducts } from "../../api/api";
-import { getAllUsers } from "../../config/services/firebase/user";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Dashboard = () => {
@@ -15,12 +14,12 @@ const Dashboard = () => {
   const cachedUser = queryClient.getQueryData('user');
 
   const fetchCustomerSize = async () => {
-    try {
-      let response = await getAllUsers();
-      setCustomerSize(response.size);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   let response = await getAllUsers();
+    //   setCustomerSize(response.size);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const fetchProductSize = async () => {

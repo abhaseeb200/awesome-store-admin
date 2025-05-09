@@ -1,8 +1,6 @@
 import { useRef } from "react";
 import { CSVLink } from "react-csv";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
 import { GoDownload } from "react-icons/go";
 import { IoPrintOutline } from "react-icons/io5";
 import { PiNewspaperLight } from "react-icons/pi";
@@ -44,37 +42,37 @@ const ExportDropDown = ({ exportData, title, filename }) => {
   //   });
 
   const handleExportPrint = () => {
-    const pdf = new jsPDF();
-    // pdf.setProperties({ title: 'test' });
-    pdf.setFontSize(18);
-    pdf.setFont("Helvetica", "normal");
-    pdf.setTextColor(64, 64, 64);
-    pdf.text(`${title}`, pdf.internal.pageSize.width / 2, 10, {
-      align: "center",
-    });
-    pdf.autoTable({ html: "#mytable", theme: "grid" });
-    // Get total number of pages
-    const totalPages = pdf.internal.getNumberOfPages();
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(10);
-      pdf.setTextColor(64, 64, 64);
-      //Print page number
-      pdf.text(
-        `Page ${i} of ${totalPages}`,
-        pdf.internal.pageSize.width / 2,
-        pdf.internal.pageSize.height - 10,
-        {
-          align: "center",
-        }
-      );
-    }
-    pdf.autoPrint();
-    pdf.output("dataurlnewwindow");
+    // const pdf = new jsPDF();
+    // // pdf.setProperties({ title: 'test' });
+    // pdf.setFontSize(18);
+    // pdf.setFont("Helvetica", "normal");
+    // pdf.setTextColor(64, 64, 64);
+    // pdf.text(`${title}`, pdf.internal.pageSize.width / 2, 10, {
+    //   align: "center",
+    // });
+    // pdf.autoTable({ html: "#mytable", theme: "grid" });
+    // // Get total number of pages
+    // const totalPages = pdf.internal.getNumberOfPages();
+    // for (let i = 1; i <= totalPages; i++) {
+    //   pdf.setPage(i);
+    //   pdf.setFontSize(10);
+    //   pdf.setTextColor(64, 64, 64);
+    //   //Print page number
+    //   pdf.text(
+    //     `Page ${i} of ${totalPages}`,
+    //     pdf.internal.pageSize.width / 2,
+    //     pdf.internal.pageSize.height - 10,
+    //     {
+    //       align: "center",
+    //     }
+    //   );
+    // }
+    // pdf.autoPrint();
+    // pdf.output("dataurlnewwindow");
   };
 
   const handleExportCVS = () => {
-    excelRef.current.link.click();
+    // excelRef.current.link.click();
   };
 
   return (
