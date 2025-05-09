@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Modal from ".";
 import { FiUpload } from "react-icons/fi";
+import Modal from "@/components/modal";
 
 const UploadModal = ({ setIsOpen, isOpen, handleOnChangeUpload, type }) => {
   const [activeTab, setActiveTab] = useState("upload"); // "upload" or "media"
@@ -14,7 +14,7 @@ const UploadModal = ({ setIsOpen, isOpen, handleOnChangeUpload, type }) => {
       <div className="w-full mx-auto overflow-hidden">
         {/* Modal Header */}
         <div className="flex border-b">
-          <button
+          <span
             className={`flex-1 py-3 px-4 text-center ${
               activeTab === "upload"
                 ? "bg-blue-500 text-white"
@@ -24,8 +24,9 @@ const UploadModal = ({ setIsOpen, isOpen, handleOnChangeUpload, type }) => {
             onClick={() => setActiveTab("upload")}
           >
             Upload File
-          </button>
-          <button
+          </span>
+
+          <span
             type="button"
             className={`flex-1 py-3 px-4 text-center ${
               activeTab === "media"
@@ -35,7 +36,7 @@ const UploadModal = ({ setIsOpen, isOpen, handleOnChangeUpload, type }) => {
             onClick={() => setActiveTab("media")}
           >
             Media Library
-          </button>
+          </span>
         </div>
 
         {/* Modal Body */}
@@ -74,10 +75,8 @@ const Upload = () => {
 };
 
 const Media = ({ handleOnChangeUpload, type }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
 
   const handleImageClick = (index, url) => {
-    setSelectedImage(index);
     handleOnChangeUpload(url, type);
   };
 
@@ -88,19 +87,14 @@ const Media = ({ handleOnChangeUpload, type }) => {
           key={index}
           className="relative aspect-square bg-gray-200 rounded-lg overflow-hidden cursor-pointer"
           onClick={() =>
-            handleImageClick(index, `https://placehold.co/300x30${index + 10}`)
+            handleImageClick(index, `https://placehold.co/300x30${index + 1}`)
           }
         >
           <img
-            src={`https://placehold.co/300x30${index + 10}`}
+            src={`https://placehold.co/300x30${index + 1}`}
             alt={`Media ${index + 1}`}
             className="w-full h-full object-cover"
           />
-          {selectedImage === index && (
-            <button className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-3 py-1 rounded-lg text-sm">
-              Delete
-            </button>
-          )}
         </div>
       ))}
     </div>
