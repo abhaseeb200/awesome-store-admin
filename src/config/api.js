@@ -12,7 +12,7 @@ API.interceptors.request.use(
     const authData = JSON.parse(localStorage.getItem("auth"));
 
     if (authData?.token) {
-      config.headers["Authorization"] = `Bearer ${authData?.token}`;
+      config.headers["Authorization"] = `${authData?.token}`;
     }
     return config;
   },
