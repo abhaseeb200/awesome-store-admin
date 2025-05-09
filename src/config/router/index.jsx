@@ -4,19 +4,20 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import Layout from "../../components/layout/index.jsx";
-import Dashboard from "../../screens/dashboard/index.jsx";
-import Login from "../../screens/login/index.jsx";
-import ProtectRoute from "../protectedRoute/index.jsx";
-import PageNotFound from "../../screens/pageNotFound/index.jsx";
-import CategoryList from "../../screens/categories/index.jsx";
-import OrderList from "../../screens/orders/orderList.jsx";
-import OrderDetails from "../../screens/orders/orderDetails.jsx";
-import ProductList from "../../screens/products/productList.jsx";
-import ProductEditor from "../../screens/products/productEditor.jsx";
-import Orders from "../../screens/orders/index.jsx";
-import Products from "../../screens/products/index.jsx";
-import Error from "../../screens/error/index.jsx";
+import ProtectRoute from "@/config/protectedRoute/index.jsx";
+import Layout from "@/components/layout/index.jsx";
+import Dashboard from "@/screens/dashboard/index.jsx";
+import Login from "@/screens/login/index.jsx";
+import PageNotFound from "@/screens/pageNotFound/index.jsx";
+import CategoryList from "@/screens/categories/index.jsx";
+import OrderList from "@/screens/orders/orderList.jsx";
+import OrderDetails from "@/screens/orders/orderDetails.jsx";
+import ProductList from "@/screens/products/productList.jsx";
+import ProductEditor from "@/screens/products/productEditor.jsx";
+import Orders from "@/screens/orders/index.jsx";
+import Products from "@/screens/products/index.jsx";
+import Error from "@/screens/error/index.jsx";
+import CustomDropdown from "@/screens/test.jsx";
 
 const Main = () => {
   
@@ -39,7 +40,9 @@ const Main = () => {
             <Route path="*" element={<PageNotFound />} />
           </Route>
         </Route>
+        
         <Route path="login" element={<Login />} />
+        <Route path="testing" element={<CustomDropdown />} />
       </>
     )
   );
