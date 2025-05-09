@@ -13,7 +13,7 @@ const UploadField = ({ isError, messageError, ...props }) => {
         className={`${
           props?.className
         } w-full flex flex-col items-center rounded-md border-2 border-dashed tracking-wide cursor-pointer overflow-hidden ${
-          isError ? "border-red-400" : "border-gray-400"
+          isError > 0 ? "border-red-500" : "border-gray-400"
         }`}
         onClick={() => props?.onClick()}
       >
@@ -29,17 +29,15 @@ const UploadField = ({ isError, messageError, ...props }) => {
           </span>
         )}
 
-        {props?.title && (
+        {!props?.value && (
           <span className="mt-6 text-base leading-normal bg-primaryLight text-primaryDark py-1.5 px-4 rounded-md">
             {props?.title}
           </span>
         )}
       </div>
 
-      {isError ? (
+      {isError > 0 && (
         <small className="text-red-500 block capitalize">{messageError}</small>
-      ) : (
-        ""
       )}
     </>
   );
