@@ -1,4 +1,5 @@
 import { Transition } from "@headlessui/react";
+import { toast } from "react-toastify";
 import { Fragment } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -69,8 +70,8 @@ const SidebarContent = ({ handleSidebar }) => {
   const handleLogout = async () => {
     queryClient.setQueryData('auth', null);
     localStorage.removeItem('auth');
-    toast.success("Logout successfully!");
     navigate("/login", { replace: true });
+    toast.success("Logout successfully!");
   };
 
   return (
@@ -117,6 +118,16 @@ const SidebarContent = ({ handleSidebar }) => {
         <NavbarLink
           to="/categories"
           title="Categories"
+          icon={<TbCategoryPlus size="1.1rem" />}
+          handleSidebar={handleSidebar}
+        />
+        
+        <div className="text-gray-400 uppercase text-sm mt-5 mb-2 px-4">
+          brand
+        </div>
+        <NavbarLink
+          to="/brands"
+          title="Brands"
           icon={<TbCategoryPlus size="1.1rem" />}
           handleSidebar={handleSidebar}
         />
