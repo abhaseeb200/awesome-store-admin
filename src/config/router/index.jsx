@@ -18,6 +18,7 @@ import Orders from "@/screens/orders/index.jsx";
 import Products from "@/screens/products/index.jsx";
 import Error from "@/screens/error/index.jsx";
 import CustomDropdown from "@/screens/test.jsx";
+import BrandScreen from "@/screens/brands";
 
 const Main = () => {
   
@@ -27,16 +28,20 @@ const Main = () => {
         <Route path="/" element={<Layout />} errorElement={<Error />}>
           <Route element={<ProtectRoute />}>
             <Route index element={<Dashboard />} />
+            
             <Route path="orders" element={<Orders />}>
               <Route index element={<OrderList />} />
               <Route path=":id" element={<OrderDetails />} />
             </Route>
+            
             <Route path="products" element={<Products />}>
               <Route index element={<ProductList />} />
               <Route path="create" element={<ProductEditor />} />
               <Route path=":id/update" element={<ProductEditor />} />
             </Route>
+
             <Route path="categories" element={<CategoryList />} />
+            <Route path="brands" element={<BrandScreen />} />
             <Route path="*" element={<PageNotFound />} />
           </Route>
         </Route>
