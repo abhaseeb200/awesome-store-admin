@@ -18,6 +18,8 @@ const CategoryList = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateCategory, setUpdateCategory] = useState({});
 
+  const isSelectQuery = false;
+
   const {
     categoriesFetch,
     deleteMutation,
@@ -27,7 +29,7 @@ const CategoryList = () => {
     setSorting,
     setSearchValue,
     setPagination,
-  } = useCategory();
+  } = useCategory(isSelectQuery);
 
   const handleUpdate = (data) => {
     setIsOpenModal(true);

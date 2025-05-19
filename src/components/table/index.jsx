@@ -113,7 +113,7 @@ const Table = ({ table, isLoading, totalItem = 10 }) => {
               className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
             >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="py-4 px-6">
+                <td key={cell.id} className="py-4 px-6 whitespace-normal">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

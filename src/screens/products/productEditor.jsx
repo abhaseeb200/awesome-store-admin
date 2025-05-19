@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { set, z } from "zod";
 import { toast } from "react-toastify";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -13,73 +13,63 @@ import AddCategoryModal from "@/components/modal/addCategoryModal";
 import UploadModal from "@/components/modal/uploadModal";
 import UploadField from "@/components/uploadField";
 import NotFound from "@/components/card/notFound";
-import API from "@/config/api";
-import axios from "axios";
-
-const categories = [
-  { id: 1, name: "Category 1" },
-  { id: 2, name: "Category 2" },
-  { id: 3, name: "Category 3" },
-  { id: 4, name: "Category 4" },
-  { id: 5, name: "Category 5" },
-];
+import useProduct from "@/hook/useProduct";
+import SelectSearch from "@/components/SelectSearch";
+import useCategory from "@/hook/useCategory";
 
 const ProductEditor = () => {
-  const [showUploadModal, setShowUploadModal] = useState({
-    type: "",
-    isOpen: false,
-  }); //type: gallery or thumbnail
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isOpenCategoryModal, setIsOpenCategoryModal] = useState(false);
+  const [mediaType, setMediaType] = useState("thumbnail"); //type: gallery or thumbnail
   const [isUpdate, setIsUpdate] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
   const isProductFound = false;
+  const isSelectQuery = true;
+
+  const { createMutation } = useProduct();
+  const {
+    selectQuery,
+    setPagination,
+    categoriesSelect,
+    setSearchValue,
+    pagination,
+  } = useCategory(isSelectQuery);
 
   const productSchema = z.object({
     title: z.string().min(1, { message: "Title is required" }),
     description: z.string().min(1, { message: "Description is required" }),
-    category: z.string().min(1, { message: "Category is required" }),
+    category: z.object({
+      _id: z.string().min(1, { message: "Category-Id is required" }),
+    }),
     brand: z.string().min(1, { message: "Brand is required" }),
     price: z.coerce.number().min(1, "Price is required"),
     stock: z.coerce.number().min(1, "Stock is required"),
   });
 
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (data) => {
-      return API.post("/products/add", data);
-    },
-    onSuccess: (response) => {
-      toast.success("Product added successfully");
-    },
-    onError: (error) => {
-      toast.error(error?.message || "Something went wrong");
-    },
-  });
-
   const form = useForm({
     defaultValues: {
-      title: "title",
-      description: "lorem ipsum",
-      category: "category",
+      title: "",
+      description: "",
       brand: "brand",
       price: 100,
       discountPercentage: 10,
       stock: 22,
-      thumbnail: "www",
+      thumbnail: "",
     },
     validators: {
       onChange: productSchema,
       onSubmit: ({ value }) => {
         return {
           fields: {
-            thumbnail: value?.thumbnail ? null : "Please upload media",
+            thumbnail: value?.thumbnail ? undefined : "Please upload media",
           },
         };
       },
     },
     onSubmit: async ({ value }) => {
-      mutation.mutate(value);
+      createMutation.mutate(value);
     },
   });
 
@@ -87,9 +77,14 @@ const ProductEditor = () => {
     if (type === "gallery") {
       form.setFieldValue("gallery", (oldItems) => [...(oldItems || []), url]);
     } else {
-      form.setFieldValue(type, url);
+      form.setFieldValue("thumbnail", url);
+      form.validateField("thumbnail");
     }
-    setShowUploadModal({ type: "", isOpen: false });
+    setShowUploadModal(false);
+  };
+
+  const handleAddNewCategory = () => {
+    setIsOpenCategoryModal(true);
   };
 
   return (
@@ -115,16 +110,11 @@ const ProductEditor = () => {
               </span>
             </div>
             <div>
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]) => (
-                  <Button
-                    type="submit"
-                    disabled={!canSubmit}
-                    isLoading={isSubmitting}
-                    name={`${isUpdate ? "Update" : "Publish"} Product`}
-                  />
-                )}
+              <Button
+                type="submit"
+                disabled={!createMutation?.canSubmit}
+                isLoading={createMutation?.isSubmitting}
+                name={`${isUpdate ? "Update" : "Publish"} Product`}
               />
             </div>
           </div>
@@ -213,10 +203,8 @@ const ProductEditor = () => {
                           isError={field?.state?.meta?.errors?.length}
                           messageError={field?.state?.meta?.errors}
                           onClick={() => {
-                            setShowUploadModal({
-                              type: "thumbnail",
-                              isOpen: true,
-                            });
+                            setMediaType(field?.name);
+                            setShowUploadModal(true);
                           }}
                         />
                       </div>
@@ -235,22 +223,24 @@ const ProductEditor = () => {
                         return (
                           <>
                             <UploadField
-                              className="flex justify-center size-24"
-                              onClick={() =>
-                                setShowUploadModal({
-                                  type: "gallery",
-                                  isOpen: true,
-                                })
-                              }
+                              className="flex justify-center h-40"
+                              title="Browse a image"
+                              onClick={() => {
+                                setMediaType(field?.name);
+                                setShowUploadModal(true);
+                              }}
                             />
 
-                            {field?.state?.value?.map((url, index) => (
-                              <img
-                                src={url}
-                                key={index}
-                                className="size-24 object-cover border-2 border-dashed border-gray-400 rounded-md p-1"
-                              />
-                            ))}
+                            <div className="flex flex-wrap">
+                              {field?.state?.value?.map((url, index) => (
+                                <div className="w-[16.6%]" key={index}>
+                                  <img
+                                    src={url}
+                                    className="mx-2 object-cover border-2 border-dashed border-gray-400 rounded-md p-0.5"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </>
                         );
                       }}
@@ -287,7 +277,7 @@ const ProductEditor = () => {
 
                 {/* ================= DISCOUNT PRICE ================= */}
                 <form.Field
-                  name="discountedPrice"
+                  name="discountPercentage"
                   children={(field) => {
                     return (
                       <Input
@@ -307,7 +297,7 @@ const ProductEditor = () => {
                 />
               </Card>
 
-              <Card className="px-6 py-6 flex gap-3 flex-col">
+              <Card className="px-6 py-6 flex gap-4 flex-col relative z-10">
                 <CardHeading title="Organize" />
 
                 {/* ================= BRAND ================= */}
@@ -332,12 +322,12 @@ const ProductEditor = () => {
                 />
 
                 {/* ================= SELECT CATEGORY ================= */}
-                <div>
+                <div className="relative">
                   <div className="text-sm text-gray-500 dark:text-gray-300 mb-1 flex justify-between">
                     <span>Category</span>
                     <span
                       className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition dark:text-primaryLight"
-                      // onClick={handleAddNewCategory}
+                      onClick={handleAddNewCategory}
                     >
                       Add New Category
                     </span>
@@ -347,26 +337,22 @@ const ProductEditor = () => {
                     name="category"
                     children={(field) => {
                       return (
-                        <SelectDropdown
-                          className="py-2 w-full capitalize"
+                        <SelectSearch
+                          options={categoriesSelect}
+                          total={selectQuery?.data?.total}
                           value={field?.state.value}
                           isError={field?.state?.meta?.errors?.length}
                           messageError={field?.state?.meta?.errors}
-                          onChange={(e) =>
-                            field?.handleChange(e?.target?.value)
-                          }
-                        >
-                          <option value="" select="select">
-                            Select Category
-                          </option>
-                          {categories?.map((item, index) => {
-                            return (
-                              <option value={item?.id} key={index}>
-                                {item?.name}
-                              </option>
-                            );
-                          })}
-                        </SelectDropdown>
+                          pageIndex={pagination?.pageIndex + 1}
+                          setPagination={setPagination} // USED FOR LOAD MORE: PAGE NUMBER 0,1,2...
+                          setSearchValue={setSearchValue}
+                          onChange={(value) => {
+                            field?.handleChange({
+                              _id: value?._id,
+                              label: value?.title,
+                            });
+                          }}
+                        />
                       );
                     }}
                   />
@@ -404,8 +390,8 @@ const ProductEditor = () => {
 
       {/* =================== USE CASE: ADD CATEGORY IF DOES'T EXISTS =================== */}
       {/* <AddCategoryModal
-        isOpenModal={isOpenModal}
-        setIsOpenModal={setIsOpenModal}
+        isOpenModal={isOpenCategoryModal}
+        setIsOpenModal={setIsOpenCategoryModal}
         currentCategory={currentCategory}
         setCurrentCategory={setCurrentCategory}
       /> */}
@@ -413,9 +399,9 @@ const ProductEditor = () => {
       {/* =================== USE CASE: SELECT PICTURE FROM MODAL  =================== */}
       <UploadModal
         setIsOpen={setShowUploadModal}
-        isOpen={showUploadModal?.isOpen}
-        type={showUploadModal?.type}
         handleOnChangeUpload={handleOnChangeUpload}
+        isOpen={showUploadModal}
+        type={mediaType}
       />
     </>
   );
