@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { z } from "zod";
 import axios from "axios";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Button from "@/components/button";
 import Input from "@/components/inputs";
 import { Card } from "@/components/card";
@@ -25,6 +27,7 @@ const userSchema = z.object({
 
 const Login = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const queryClient = useQueryClient();
   const mutation = useMutation({
@@ -105,18 +108,29 @@ const Login = () => {
               <form.Field
                 name="password"
                 children={(field) => (
-                  <Input
-                    id={field?.name}
-                    type="password"
-                    placeholder="············"
-                    label={field?.name}
-                    name={field?.name}
-                    value={field?.state.value}
-                    onChange={(e) => field?.handleChange(e?.target?.value)}
-                    isError={field?.state?.meta?.errors?.length}
-                    messageError={field?.state?.meta?.errors}
-                    autoComplete="current-password"
-                  />
+                  <div className="relative">
+                    <Input
+                      id={field?.name}
+                      type={showPassword ? "text" : "password"}
+                      placeholder="············"
+                      label={field?.name}
+                      name={field?.name}
+                      value={field?.state.value}
+                      onChange={(e) => field?.handleChange(e?.target?.value)}
+                      isError={field?.state?.meta?.errors?.length}
+                      messageError={field?.state?.meta?.errors}
+                      autoComplete="current-password"
+                    />
+                    <span
+                      className="absolute right-3 bottom-0 -translate-y-1/2 cursor-pointer text-xl text-gray-500"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                    </span>
+                  </div>
                 )}
               />
 
