@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   createColumnHelper,
@@ -12,8 +12,6 @@ import { GrAdd } from "react-icons/gr";
 import { LuEye, LuLoader2 } from "react-icons/lu";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
-import InputCustom from "@/components/inputs";
-import SelectCustom from "@/components/select";
 import Pagination from "@/components/pagination";
 import Button from "@/components/button";
 import PageHeading from "@/components/pageTitle";
@@ -23,209 +21,148 @@ import ExportDropDown from "@/components/exportDropdown";
 import useQueryParams from "@/hook/useQueryParams";
 import ProductView from "@/screens/products/productView";
 import API from "@/config/api";
-
-const defaultData = [
-  {
-    firstName: "tanner",
-    lastName: "linsley",
-    age: 24,
-    visits: 100,
-    status: "In Relationship",
-    progress: 50,
-  },
-  {
-    firstName: "tandy",
-    lastName: "miller",
-    age: 40,
-    visits: 40,
-    status: "Single",
-    progress: 80,
-  },
-  {
-    firstName: "joe",
-    lastName: "dirte",
-    age: 45,
-    visits: 20,
-    status: "Complicated",
-    progress: 10,
-  },
-];
+import Input from "@/components/inputs";
+import useProduct from "@/hook/useProduct";
+import Table from "@/components/table";
+import { IoClose } from "react-icons/io5";
 
 const ProductList = () => {
-  const [data, _setData] = useState(() => [...defaultData]);
-  const [currentProduct, setCurrentProduct] = useState({});
-  const [search, setSearch] = useState("");
-  const [exportTableData, setExportTableData] = useState([]);
-
-  const { query, postPerPage, offset, category } = useQueryParams();
+  const [isOpen, setIsOpen] = useState(false);
+  const [productData, setProductData] = useState(null);
 
   const {
-    isPending,
-    error,
-    data: products,
-  } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => API.get("/products"),
-  });
-
-  if (error) {
-    toast.error(error?.message || "An error occurred");
-  }
-
-  console.log(products, "FETCHHH.......");
-
-  const columns = [
-    { accessorKey: "firstName", cell: (info) => info.getValue() },
-    {
-      accessorFn: (row) => row.lastName,
-      id: "lastName",
-      cell: (info) => <i>{info.getValue()}</i>,
-      header: () => <span>Last Name</span>,
-    },
-    {
-      accessorKey: "age",
-      header: () => "Age",
-    },
-    {
-      accessorKey: "visits",
-      header: () => <span>Visits</span>,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-    },
-    {
-      accessorKey: "progress",
-      header: "Profile Progress",
-    },
-    {
-      id: "actions",
-      header: "Action",
-      cell: (info) => (
-        <span className="flex gap-1.5 justify-center text-gray-500 dark:text-gray-300 actions">
-          {/* =========== UPDATE - USE-CASE: OPEN A PRODUCT EDITOR SCREEN WITH THEIR ID IN PARAMS =========== */}
-          <Link to={`update`}>
-            <span className="hover:text-primaryDark cursor-pointer">
-              <TbEdit size="1.3rem" />
-            </span>
-          </Link>
-
-          {/* =========== DELETE - USE-CASE: DELETE PRODUCT WITH THEIR ID =========== */}
-          <span
-            className="hover:text-primaryDark cursor-pointer"
-            onClick={() => console.log("delete", info?.row?.original)}
-          >
-            <MdOutlineDeleteOutline size="1.3rem" />
-          </span>
-
-          {/* =========== VIEW - USE-CASE: OPEN A MODAL =========== */}
-          <span
-            className="hover:text-primaryDark cursor-pointer"
-            onClick={() => console.log("view", info?.row?.original)}
-          >
-            <LuEye size="1.3rem" />
-          </span>
-        </span>
-      ),
-    },
-  ];
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+    searchValue,
+    setSearchValue,
+    productFetch,
+    pagination,
+    sorting,
+    setPagination,
+    setSorting,
+  } = useProduct();
 
   const handleView = (product) => {
-    console.log({ product }, "VIEW");
-    setIsOpenModal(true);
-    setCurrentProduct(product);
+    setIsOpen(true);
+    setProductData(product);
   };
 
   const handleDelete = (product) => {
     const { id } = product;
   };
 
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "title",
+        cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+      },
+      {
+        accessorKey: "stock",
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: "price",
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: "Discount",
+        accessorKey: "discountPercentage",
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: "category",
+        cell: (info) => info.getValue()?.title ?? "-",
+      },
+      {
+        accessorKey: "brand",
+        cell: (info) => info.getValue()?.title ?? "-",
+      },
+      {
+        accessorKey: "thumbnail",
+        cell: (info) => (
+          <img src={info.getValue()} className="size-full max-w-20" />
+        ),
+        enableSorting: false,
+      },
+      {
+        id: "actions",
+        header: "Action",
+        cell: (info) => (
+          <span className="flex gap-1.5 justify-start items-center text-gray-500 dark:text-gray-300 actions">
+            {/* =========== VIEW - USE-CASE: OPEN IMAGE MODAL TO SHOW THUMBNAIL =========== */}
+            <button
+              onClick={() => handleView(info?.row?.original)}
+              className="hover:text-primaryDark"
+            >
+              <LuEye size="1.3rem" />
+            </button>
+
+            {/* =========== UPDATE - USE-CASE:  =========== */}
+            <Link to={`${info?.row?.original?._id}/update`}>
+              <button className="hover:text-primaryDark">
+                <TbEdit size="1.3rem" />
+              </button>
+            </Link>
+
+            {/* =========== DELETE - USE-CASE: DELETE CATEGORY WITH THEIR ID =========== */}
+            <button
+              className="hover:text-primaryDark"
+              onClick={() => deleteMutation.mutate(info?.row?.original)}
+            >
+              <MdOutlineDeleteOutline size="1.3rem" />
+            </button>
+          </span>
+        ),
+      },
+    ],
+    []
+  );
+
+  const table = useReactTable({
+    data: productFetch?.data?.data ?? [],
+    columns,
+    state: {
+      sorting,
+      pagination,
+    },
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    pageCount:
+      Math.ceil(productFetch?.data?.total / productFetch?.data?.limit) || -1,
+    manualPagination: true,
+    manualSorting: true,
+  });
+
   return (
     <>
       <div>
         <PageHeading title="Product List" />
-        {isPending ? (
+        {productFetch?.isLoading ? (
           <CardSkeleton />
         ) : (
           <Card>
-            {/* =================== FILTER =================== */}
-            <div className="filter py-6 px-5">
-              <h4 className="text-lg text-gray-600 font-medium pb-2 dark:text-gray-200">
-                Filter
-              </h4>
-              <div className="flex sm:flex-row flex-col gap-4">
-                <span className="sm:w-1/2 w-full">
-                  {/* <SelectCustom
-                    customClass="w-full py-2 capitalize"
-                    onChange={handleCategoryFilter}
-                    value={currentCategory}
-                  >
-                    <option value="0" select="select">
-                      Select Category
-                    </option>
-                    {categories.map((item, index) => {
-                      return (
-                        <option value={item?.category?.slug} key={index}>
-                          {item?.category?.name}
-                        </option>
-                      );
-                    })}
-                  </SelectCustom> */}
-                </span>
-              </div>
-            </div>
-            <hr className="bg-gray-400 h-0.5" />
-
-            {/* =================== SEARCH BAR =================== */}
             <div className="py-6 px-5 flex lg:flex-row flex-col gap-4 justify-between">
-              <span className="lg:w-48 w-full block relative">
-                <InputCustom
+              {/* =================== SEARCH BAR =================== */}
+              <div className="relative flex gap-2 sm:items-center items-start sm:flex-row flex-col">
+                <Input
                   type="text"
-                  placeholder="Search Product"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search Category"
+                  className="sm:w-[303px] w-full pr-10"
+                  onChange={(event) => setSearchValue(event.target.value)}
+                  value={searchValue}
                 />
-                <span
-                  className="absolute top-1.5 right-1.5 text-primaryDark p-1 cursor-pointer rounded-md bg-primaryLight dark:bg-dark-600 dark:text-gray-300 hover:text-white hover:bg-primaryDark transition "
-                  onClick={() => {
-                    // handleSearch(postPerPage, 0);
-                    // setSearchButtton(search);
-                  }}
-                >
-                  {/* {searchLoader ? (
-                    <LuLoader2 className="animate-spin" />
-                  ) : (
-                    <IoIosSearch />
-                  )} */}
-                </span>
-              </span>
-              <span className="flex gap-2 items-center">
-                {/* <SelectCustom
-                  customClass="py-2 lg:w-auto w-1/2 flex-1"
-                  // onChange={handlePostPerPage}
-                  value={postPerPage}
-                >
-                  <option value="10" select="select">
-                    10
-                  </option>
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                </SelectCustom> */}
-                <span className="lg:w-auto w-1/2">
-                  {/* {productData?.length > 0 && (
-                    <ExportDropDown
-                      title="Product List"
-                      filename="product_list_data"
-                      exportData={exportTableData}
-                    />
-                  )} */}
-                </span>
+                {searchValue && (
+                  <span
+                    onClick={() => setSearchValue("")}
+                    className="absolute right-2 mb-0.5 cursor-pointer bg-gray-600 rounded-full p-1 hover:bg-gray-500 transition-all ease-in-out"
+                  >
+                    <IoClose color="#fff" size="1rem" />
+                  </span>
+                )}
+              </div>
+
+              {/* =================== ADD TO PRODUCT - BUTTON =================== */}
+              <div className="flex gap-2 items-center">
                 <Link to="create" className="lg:w-auto w-1/2">
                   <Button
                     name="Add Product"
@@ -233,101 +170,24 @@ const ProductList = () => {
                     className="w-full justify-center"
                   />
                 </Link>
-              </span>
+              </div>
             </div>
 
             {/* =================== TABLE =================== */}
-            <div className="overflow-auto">
-              <table className="table-auto w-full">
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr
-                      key={headerGroup.id}
-                      className="border border-y-1 border-x-0 border-gray-400 text-gray-500 dark:text-gray-200 uppercase text-sm"
-                    >
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <th
-                            key={header.id}
-                            colSpan={header.colSpan}
-                            className="text-left py-4 px-3 font-medium"
-                          >
-                            {header.isPlaceholder ? null : (
-                              <div
-                                className={
-                                  header.column.getCanSort()
-                                    ? "cursor-pointer select-none"
-                                    : ""
-                                }
-                                onClick={header.column.getToggleSortingHandler()}
-                                title={
-                                  header.column.getCanSort()
-                                    ? header.column.getNextSortingOrder() ===
-                                      "asc"
-                                      ? "Sort ascending"
-                                      : header.column.getNextSortingOrder() ===
-                                        "desc"
-                                      ? "Sort descending"
-                                      : "Clear sort"
-                                    : undefined
-                                }
-                              >
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                                {{
-                                  asc: " 🔼",
-                                  desc: " 🔽",
-                                }[header.column.getIsSorted()] ?? null}
-                              </div>
-                            )}
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="border border-y-1 border-x-0 border-gray-400 text-gray-600 dark:text-gray-300 text-sm"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="py-4 px-3">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* =================== PAGINATION ===================  */}
-            {/* <div className="py-6 flex sm:flex-row flex-col gap-3 justify-between items-center px-5">
-              {total > 10 && (
-                <>
-                  <p className="text-xs text-gray-500">
-                    Displaying 1 to 10 of 100 entries
-                  </p>
-                  <Pagination
-                    totalPages={Math.ceil(total / postPerPage)} //10 is post per page
-                    currentPage={currentPaginationNum}
-                    onPageChange={handlePageChange}
-                  />
-                </>
-              )}
-            </div> */}
+            <Table
+              table={table}
+              isLoading={productFetch?.isLoading}
+              totalItem={productFetch?.data?.total}
+            />
           </Card>
         )}
       </div>
 
-      <ProductView />
+      <ProductView
+        isOpenModal={isOpen}
+        setIsOpenModal={setIsOpen}
+        data={productData}
+      />
     </>
   );
 };

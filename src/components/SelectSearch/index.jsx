@@ -57,7 +57,7 @@ const SelectSearch = ({
             isError ? "border-red-500" : "border-gray-300 focus:border-primary"
           } cursor-pointer capitalize border bg-white dark:bg-dark-200 text-gray-800 dark:text-gray-200 rounded-md text-sm leading-none h-[38.89px] flex items-center w-full px-3 placeholder:text-md outline-0 focus:drop-shadow-md transition`}
         >
-          {value?.label || placeholder}
+          {value?.label || value?.title || placeholder}
         </div>
       </div>
 

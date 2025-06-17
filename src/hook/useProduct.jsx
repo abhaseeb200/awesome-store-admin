@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import useDebounce from "@/hook/useDebounce";
 
-function useProduct() {
+function useProduct(productId) {
   const queryClient = useQueryClient();
   const [sorting, setSorting] = useState([{}]);
   const [searchValue, setSearchValue] = useState("");
@@ -13,6 +13,7 @@ function useProduct() {
 
   const productFetch = useQuery({
     queryKey: ["products", sorting, debouncedSearch, pagination],
+    enabled: productId ? false : true,
     queryFn: async () => {
       try {
         const sort = sorting[0];
@@ -33,6 +34,19 @@ function useProduct() {
     },
   });
 
+  const singleProductFetch = useQuery({
+    queryKey: ["product"],
+    enabled: !productId ? false : true,
+    queryFn: async () => {
+      try {
+        const response = await API.get(`products/${productId}`);
+        return response?.data?.data || [];
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      }
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (data) => {
       return API.post("/products/add", data);
@@ -47,7 +61,7 @@ function useProduct() {
 
   const updateMutation = useMutation({
     mutationFn: (data) => {
-      return API.put(`/products/update/${data?.id}`, data?.value);
+      return API.put(`/products/update/${data?._id}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
@@ -73,6 +87,7 @@ function useProduct() {
 
   return {
     productFetch,
+    singleProductFetch,
     createMutation,
     updateMutation,
     deleteMutation,

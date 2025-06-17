@@ -26,10 +26,14 @@ const ProductEditor = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
+
   const isProductFound = false;
   const isSelectQuery = true;
 
-  const { createMutation } = useProduct();
+  const { createMutation, singleProductFetch, updateMutation } = useProduct(id);
+
+  const currentProduct = singleProductFetch?.data;
+
   const {
     selectQuery,
     setPagination,
@@ -71,11 +75,28 @@ const ProductEditor = () => {
       },
     },
     onSubmit: async ({ value }) => {
-      createMutation.mutate(value, {
-        onSuccess: () => {
-          form.reset();
-        },
-      });
+      if (currentProduct) {
+        //UPDATE PRODUCT
+        const brand = {
+          label: currentProduct?.brand?.title,
+          _id: currentProduct?.brand?._id,
+        };
+
+        const category = {
+          label: currentProduct?.category?.title,
+          _id: currentProduct?.category?._id,
+        };
+
+        updateMutation.mutate({ ...value, category, brand });
+      } else {
+        //CREATE PRODUCT
+        createMutation.mutate(value, {
+          onSuccess: () => {
+            form.reset();
+          },
+        });
+      }
+
     },
   });
 
@@ -88,6 +109,12 @@ const ProductEditor = () => {
     }
     setShowUploadModal(false);
   };
+
+  useEffect(() => {
+    if (currentProduct) {
+      form.reset(currentProduct);
+    }
+  }, [currentProduct]);
 
   return (
     <>
@@ -105,7 +132,7 @@ const ProductEditor = () => {
           <div className="flex flex-wrap gap-2 justify-between items-end pt-6">
             <div>
               <h2 className="text-2xl text-gray-600 dark:text-gray-300 font-medium">
-                {isUpdate ? "Update Product" : "Add Product"}
+                {currentProduct ? "Update Product" : "Add Product"}
               </h2>
               <span className="text-gray-500 dark:text-gray-300 text-sm">
                 Orders placed across your store
@@ -116,7 +143,7 @@ const ProductEditor = () => {
                 type="submit"
                 disabled={!createMutation?.canSubmit}
                 isLoading={createMutation?.isSubmitting}
-                name={`${isUpdate ? "Update" : "Publish"} Product`}
+                name={`${currentProduct ? "Update" : "Publish"} Product`}
               />
             </div>
           </div>
@@ -348,7 +375,7 @@ const ProductEditor = () => {
                           placeholder="Select your category"
                           options={categoriesSelect}
                           total={selectQuery?.data?.total}
-                          value={field?.state.value || ""}
+                          value={field?.state.value}
                           isError={field?.state?.meta?.errors?.length}
                           messageError={field?.state?.meta?.errors}
                           pageIndex={pagination?.pageIndex + 1}

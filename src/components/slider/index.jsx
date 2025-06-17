@@ -3,7 +3,7 @@ import "./slick.css";
 import "./slick-theme.css";
 import "./style.css";
 
-const ThumbnailSlider = ({ currentProductData }) => {
+const ThumbnailSlider = ({ data }) => {
   var settings = {
     dots: true,
     infinite: true,
@@ -14,7 +14,7 @@ const ThumbnailSlider = ({ currentProductData }) => {
       return (
         <div>
           <img
-            src={currentProductData.images[i]}
+            src={data?.thumbnail}
             onError={(e) =>
               (e.target.src =
                 "https://cdn.dummyjson.com/product-images/placeholder.jpg")
@@ -28,7 +28,7 @@ const ThumbnailSlider = ({ currentProductData }) => {
   return (
     <div className="thumbnail-slider">
       <Slider {...settings}>
-        {currentProductData.images?.map((url, ind) => {
+        {data?.gallery?.map((url, ind) => {
           return (
             <div
               key={ind}
