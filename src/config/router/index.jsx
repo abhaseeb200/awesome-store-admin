@@ -17,7 +17,6 @@ import ProductEditor from "@/screens/products/productEditor.jsx";
 import Orders from "@/screens/orders/index.jsx";
 import Products from "@/screens/products/index.jsx";
 import Error from "@/screens/error/index.jsx";
-import CustomDropdown from "@/screens/test.jsx";
 import BrandScreen from "@/screens/brands";
 
 const Main = () => {
@@ -47,7 +46,6 @@ const Main = () => {
         </Route>
         
         <Route path="login" element={<Login />} />
-        <Route path="testing" element={<CustomDropdown />} />
       </>
     )
   );
