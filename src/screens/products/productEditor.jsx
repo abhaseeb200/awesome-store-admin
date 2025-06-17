@@ -13,9 +13,10 @@ import AddCategoryModal from "@/components/modal/addCategoryModal";
 import UploadModal from "@/components/modal/uploadModal";
 import UploadField from "@/components/uploadField";
 import NotFound from "@/components/card/notFound";
-import useProduct from "@/hook/useProduct";
 import SelectSearch from "@/components/SelectSearch";
 import useCategory from "@/hook/useCategory";
+import useProduct from "@/hook/useProduct";
+import useBrand from "@/hook/useBrand";
 
 const ProductEditor = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -37,27 +38,28 @@ const ProductEditor = () => {
     pagination,
   } = useCategory(isSelectQuery);
 
+  const {
+    selectQuery: selectQueryBrand,
+    setPagination: setPaginationBrand,
+    brandsSelect,
+    setSearchValue: setSearchValueBrand,
+    pagination: paginationBrand,
+  } = useBrand(isSelectQuery);
+
   const productSchema = z.object({
     title: z.string().min(1, { message: "Title is required" }),
     description: z.string().min(1, { message: "Description is required" }),
     category: z.object({
-      _id: z.string().min(1, { message: "Category-Id is required" }),
+      _id: z.string().min(1, { message: "Category is required" }),
     }),
-    brand: z.string().min(1, { message: "Brand is required" }),
+    brand: z.object({
+      _id: z.string().min(1, { message: "Brand is required" }),
+    }),
     price: z.coerce.number().min(1, "Price is required"),
     stock: z.coerce.number().min(1, "Stock is required"),
   });
 
   const form = useForm({
-    defaultValues: {
-      title: "",
-      description: "",
-      brand: "brand",
-      price: 100,
-      discountPercentage: 10,
-      stock: 22,
-      thumbnail: "",
-    },
     validators: {
       onChange: productSchema,
       onSubmit: ({ value }) => {
@@ -69,7 +71,11 @@ const ProductEditor = () => {
       },
     },
     onSubmit: async ({ value }) => {
-      createMutation.mutate(value);
+      createMutation.mutate(value, {
+        onSuccess: () => {
+          form.reset();
+        },
+      });
     },
   });
 
@@ -81,10 +87,6 @@ const ProductEditor = () => {
       form.validateField("thumbnail");
     }
     setShowUploadModal(false);
-  };
-
-  const handleAddNewCategory = () => {
-    setIsOpenCategoryModal(true);
   };
 
   return (
@@ -134,7 +136,7 @@ const ProductEditor = () => {
                         placeholder="Enter your product title"
                         label={field?.name}
                         name={field?.name}
-                        value={field?.state.value}
+                        value={field?.state.value || ""}
                         onChange={(e) => field?.handleChange(e?.target?.value)}
                         isError={field?.state?.meta?.errors?.length}
                         messageError={field?.state?.meta?.errors}
@@ -154,7 +156,7 @@ const ProductEditor = () => {
                         placeholder="Enter your product stock"
                         label="Quantity / Stock"
                         name={field?.name}
-                        value={field?.state.value}
+                        value={field?.state.value || ""}
                         onChange={(e) => field?.handleChange(e?.target?.value)}
                         isError={field?.state?.meta?.errors?.length}
                         messageError={field?.state?.meta?.errors}
@@ -175,7 +177,7 @@ const ProductEditor = () => {
                         placeholder="Enter your product description"
                         label={field?.name}
                         name={field?.name}
-                        value={field?.state.value}
+                        value={field?.state.value || ""}
                         onChange={(e) => field?.handleChange(e?.target?.value)}
                         isError={field?.state?.meta?.errors?.length}
                         messageError={field?.state?.meta?.errors}
@@ -199,7 +201,7 @@ const ProductEditor = () => {
                           className="h-80 justify-center"
                           title="Browse a image"
                           label={field?.name}
-                          value={field?.state.value}
+                          value={field?.state.value || ""}
                           isError={field?.state?.meta?.errors?.length}
                           messageError={field?.state?.meta?.errors}
                           onClick={() => {
@@ -265,7 +267,7 @@ const ProductEditor = () => {
                         placeholder="Enter your product price"
                         label="Base Price"
                         name={field?.name}
-                        value={field?.state.value}
+                        value={field?.state.value || ""}
                         onChange={(e) => field?.handleChange(e?.target?.value)}
                         isError={field?.state?.meta?.errors?.length}
                         messageError={field?.state?.meta?.errors}
@@ -286,7 +288,7 @@ const ProductEditor = () => {
                         placeholder="Enter your product discounted price"
                         label="Discounted Price (Optional)"
                         name={field?.name}
-                        value={field?.state.value}
+                        value={field?.state.value || ""}
                         onChange={(e) => field?.handleChange(e?.target?.value)}
                         isError={field?.state?.meta?.errors?.length}
                         messageError={field?.state?.meta?.errors}
@@ -300,37 +302,42 @@ const ProductEditor = () => {
               <Card className="px-6 py-6 flex gap-4 flex-col relative z-10">
                 <CardHeading title="Organize" />
 
-                {/* ================= BRAND ================= */}
-                <form.Field
-                  name="brand"
-                  children={(field) => {
-                    return (
-                      <Input
-                        id={field?.name}
-                        type="text"
-                        placeholder="Enter your product brand"
-                        label={field?.name}
-                        name={field?.name}
-                        value={field?.state.value}
-                        onChange={(e) => field?.handleChange(e?.target?.value)}
-                        isError={field?.state?.meta?.errors?.length}
-                        messageError={field?.state?.meta?.errors}
-                        autoComplete={field?.name}
-                      />
-                    );
-                  }}
-                />
+                {/* ================= SELECT BRAND ================= */}
+                <div className="relative z-10">
+                  <div className="text-sm text-gray-500 dark:text-gray-300 mb-1 flex justify-between">
+                    <span>Select Brand</span>
+                  </div>
+
+                  <form.Field
+                    name="brand"
+                    children={(field) => {
+                      return (
+                        <SelectSearch
+                          placeholder="Select your brand"
+                          options={brandsSelect}
+                          total={selectQueryBrand?.data?.total}
+                          value={field?.state.value || ""}
+                          isError={field?.state?.meta?.errors?.length}
+                          messageError={field?.state?.meta?.errors}
+                          pageIndex={paginationBrand?.pageIndex + 1}
+                          setPagination={setPaginationBrand} // USED FOR LOAD MORE: PAGE NUMBER 0,1,2...
+                          setSearchValue={setSearchValueBrand}
+                          onChange={(value) => {
+                            field?.handleChange({
+                              _id: value?._id,
+                              label: value?.title,
+                            });
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                </div>
 
                 {/* ================= SELECT CATEGORY ================= */}
                 <div className="relative">
                   <div className="text-sm text-gray-500 dark:text-gray-300 mb-1 flex justify-between">
-                    <span>Category</span>
-                    <span
-                      className="text-primaryDark cursor-pointer hover:underline underline-offset-2 transition dark:text-primaryLight"
-                      onClick={handleAddNewCategory}
-                    >
-                      Add New Category
-                    </span>
+                    <span>Select Category</span>
                   </div>
 
                   <form.Field
@@ -338,9 +345,10 @@ const ProductEditor = () => {
                     children={(field) => {
                       return (
                         <SelectSearch
+                          placeholder="Select your category"
                           options={categoriesSelect}
                           total={selectQuery?.data?.total}
-                          value={field?.state.value}
+                          value={field?.state.value || ""}
                           isError={field?.state?.meta?.errors?.length}
                           messageError={field?.state?.meta?.errors}
                           pageIndex={pagination?.pageIndex + 1}
@@ -358,43 +366,10 @@ const ProductEditor = () => {
                   />
                 </div>
               </Card>
-
-              {/* ================== ATTRIBUTES ================== */}
-              <Card className="px-6 py-6 flex gap-3 flex-col">
-                <CardHeading title="Variants" />
-                <div className="pb-4">
-                  <div className="flex sm:flex-row flex-col items-end gap-3">
-                    <span className="sm:w-1/3 w-full">
-                      <label className="text-sm text-gray-500 dark:text-gray-300 block">
-                        Options
-                      </label>
-                      <SelectDropdown className="py-2 w-full">
-                        <option value="0">Select Option</option>
-                        <option value="0">Size</option>
-                        <option value="0">Color</option>
-                      </SelectDropdown>
-                    </span>
-                    <span className="sm:w-2/3 w-full">
-                      <Input placeholder="Enter Size" type="text" />
-                    </span>
-                  </div>
-                </div>
-                <div className="pb-6">
-                  <Button type="button" name="Add another option" />
-                </div>
-              </Card>
             </div>
           </div>
         </form>
       )}
-
-      {/* =================== USE CASE: ADD CATEGORY IF DOES'T EXISTS =================== */}
-      {/* <AddCategoryModal
-        isOpenModal={isOpenCategoryModal}
-        setIsOpenModal={setIsOpenCategoryModal}
-        currentCategory={currentCategory}
-        setCurrentCategory={setCurrentCategory}
-      /> */}
 
       {/* =================== USE CASE: SELECT PICTURE FROM MODAL  =================== */}
       <UploadModal
