@@ -5,13 +5,32 @@ import { TbUsers } from "react-icons/tb";
 import { Card, CardHeading } from "../../components/card";
 import { getProducts } from "../../api/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { GrLineChart } from "react-icons/gr";
+import IncomeChart from "@/components/IncomeChart";
+
+const InfoCard = ({ icon, title, value }) => {
+  return (
+    <div className="lg:w-1/4 w-full">
+      <Card className="p-6">
+        <CardHeading title={title} />
+        <div className="justify-between text-gray-600 dark:text-gray-300 flex flex-col sm:flex-row">
+          <span className="opacity-70">last 07 days</span>
+          {icon}
+        </div>
+        <div className="pt-4 text-gray-600 dark:text-gray-300 text-[29px] font-bold">
+          {value}
+        </div>
+      </Card>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   let [customerSize, setCustomerSize] = useState(0);
   let [productSize, setProductSize] = useState(0);
 
   const queryClient = useQueryClient();
-  const cachedUser = queryClient.getQueryData('user');
+  const cachedUser = queryClient.getQueryData("user");
 
   const fetchCustomerSize = async () => {
     // try {
@@ -37,83 +56,122 @@ const Dashboard = () => {
     fetchProductSize();
   }, []);
 
+  // Example popular products array
+  const popularProducts = [
+    {
+      id: 1,
+      image: "https://cdn.dummyjson.com/product-images/placeholder.jpg",
+      name: "Iphone 16 pro max",
+      brand: "Apple",
+      price: 30,
+    },
+    {
+      id: 1,
+      image: "https://cdn.dummyjson.com/product-images/placeholder.jpg",
+      name: "Iphone 16 pro max",
+      brand: "Apple",
+      price: 30,
+    },
+    {
+      id: 1,
+      image: "https://cdn.dummyjson.com/product-images/placeholder.jpg",
+      name: "Iphone 16 pro max",
+      brand: "Apple",
+      price: 30,
+    },
+    {
+      id: 1,
+      image: "https://cdn.dummyjson.com/product-images/placeholder.jpg",
+      name: "Iphone 16 pro max",
+      brand: "Apple",
+      price: 30,
+    },
+    {
+      id: 1,
+      image: "https://cdn.dummyjson.com/product-images/placeholder.jpg",
+      name: "Iphone 16 pro max",
+      brand: "Apple",
+      price: 30,
+    },
+  ];
+
   return (
     <>
       <span className="p-3"></span>
-      <div className="flex gap-3 flex-col lg:flex-row">
-        <div className="lg:w-3/5 w-full">
-          <Card>
-            <CardHeading title="Statistics" />
-            <div className="flex flex-col sm:flex-row pt-4 pb-10 px-5">
-              <div className="sm:w-1/3 w-full flex sm:gap-1.5 gap-3 items-center">
-                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
-                  <ImCoinDollar size="1.2rem" />
-                </span>
-                <span className="">
-                  <h5 className="text-gray-600 dark:text-gray-300">23</h5>
-                  <p className="text-gray-400">Sales</p>
-                </span>
-              </div>
-              <div className="sm:w-1/3 w-full flex sm:gap-1.5 gap-3 items-center sm:py-0 py-3">
-                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
-                  <TbUsers size="1.2rem" />
-                </span>
-                <span className="">
-                  <h5 className="text-gray-600 dark:text-gray-300">
-                    {customerSize}
-                  </h5>
-                  <p className="text-gray-400">Customers</p>
-                </span>
-              </div>
-              <div className="sm:w-1/3 w-full flex sm:gap-1.5 gap-3 items-center">
-                <span className="bg-gray-300 dark:bg-dark-600 dark:text-gray-300 rounded-full flex items-center justify-center w-10 h-10">
-                  <BsCart3 size="1.2rem" />
-                </span>
-                <span className="">
-                  <h5 className="text-gray-600 dark:text-gray-300">
-                    {productSize}
-                  </h5>
-                  <p className="text-gray-400">Products</p>
-                </span>
-              </div>
-            </div>
+      <div className="flex gap-4 flex-col lg:flex-row">
+        {/* === TOTAL REVENUE === */}
+        <InfoCard
+          icon={<ImCoinDollar size={"1.6rem"} className="-mt-4" />}
+          title="Total Revenue"
+          value="$1,763"
+        />
+
+        {/* === TOTAL ORDERS === */}
+        <InfoCard
+          icon={<BsCart3 size={"1.6rem"} className="-mt-4" />}
+          title="Total Orders"
+          value="300"
+        />
+
+        {/* === TOTAL PRODUCT === */}
+        <InfoCard
+          icon={<GrLineChart size={"1.6rem"} className="-mt-4" />}
+          title="Total Products"
+          value={productSize}
+        />
+
+        {/* === PENDING DELIVERY === */}
+        <InfoCard
+          icon={<TbUsers size={"1.6rem"} className="-mt-4" />}
+          title="Pending Delivery"
+          value="763"
+        />
+      </div>
+      {/* ================== SECOND ROW ================== */}
+      <div className="flex gap-4 flex-col lg:flex-row">
+        {/* === TOTAL INCOME === */}
+        <div className="lg:w-[64%] w-full">
+          <Card className="p-6">
+            <CardHeading title="Total Income" />
+            <p className="text-gray-600 dark:text-gray-300 opacity-60 mb-4">
+              Yearly report overview
+            </p>
+            <IncomeChart />
           </Card>
         </div>
-        <div className="lg:w-2/5 w-full">
-          <Card>
+
+        {/* === POPULAR PRODUCTS === */}
+        <div className="lg:w-[36%] w-full">
+          <Card className="p-6">
             <CardHeading title="Popular Products" />
-            <div className="flex flex-wrap justify-between items-center pb-5 px-5">
-              <div className="flex items-center">
-                <span>
+            <p className="text-gray-600 dark:text-gray-300 opacity-60">
+              Last 07 days
+            </p>
+            {popularProducts.map((product) => (
+              <div
+                key={product.id}
+                className="flex items-center justify-between bg-[#424659] p-3 rounded-md mt-3"
+              >
+                <div className="flex items-center gap-3">
                   <img
-                    src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/img/products/iphone.png"
-                    width="52"
+                    className="size-12 object-cover rounded-md"
+                    src={product.image}
+                    alt={product.name}
                   />
-                </span>
-                <span>
-                  <h5 className="text-gray-600 dark:text-gray-300 ">
-                    Apple Iphone 13
-                  </h5>
-                  <p className="text-gray-400 text-sm">Item: #FXZ-4567</p>
-                </span>
+                  <div className="flex flex-col">
+                    <p className="font-medium text-gray-600 dark:text-gray-300">
+                      {product.name}
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {product.brand}
+                    </p>
+                  </div>
+                </div>
+                <div className="font-bold text-lg text-gray-600 dark:text-gray-300">
+                  ${product.price}
+                </div>
               </div>
-              <span className="text-gray-600 dark:text-gray-300">$72.40</span>
-            </div>
-            <div className="flex flex-wrap justify-between items-center pb-6 px-5">
-              <span className="flex items-center">
-                <img
-                  src="https://demos.pixinvent.com/vuexy-html-admin-template/assets/img/products/iphone.png"
-                  width="52"
-                />
-                <span>
-                  <h5 className="text-gray-600 dark:text-gray-300 ">
-                    Apple Iphone 13
-                  </h5>
-                  <p className="text-gray-400 text-sm">Item: #FXZ-4567</p>
-                </span>
-              </span>
-              <span className="text-gray-600 dark:text-gray-300">$999.9</span>
-            </div>
+            ))}
           </Card>
         </div>
       </div>
